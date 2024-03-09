@@ -1,4 +1,5 @@
 <script>
+
   import ProductEntry from '$lib/shared/ProductEntry.svelte';
   import OrderEntry from '../lib/shared/OrderEntry.svelte';
 
@@ -8,3 +9,4 @@
 <OrderEntry status="complete"/>
 <ProductEntry isAvailable={true}/>
 <ProductEntry isAvailable={false}/>
+
