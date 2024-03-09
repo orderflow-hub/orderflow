@@ -1,6 +1,10 @@
 <script>
-    import { Button } from "$lib/components/ui/button";
+  import ProductEntry from '$lib/shared/ProductEntry.svelte';
+  import OrderEntry from '../lib/shared/OrderEntry.svelte';
 
 </script>
 
-<Button>Click me</Button>
+<OrderEntry status="pending"/>
+<OrderEntry status="complete"/>
+<ProductEntry isAvailable={true}/>
+<ProductEntry isAvailable={false}/>
