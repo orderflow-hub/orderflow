@@ -6,7 +6,7 @@
 <div class="flex flex-col min-h-screen">
     <header>Αρχική</header>
 
-    <main class="flex flex-col p-4 w-full max-w-4xl box-border pb-16">
+    <main class="flex flex-col p-2.5 w-full max-w-4xl box-border pb-16">
         <slot />
     </main>
 
