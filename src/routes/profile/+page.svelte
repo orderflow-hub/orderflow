@@ -13,11 +13,11 @@
     }
 
     // TODO: Fetch user data from backend
-    let user = { role: 'admin', email: 'admin@example.com' };
-    // let user = { role: 'customer', email: 'customer@example.com', companyName: 'Εταιρεία Α.Ε.', customerId: '123456', phone: '2101234567', afm: '123456789'};
+    // let user = { role: 'admin', email: 'admin@example.com' };
+    let user = { role: 'customer', email: 'customer@example.com', companyName: 'Εταιρεία Α.Ε.', customerId: '123456', phone: '2101234567', afm: '123456789'};
 </script>
 
-<div class="flex flex-col justify-start items-stretch gap-4 flex p-1.5">
+<div class="flex flex-col justify-start items-stretch gap-4 p-1.5">
     {#if user.role === 'admin'}
         <AdminDetailsForm email={user.email} emailDisabled />
     {:else if user.role === 'customer'}
