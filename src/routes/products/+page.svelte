@@ -8,17 +8,18 @@
     import AddNewProduct from '$lib/components/AddNewProduct.svelte';
 
     let userRole = 'admin';
+    let isDialogOpen = false;
+    const closeDialog = () => {
+        isDialogOpen = false;
+    }
 </script>
 
-{#if userRole === 'admin'} 
+{#if userRole === 'admin'}
     <div class="flex items-center pt-0 pb-4">
-        <Input
-        placeholder="Αναζήτηση"
-        type="text"
-        />
-        <Dialog.Root>
+        <Input class="mr-2.5" placeholder="Αναζήτηση" type="text"/>
+        <Dialog.Root bind:open={isDialogOpen}>
             <Dialog.Trigger class="text-base font-normal">
-                <Button class="w-10 p-0 ml-2.5 grow-0 border-2 text-card-foreground bg-transparent">
+                <Button class="w-10 p-0  grow-0 border-2 text-card-foreground bg-transparent">
                     <Plus />
                 </Button>
             </Dialog.Trigger>
@@ -28,12 +29,13 @@
                 </Dialog.Header>
                 <AddNewProduct />
                 <Dialog.Footer>
-                    Some text
+                    <Button variant="secondary" on:click={closeDialog}>Ακύρωση</Button>
+                    <Button type="submit">Προσθήκη</Button>
                 </Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>
     </div>
-    <ScrollArea class="w-full whitespace-nowrap rounded-md border" orientation="vertical">
+    <ScrollArea class="w-full whitespace-nowrap rounded-lg border" orientation="vertical">
         <ProductEntry isAvailable={true}/>
         <ProductEntry isAvailable={true}/>
         <ProductEntry isAvailable={true}/>

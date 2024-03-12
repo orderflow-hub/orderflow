@@ -4,7 +4,7 @@
     export let isAvailable = true;
 </script>
    
-<Card.Root class={`flex h-24 items-center justify-start ${isAvailable ? "" : "grayscale"}`}>
+<Card.Root class={`flex h-24 rounded-none items-center justify-start ${isAvailable ? "" : "grayscale"}`}>
     <Card.Content class="py-0 px-2 h-full">
         <div class="w-full h-full flex-grow flex-col justify-start items-start gap-2.5">
             <img class="h-full object-cover" src="https://www.doorsteporganics.com.au/image/optimised/large/Tomatoes-Round-1kg.jpg" alt="Fresh tomatoes"/>
