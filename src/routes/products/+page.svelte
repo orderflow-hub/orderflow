@@ -1,26 +1,51 @@
 <script>
-    import ProductEntry from '$lib/shared/ProductEntry.svelte';
+    import ProductEntryAdmin from '$lib/shared/ProductEntryAdmin.svelte';
+    import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
     import Input from '$lib/components/ui/input/input.svelte';
     import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
     import {Plus} from 'lucide-svelte';
+    import {Search} from 'lucide-svelte';
 	import {Button} from '$lib/components/ui/button';
     import * as Dialog from '$lib/components/ui/dialog';
     import AddNewProduct from '$lib/components/AddNewProduct.svelte';
 
-    let userRole = 'admin';
     let isDialogOpen = false;
     const closeDialog = () => {
         isDialogOpen = false;
     }
+
+    let userRole = 'customer';
+
+    let object1 = {
+        image: "https://farzana.ae/images/thumbs/0005177_spinach-green-silik_500.jpeg",
+        product_name: "ΣΠΑΝΑΚΙ",
+        product_code: "ΕΙΔΗ-000000023",
+        isAvailable: true,
+        sale_unit: "piece"
+    }
+
+    let object2 = {
+        image: "https://www.doorsteporganics.com.au/image/optimised/large/Tomatoes-Round-1kg.jpg",
+        product_name: "ΝΤΟΜΑΤΕΣ ΚΡΗΤΗΣ",
+        product_code: "ΕΙΔΗ-000000024",
+        isAvailable: false,
+        sale_unit: "kg"
+    }
+
 </script>
 
 {#if userRole === 'admin'}
-    <div class="flex items-center pt-0 pb-4">
-        <Input class="mr-2.5" placeholder="Αναζήτηση" type="text"/>
+    <div class="flex items-center pt-0 pb-2">
+        <div class="relative flex flex-grow items-center">
+            <Input class="pl-10 mr-2.5" placeholder="Αναζήτηση" type="text"/>
+            <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
+              <Search/>
+            </div>
+        </div>
         <Dialog.Root bind:open={isDialogOpen}>
             <Dialog.Trigger class="text-base font-normal">
-                <Button class="w-10 p-0  grow-0 border-2 text-card-foreground bg-transparent">
-                    <Plus />
+                <Button class="w-10 p-0 grow-0 border-2 text-muted-foreground bg-transparent">
+                    <Plus/>
                 </Button>
             </Dialog.Trigger>
             <Dialog.Content>
@@ -36,11 +61,27 @@
         </Dialog.Root>
     </div>
     <ScrollArea class="w-full whitespace-nowrap rounded-lg border" orientation="vertical">
-        <ProductEntry isAvailable={true}/>
-        <ProductEntry isAvailable={true}/>
-        <ProductEntry isAvailable={true}/>
-        <ProductEntry isAvailable={false}/>
-        <ProductEntry isAvailable={false}/>
-        <ProductEntry isAvailable={false}/>
+        <ProductEntryAdmin object={object1}/>
+        <ProductEntryAdmin object={object1}/>
+        <ProductEntryAdmin object={object1}/>
+        <ProductEntryAdmin object={object1}/>
+        <ProductEntryAdmin object={object2}/>
+        <ProductEntryAdmin object={object2}/>
+    </ScrollArea>
+{:else if userRole === 'customer'}
+        <div class="relative flex flex-grow items-center mb-2">
+            <Input class="pl-10" placeholder="Αναζήτηση" type="text"/>
+            <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
+            <Search/>
+            </div>
+        </div>
+    <ScrollArea class="w-full whitespace-nowrap rounded-lg" orientation="vertical">
+        <div class="grid grid-cols-2 gap-4">
+            <ProductEntryCustomer object={object1}/>
+            <ProductEntryCustomer object={object1}/>
+            <ProductEntryCustomer object={object1}/>
+            <ProductEntryCustomer object={object2}/>
+            <ProductEntryCustomer object={object2}/>
+        </div>
     </ScrollArea>
 {/if}
