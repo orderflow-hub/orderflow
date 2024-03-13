@@ -14,7 +14,7 @@
         isDialogOpen = false;
     }
 
-    let userRole = 'customer';
+    let userRole = 'admin';
 
     let object1 = {
         image: "https://farzana.ae/images/thumbs/0005177_spinach-green-silik_500.jpeg",
