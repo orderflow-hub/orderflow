@@ -1,9 +1,17 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
+import postgres from 'postgres';
+
 declare global {
 	namespace App {
+		interface User {
+			uid: string;
+			role: string;
+		}
+
+		interface Locals {
+			user: User;
+			sql: ReturnType<typeof postgres>;
+		}
 		// interface Error {}
-		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
