@@ -6,10 +6,43 @@
     import * as Dialog from "$lib/components/ui/dialog";
     import CustomerDetailsForm from "$lib/components/CustomerDetailsForm.svelte";
     import AdminDetailsForm from "$lib/components/AdminDetailsForm.svelte";
+	import { authHandlers, authStore } from "../../stores/authStore";
+    import { EmailAuthProvider } from "firebase/auth";
+    import { toast } from "svelte-sonner";
 
     let isChangePasswordDialogOpen = false;
     function closeChangePasswordDialog() {
         isChangePasswordDialogOpen = false;
+    }
+
+    let oldPassword = '';
+    let newPassword = '';
+    let newPasswordConfirm = '';
+
+    async function handlePasswordChange() {
+        const currentUser = $authStore.currentUser;
+        if (newPassword === newPasswordConfirm && currentUser && currentUser.email) {
+            const credential = EmailAuthProvider.credential(currentUser.email, oldPassword);
+
+            try {
+                await authHandlers.reauthenticateWithCredential(credential)
+                await authHandlers.updatePassword(newPassword);
+                closeChangePasswordDialog();
+                toast.success('Ο κωδικός σας άλλαξε επιτυχώς');
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    async function handleLogout() {
+        try {
+            await authHandlers.logout();
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // TODO: Fetch user data from backend
@@ -35,20 +68,24 @@
                 <div class="flex flex-col gap-4 pt-2.5 pb-6">
                     <div class="flex w-full flex-col gap-1.5 ">
                         <Label for="old-password">Παλιός Κωδικός</Label>
-                        <Input type="password" id="old-password" placeholder="" value=""/>
+                        <Input type="password" id="old-password" placeholder="" bind:value={oldPassword} required/>
                     </div>
                     <div class="flex w-full flex-col gap-1.5 ">
                         <Label for="new-password">Νέος Κωδικός</Label>
-                        <Input type="password" id="new-password" placeholder="" value=""/>
+                        <Input type="password" id="new-password" placeholder="" bind:value={newPassword} required/>
+                    </div>
+                    <div class="flex w-full flex-col gap-1.5 ">
+                        <Label for="new-password-confirm">Επανάληψη Νέου Κωδικού</Label>
+                        <Input type="password" id="new-password-confirm" placeholder="" bind:value={newPasswordConfirm} required/>
                     </div>
                 </div>
                 <Dialog.Footer>
                     <Button variant="secondary" on:click={closeChangePasswordDialog}>Ακύρωση</Button>
-                    <Button type="submit">Αλλαγή κωδικού</Button>
+                    <Button type="submit" on:click={handlePasswordChange}>Αλλαγή κωδικού</Button>
                 </Dialog.Footer>
             </Dialog.Content>
         </Dialog.Root>
-        <Button variant="destructive" class="text-base font-normal">Αποσύνδεση</Button>
+        <Button variant="destructive" class="text-base font-normal" on:click={handleLogout}>Αποσύνδεση</Button>
     </div>
     <div class="flex py-4 justify-center">
         <p class="text-neutral-300 text-sm font-semibold">OrderFlow v1.0</p>
