@@ -1,3 +1,9 @@
+/* API Endpoint: /api/logout
+ * Method: POST
+ * Description: Logs the user out by clearing the idToken cookie
+ * Request: None
+ * Response: { message: string }
+ */
 export async function POST() {
 	// Set the cookie to expire immediately
 	const headers = new Headers({

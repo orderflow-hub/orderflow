@@ -27,6 +27,7 @@
 
     setMode("light");
 
+    // Retrieve user role from the server
     export let data;
     const userRole = data.userRole;
 </script>
