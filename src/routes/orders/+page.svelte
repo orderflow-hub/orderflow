@@ -3,6 +3,7 @@
     import Input from '$lib/components/ui/input/input.svelte';
     import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
+	import SearchBar from '$lib/shared/SearchBar.svelte';
 
     let userRole = "customer";
 
@@ -47,12 +48,7 @@
 </script>
 
 {#if userRole === "admin"}
-    <div class="relative flex flex-grow items-center mb-2">
-        <Input class="pl-10" placeholder="Αναζήτηση" type="text"/>
-        <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-        <Search/>
-        </div>
-    </div>
+    <SearchBar/>
     <ScrollArea class="w-full whitespace-nowrap rounded-lg border" orientation="vertical">
         <OrderEntry object={object1} />
         <OrderEntry object={object2} />

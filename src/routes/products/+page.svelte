@@ -1,13 +1,12 @@
 <script>
     import ProductEntryAdmin from '$lib/shared/ProductEntryAdmin.svelte';
     import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
-    import Input from '$lib/components/ui/input/input.svelte';
     import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
     import {Plus} from 'lucide-svelte';
-    import {Search} from 'lucide-svelte';
 	import {Button} from '$lib/components/ui/button';
     import * as Dialog from '$lib/components/ui/dialog';
     import AddNewProduct from '$lib/components/AddNewProduct.svelte';
+	import SearchBar from '$lib/shared/SearchBar.svelte';
 
     let isDialogOpen = false;
     const closeDialog = () => {
@@ -36,12 +35,7 @@
 
 {#if userRole === 'admin'}
     <div class="flex items-center pt-0 pb-2">
-        <div class="relative flex flex-grow items-center">
-            <Input class="pl-10 mr-2.5" placeholder="Αναζήτηση" type="text"/>
-            <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-              <Search/>
-            </div>
-        </div>
+        <SearchBar/>
         <Dialog.Root bind:open={isDialogOpen}>
             <Dialog.Trigger class="text-base font-normal">
                 <Button class="w-10 p-0 grow-0 border-2 text-muted-foreground bg-transparent">
@@ -70,10 +64,7 @@
     </ScrollArea>
 {:else if userRole === 'customer'}
         <div class="relative flex flex-grow items-center mb-2">
-            <Input class="pl-10" placeholder="Αναζήτηση" type="text"/>
-            <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-            <Search/>
-            </div>
+            <SearchBar/>
         </div>
     <ScrollArea class="w-full whitespace-nowrap rounded-lg" orientation="vertical">
         <div class="grid grid-cols-2 gap-4">

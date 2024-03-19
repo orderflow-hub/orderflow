@@ -1,12 +1,11 @@
 <script>
-	import Input from "$lib/components/ui/input/input.svelte";
     import Button from "$lib/components/ui/button/button.svelte";
     import * as Dialog from "$lib/components/ui/dialog";
     import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
     import CustomerEntry from "$lib/shared/CustomerEntry.svelte";
     import AddNewCustomer from "$lib/components/AddNewCustomer.svelte";
     import { Plus } from "lucide-svelte";
-    import { Search } from "lucide-svelte";
+	import SearchBar from "$lib/shared/SearchBar.svelte";
 
     let isDialogOpen = false;
     const closeDialog = () => {
@@ -33,12 +32,7 @@
 </script>
 
 <div class="flex items-center pt-0 pb-2">
-    <div class="relative flex flex-grow items-center">
-        <Input class="pl-10 mr-2.5" placeholder="Αναζήτηση" type="text"/>
-        <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-          <Search/>
-        </div>
-    </div>
+    <SearchBar/>
     <Dialog.Root bind:open={isDialogOpen}>
         <Dialog.Trigger class="text-base font-normal">
             <Button class="w-10 p-0 grow-0 border-2 text-muted-foreground bg-transparent">
