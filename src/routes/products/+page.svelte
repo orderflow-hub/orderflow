@@ -2,7 +2,6 @@
     import ProductEntryAdmin from '$lib/shared/ProductEntryAdmin.svelte';
     import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
     import Input from '$lib/components/ui/input/input.svelte';
-    import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
     import {Plus} from 'lucide-svelte';
     import {Search} from 'lucide-svelte';
 	import {Button} from '$lib/components/ui/button';
@@ -17,7 +16,7 @@
     let userRole = 'admin';
 
     let object1 = {
-        image: "https://farzana.ae/images/thumbs/0005177_spinach-green-silik_500.jpeg",
+        image: "https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg",
         product_name: "ΣΠΑΝΑΚΙ",
         product_code: "ΕΙΔΗ-000000023",
         isAvailable: true,
@@ -35,16 +34,16 @@
 </script>
 
 {#if userRole === 'admin'}
-    <div class="flex items-center pt-0 pb-2">
+    <div class="flex items-center sticky top-0 p-2.5 bg-white gap-2.5 z-10">
         <div class="relative flex flex-grow items-center">
-            <Input class="pl-10 mr-2.5" placeholder="Αναζήτηση" type="text"/>
+            <Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search"/>
             <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-              <Search/>
+                <Search size={18}/>
             </div>
         </div>
         <Dialog.Root bind:open={isDialogOpen}>
             <Dialog.Trigger class="text-base font-normal">
-                <Button class="w-10 p-0 grow-0 border-2 text-muted-foreground bg-transparent">
+                <Button class="w-10 p-0 grow-0 border text-muted-foreground bg-transparent">
                     <Plus/>
                 </Button>
             </Dialog.Trigger>
@@ -60,28 +59,36 @@
             </Dialog.Content>
         </Dialog.Root>
     </div>
-    <ScrollArea class="w-full whitespace-nowrap rounded-lg border" orientation="vertical">
-        <ProductEntryAdmin object={object1}/>
-        <ProductEntryAdmin object={object1}/>
-        <ProductEntryAdmin object={object1}/>
-        <ProductEntryAdmin object={object1}/>
-        <ProductEntryAdmin object={object2}/>
-        <ProductEntryAdmin object={object2}/>
-    </ScrollArea>
+    <div class="p-2.5 pt-0">
+        <div class="w-full border rounded-lg divide-y overflow-hidden">
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object2}/>
+            <ProductEntryAdmin object={object2}/>
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object2}/>
+            <ProductEntryAdmin object={object1}/>
+            <ProductEntryAdmin object={object2}/>
+        </div>
+    </div>
 {:else if userRole === 'customer'}
-        <div class="relative flex flex-grow items-center mb-2">
-            <Input class="pl-10" placeholder="Αναζήτηση" type="text"/>
+    <div class="flex items-center sticky top-0 p-2.5 bg-white z-10">
+        <div class="relative flex flex-grow items-center">
+            <Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search"/>
             <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-            <Search/>
+                <Search size={18}/>
             </div>
         </div>
-    <ScrollArea class="w-full whitespace-nowrap rounded-lg" orientation="vertical">
-        <div class="grid grid-cols-2 gap-4">
+    </div>
+    <div class="p-2.5 pt-0">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
             <ProductEntryCustomer object={object1}/>
             <ProductEntryCustomer object={object1}/>
             <ProductEntryCustomer object={object1}/>
             <ProductEntryCustomer object={object2}/>
             <ProductEntryCustomer object={object2}/>
         </div>
-    </ScrollArea>
+    </div>
 {/if}

@@ -33,10 +33,12 @@
     const userRole = data.userRole;
 </script>
 
-<div class="flex flex-col min-h-screen">
-    <header class="bg-secondary-foreground text-background flex justify-start items-center h-10 px-2.5">Αρχική</header>
+<div class="flex flex-col min-h-screen items-center">
+    <header class="bg-secondary-foreground text-background flex flex-col justify-center items-center h-10 w-full">
+        <div class="flex w-full max-w-4xl px-2.5">Αρχική</div>
+    </header>
 
-    <main class="flex flex-col w-full max-w-4xl box-border pb-12">
+    <main class="flex flex-col w-full max-w-4xl box-border pb-12 items-stretch">
         <slot />
     </main>
 

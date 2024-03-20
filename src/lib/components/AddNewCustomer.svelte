@@ -15,10 +15,10 @@
     }
 </script>
 
-<div class="self-stretch rounded-lg flex-col justify-center items-stasrt flex">
+<form class="self-stretch rounded-lg flex-col justify-center items-stasrt flex" autocomplete="off">
     <div class="self-stretch rounded-lg flex-col justify-center items-start flex gap-4">
         <div class="flex w-full max-w-sm flex-col gap-1.5 ">
-            <Label for="customer-company-name">Όνομα προϊόντος</Label>
+            <Label for="customer-company-name">Επωνυμία</Label>
             <Input type="text" id="customer-company-name" placeholder="" bind:value={object.customer_company_name}/>
         </div>
         <div class="flex w-full max-w-sm flex-col gap-1.5 ">
@@ -27,17 +27,17 @@
         </div>
         <div class="flex w-full max-w-sm flex-col gap-1.5 ">
             <Label for="email">Email</Label>
-            <Input type="text" id="email" placeholder="" bind:value={object.email}/>
+            <Input type="email" id="email" placeholder="" bind:value={object.email}/>
         </div>
         <div class="flex gap-3 mb-3">
             <div class="flex w-full max-w-sm flex-col gap-1.5">
                 <Label for="phone">Τηλέφωνο</Label>
-                <Input type="text" id="phone" placeholder="" bind:value={object.phone}/>
+                <Input type="tel" id="phone" placeholder="" bind:value={object.phone}/>
             </div>
             <div class="flex w-full max-w-sm flex-col gap-1.5">
                 <Label for="afm">ΑΦΜ</Label>
-                <Input type="text" id="afm" placeholder="" bind:value={object.afm}/>
+                <Input type="number" id="afm" placeholder="" bind:value={object.afm} autocomplete="new-password"/>
             </div>
         </div>
     </div>
-</div>
+</form>

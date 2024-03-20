@@ -18,7 +18,7 @@
     }
 </script>
 
-<div class="flex flex-col max-w-sm w-full h-full justify-center items-stretch gap-8">
+<div class="flex flex-col max-w-md w-full h-full justify-center items-stretch gap-8 p-2.5">
     <div class="pt-4 text-zinc-700 text-5xl font-extrabold text-center">OrderFlow</div>
     <form class="flex flex-col gap-8" on:submit|preventDefault={handleLogin}>
         <div class="self-stretch rounded-lg flex-col justify-center items-start flex gap-4">
