@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "@fontsource-variable/manrope";
     import "../app.pcss";
     import Navbar from "$lib/components/Navbar.svelte";
     import { onMount } from "svelte";
@@ -46,3 +47,9 @@
         <Navbar {userRole}/>
     {/if}
 </div>
+
+<style>
+    :global(body) {
+        font-family: 'Manrope Variable', sans-serif;
+    }
+</style>
