@@ -27,7 +27,7 @@
   hour12: false
   });
 
-  const formattedDateTime = `${dateStringInGreek} | ${timeString}`;
+  const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
   
   let object1 = {
         entry_title: "Ταβέρνα - Τα 12 προβατάκια",
@@ -42,45 +42,47 @@
     }
 </script>
 
-<Card.Root class="overflow-hidden">
-  <Card.Header class="p-0">
-    <Card.Title class="bg-secondary h-10 flex justify-center items-center font-normal">
-      Ιστορικό Πωλήσεων
-    </Card.Title>
-  </Card.Header>
-  <Card.Content class="p-0">
-    <OrderEntry object={object1} />
-    <OrderEntry object={object2} />
-    <OrderEntry object={object1} />
-    <OrderEntry object={object2} />
-    <OrderEntry object={object2} />
-  </Card.Content>
-  <Card.Footer class="p-0">
-    <Button class="w-full rounded-none">
-      Προβολή όλων
-    </Button>
-  </Card.Footer>
-</Card.Root>
-
-<Card.Root class="overflow-hidden mt-2.5">
-  <Card.Header class="p-0">
-    <Card.Title class="bg-secondary h-10 flex justify-center items-center font-normal border-b">
-      Προιόντα
-    </Card.Title>
-  </Card.Header>
-  <Card.Content class="p-0">
-    <div class="flex justify-between p-2.5">
-      <span>Ενεργά προιόντα</span>
-      <span>105</span>
-    </div>
-    <div class="flex justify-between p-2.5 text-destructive">
-      <span>Ανενεργά προιόντα</span>
-      <span>72</span>
-    </div>
-    <Separator />
-    <div class="flex justify-between p-2.5">
-      <span>Σύνολο</span>
-      <span>177</span>
-    </div>
-  </Card.Content>
-</Card.Root>
+<div class="p-2.5">
+  <Card.Root class="overflow-hidden">
+    <Card.Header class="p-0 border-b">
+      <Card.Title class="bg-secondary h-10 flex justify-center items-center font-normal">
+        Ιστορικό Πωλήσεων
+      </Card.Title>
+    </Card.Header>
+    <Card.Content class="p-0 divide-y">
+      <OrderEntry object={object1} />
+      <OrderEntry object={object2} />
+      <OrderEntry object={object1} />
+      <OrderEntry object={object2} />
+      <OrderEntry object={object2} />
+    </Card.Content>
+    <Card.Footer class="p-0 border-t">
+      <Button class="w-full rounded-none text-base">
+        Προβολή όλων
+      </Button>
+    </Card.Footer>
+  </Card.Root>
+  
+  <Card.Root class="overflow-hidden mt-2.5">
+    <Card.Header class="p-0">
+      <Card.Title class="bg-secondary h-10 flex justify-center items-center font-normal border-b">
+        Προιόντα
+      </Card.Title>
+    </Card.Header>
+    <Card.Content class="p-0">
+      <div class="flex justify-between p-2.5 text-zinc-700">
+        <span>Ενεργά προιόντα</span>
+        <span>105</span>
+      </div>
+      <div class="flex justify-between p-2.5 text-destructive">
+        <span>Ανενεργά προιόντα</span>
+        <span>72</span>
+      </div>
+      <Separator class="h-[0.8px] bg-neutral-200"/>
+      <div class="flex justify-between p-2.5 text-zinc-700">
+        <span>Σύνολο</span>
+        <span>177</span>
+      </div>
+    </Card.Content>
+  </Card.Root>
+</div>
