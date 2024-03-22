@@ -28,3 +28,37 @@ A step by step series of examples that tell you how to get a development environ
 ```bash
 git clone https://github.com/yourusername/orderflow.git
 ```
+
+2. Install the dependencies:
+
+```bash
+git npm install
+```
+
+3. Set up your environment variables:
+
+```bash
+git cp .env.example .env
+```
+
+4. Initialize the database:
+   Make sure PostgreSQL is running and execute the initialization script located in scripts/init_db.sql to create the necessary database and tables.
+
+5. Start the application:
+
+```bash
+npm run dev -- --open
+```
+
+Access the application through http://localhost:3000.
+
+## Built With
+
+SvelteKit - The web framework used
+PostgreSQL - Database
+Firebase - Authentication and storage
+
+## Authors
+
+- **CVakratsas** - [CVakratsas](https://github.com/CVakratsas)
+- **NikolasPpd** - [NikolasPpd](https://github.com/NikolasPpd)
