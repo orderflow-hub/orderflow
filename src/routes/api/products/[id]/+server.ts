@@ -12,7 +12,7 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
-import { Pool } from 'pg';
+import type { ParameterOrJSON } from 'postgres';
 
 export const GET: RequestHandler = async ({ params }) => {
 	// Ensure id is defined and is a string
@@ -49,12 +49,11 @@ export const GET: RequestHandler = async ({ params }) => {
 	} catch (error) {
 		console.error('Failed to fetch product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-			status: 500
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 };
-
-const pool = new Pool();
 
 export const PATCH: RequestHandler = async ({ params, request }) => {
 	const id = params.id;
@@ -64,7 +63,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		});
 	}
 
-	// Safely convert id to a number, assuming product_id is a numeric type in your database
+	// Safely convert id to a number
 	const productId = parseInt(id, 10);
 	if (isNaN(productId)) {
 		return new Response(JSON.stringify({ error: 'Invalid product ID' }), {
@@ -72,48 +71,82 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		});
 	}
 
+	// // Initialize parts of the query
+	// let query = 'UPDATE products SET ';
+	// let setClauses: string[] = [];
+	// const values = [];
+	// let paramIndex = 1;
+
+	// // Filter updates to include only allowed keys
+	// Object.entries(data).forEach(([key, value]) => {
+	// 	if (allowedColumns.includes(key)) {
+	// 		setClauses.push(`${key} = $${paramIndex}`);
+	// 		values.push(value);
+	// 		paramIndex++;
+	// 	}
+	// });
+
+	// if (setClauses.length === 0) {
+	// 	return new Response(JSON.stringify({ error: 'No valid fields to update' }), {
+	// 		status: 400
+	// 	});
+	// }
+
+	// // Construct the final query
+	// query += setClauses.join(', ');
+	// query += ` WHERE product_id = $${paramIndex}`;
+	// values.push(productId);
+
+	// try {
+	// 	const res = await pool.query(query, values);
+	// 	return new Response(JSON.stringify({ message: 'Product updated successfully' }), {
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		status: 200
+	// 	});
+	// } catch (error) {
+	// 	console.error('Failed to update product:', error);
+	// 	return new Response(JSON.stringify({ error: 'Internal server error' }), {
+	// 		status: 500
+	// 	});
+	// }
+
 	// Parse the request body to get the updated product details
 	const data = await request.json();
 
 	// Define allowed keys to prevent SQL injection
 	const allowedColumns = ['product_code', 'product_name', 'sale_unit', 'is_available', 'image_url'];
 
-	// Initialize parts of the query
-	let query = 'UPDATE products SET ';
-	let setClauses: string[] = [];
-	const values = [];
-	let paramIndex = 1;
+	const updates = Object.entries(data)
+		.filter(([key]) => allowedColumns.includes(key))
+		.map(([key, value], index) => `${key} = $${index + 1}`); // Start indexing at 1 for values
 
-	// Filter updates to include only allowed keys
-	Object.entries(data).forEach(([key, value]) => {
-		if (allowedColumns.includes(key)) {
-			setClauses.push(`${key} = $${paramIndex}`);
-			values.push(value);
-			paramIndex++;
-		}
-	});
-
-	if (setClauses.length === 0) {
-		return new Response(JSON.stringify({ error: 'No valid fields to update' }), {
-			status: 400
-		});
+	if (updates.length === 0) {
+		throw new Error('No valid fields provided for update');
 	}
 
-	// Construct the final query
-	query += setClauses.join(', ');
-	query += ` WHERE product_id = $${paramIndex}`;
-	values.push(productId);
+	const query = `
+		UPDATE products
+		SET ${updates.join(', ')}
+		WHERE product_id = ${productId}
+	`;
+
+	// Filter only the values for the allowed updates
+	const values = Object.values(data).filter((value, index) =>
+		allowedColumns.includes(Object.keys(data)[index])
+	);
 
 	try {
-		const res = await pool.query(query, values);
+		// The unsafe method allows for executing the dynamic query with parameter binding
+		const result = await sql.unsafe(query, values as ParameterOrJSON<any>[]);
 		return new Response(JSON.stringify({ message: 'Product updated successfully' }), {
-			headers: { 'Content-Type': 'application/json' },
-			status: 200
+			status: 200,
+			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (error) {
 		console.error('Failed to update product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-			status: 500
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 };
@@ -145,7 +178,8 @@ export const DELETE: RequestHandler = async ({ params }) => {
 	} catch (error) {
 		console.error('Failed to delete product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-			status: 500
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 };
