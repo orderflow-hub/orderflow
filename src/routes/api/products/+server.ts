@@ -1,18 +1,14 @@
-/*
- * API Endpoint: /api/products
- * Method: GET
- * Description: Retrieves a list of all products from the database.
- *              This endpoint does not require request parameters in the body; it is designed to return an array of product objects.
- *              Each product object contains all the details of a product as stored in the database.
- * Request: No request body needed for this endpoint. (Note: If authentication is implemented, a token might be required in request headers, not the body.)
- * Response: On success: JSON array of objects, where each object represents a product with all its details from the database.
- *           On failure: JSON object with an error message, indicating the failure to fetch products from the database.
- *           Possible HTTP status codes include 200 for a successful fetch, and 500 for internal server errors.
- */
+/* API Endpoint: /api/products */
 
 import sql from '$lib/db';
+import type { RequestHandler } from '@sveltejs/kit';
 
-export async function GET() {
+/*
+ * GET: Fetches all products from the database.
+ * Doesn't require a request body or parameters.
+ * Returns a success message on update or an error message on failure.
+ */
+export const GET: RequestHandler = async () => {
 	try {
 		const products = await sql`
             SELECT * FROM products;
@@ -28,8 +24,37 @@ export async function GET() {
 				error: 'Failed to fetch products'
 			}),
 			{
-				status: 500
+				status: 500,
+				headers: { 'Content-Type': 'application/json' }
 			}
 		);
 	}
-}
+};
+
+/*
+ * POST: Creates a new product.
+ * Accepts product details in the request body and inserts a new product into the database.
+ * Returns the created product details on success or an error message on failure.
+ */
+export const POST: RequestHandler = async ({ request }) => {
+	const data = await request.json();
+
+	try {
+		const result = await sql`
+            INSERT INTO products (product_code, product_name, sale_unit, is_available, image_url) VALUES
+            (${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_available}, ${data.image_url})
+            RETURNING *
+        `;
+
+		return new Response(JSON.stringify(result[0]), {
+			status: 201,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	} catch (error) {
+		console.error('Failed to create product:', error);
+		return new Response(JSON.stringify({ error: 'Internal server error' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+};

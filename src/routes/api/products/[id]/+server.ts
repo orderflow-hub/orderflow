@@ -1,19 +1,14 @@
-/*
- * API Endpoint: /api/products/[id]
- * Method: GET
- * Description: Retrieves a product from the database with a specific product_id.
- *              Validates the provided ID to ensure it's numeric and exists within the database.
- *              If the product is found, returns the product details. If the product is not found or if the ID is invalid, returns an error message.
- * Request Parameters: id (in URL path)
- * Response: On success: JSON object containing the product's details.
- *           On failure: JSON object with an error message.
- *           Possible HTTP status codes include 400 for invalid ID format, 404 for product not found, and 500 for internal server errors.
- */
+/* API Endpoint: /api/products/[id] */
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 import type { ParameterOrJSON } from 'postgres';
 
+/*
+ * GET: Retrieves a product by ID.
+ * Validates the provided ID to ensure it's numeric and exists within the database.
+ * Returns product details on success or an error message on failure.
+ */
 export const GET: RequestHandler = async ({ params }) => {
 	// Ensure id is defined and is a string
 	const id = params.id;
@@ -23,7 +18,7 @@ export const GET: RequestHandler = async ({ params }) => {
 		});
 	}
 
-	// Safely convert id to a number, assuming product_id is a numeric type in your database
+	// Safely convert id to a number
 	const productId = parseInt(id, 10);
 	if (isNaN(productId)) {
 		return new Response(JSON.stringify({ error: 'Invalid product ID' }), {
@@ -55,6 +50,11 @@ export const GET: RequestHandler = async ({ params }) => {
 	}
 };
 
+/*
+ * PATCH: Updates a product by ID.
+ * Only updates fields provided in the request body, ignoring any not listed in allowedColumns.
+ * Returns a success message on update or an error message on failure.
+ */
 export const PATCH: RequestHandler = async ({ params, request }) => {
 	const id = params.id;
 	if (!id) {
@@ -70,45 +70,6 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			status: 400
 		});
 	}
-
-	// // Initialize parts of the query
-	// let query = 'UPDATE products SET ';
-	// let setClauses: string[] = [];
-	// const values = [];
-	// let paramIndex = 1;
-
-	// // Filter updates to include only allowed keys
-	// Object.entries(data).forEach(([key, value]) => {
-	// 	if (allowedColumns.includes(key)) {
-	// 		setClauses.push(`${key} = $${paramIndex}`);
-	// 		values.push(value);
-	// 		paramIndex++;
-	// 	}
-	// });
-
-	// if (setClauses.length === 0) {
-	// 	return new Response(JSON.stringify({ error: 'No valid fields to update' }), {
-	// 		status: 400
-	// 	});
-	// }
-
-	// // Construct the final query
-	// query += setClauses.join(', ');
-	// query += ` WHERE product_id = $${paramIndex}`;
-	// values.push(productId);
-
-	// try {
-	// 	const res = await pool.query(query, values);
-	// 	return new Response(JSON.stringify({ message: 'Product updated successfully' }), {
-	// 		headers: { 'Content-Type': 'application/json' },
-	// 		status: 200
-	// 	});
-	// } catch (error) {
-	// 	console.error('Failed to update product:', error);
-	// 	return new Response(JSON.stringify({ error: 'Internal server error' }), {
-	// 		status: 500
-	// 	});
-	// }
 
 	// Parse the request body to get the updated product details
 	const data = await request.json();
@@ -151,6 +112,11 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	}
 };
 
+/*
+ * DELETE: Deletes a product by ID.
+ * Validates the provided ID and deletes the corresponding product if found.
+ * Returns a success message on deletion or an error message on failure.
+ */
 export const DELETE: RequestHandler = async ({ params }) => {
 	const id = params.id;
 	if (!id) {
