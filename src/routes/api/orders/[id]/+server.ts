@@ -1,13 +1,12 @@
+// API Endpoint: /api/orders/[id]
+
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 
 /*
  * GET: Fetches a single order by ID from the database.
- * Request: Order ID in URL path.
- * Response:
- * - 200: JSON object of the order details.
- * - 404: Order not found error message.
- * - 500: Error message in case of an internal server error.
+ * Validates the provided ID to ensure it's numeric and exists within the database.
+ * Returns product details on success or an error message on failure.
  */
 export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id;
@@ -51,11 +50,8 @@ export const GET: RequestHandler = async ({ params }) => {
 
 /*
  * DELETE: Deletes an order by ID.
- * Request: Order ID in URL path.
- * Response:
- * - 200: Success message indicating order deletion.
- * - 404: Order not found error message.
- * - 500: Error message in case of an internal server error.
+ * Validates the provided ID and deletes the corresponding product if found.
+ * Returns a success message on deletion or an error message on failure.
  */
 export const DELETE: RequestHandler = async ({ params }) => {
 	const id = params.id;
@@ -98,44 +94,47 @@ export const DELETE: RequestHandler = async ({ params }) => {
 };
 
 /*
- * PATCH: Updates the status of an order by ID.
- * Request: Order ID in URL path and new status in request body.
- * Response:
- * - 200: Success message indicating order status update.
- * - 404: Order not found error message.
- * - 500: Error message in case of an internal server error.
+ * PATCH: Updates the status of an order by ID, which is provided in the request body.
+ * Returns a success message on update or an error message on failure.
  */
-// export const PATCH: RequestHandler = async ({ params, request }) => {
-// 	const { id } = params;
-// 	const { status } = await request.json(); // Assuming the new status is provided in the request body
+export const PATCH: RequestHandler = async ({ params, request }) => {
+	const id = params.id;
+	const { status } = await request.json();
 
-// 	try {
-// 		const result = await sql`
-//             UPDATE orders
-//             SET status = ${status}
-//             WHERE order_id = ${id}
-//             RETURNING *
-//         `;
+	if (typeof status === 'undefined' || typeof id === 'undefined') {
+		return new Response(JSON.stringify({ error: 'Status and ID are required' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
 
-// 		if (result.length > 0) {
-// 			return new Response(
-// 				JSON.stringify({ message: 'Order status updated successfully', order: result[0] }),
-// 				{
-// 					status: 200,
-// 					headers: { 'Content-Type': 'application/json' }
-// 				}
-// 			);
-// 		} else {
-// 			return new Response(JSON.stringify({ error: 'Order not found' }), {
-// 				status: 404,
-// 				headers: { 'Content-Type': 'application/json' }
-// 			});
-// 		}
-// 	} catch (error) {
-// 		console.error('Failed to update order status:', error);
-// 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-// 			status: 500,
-// 			headers: { 'Content-Type': 'application/json' }
-// 		});
-// 	}
-// };
+	try {
+		const result = await sql`
+            UPDATE orders
+            SET status = ${status}
+            WHERE order_id = ${id}
+            RETURNING *
+        `;
+
+		if (result.length > 0) {
+			return new Response(
+				JSON.stringify({ message: 'Order status updated successfully', order: result[0] }),
+				{
+					status: 200,
+					headers: { 'Content-Type': 'application/json' }
+				}
+			);
+		} else {
+			return new Response(JSON.stringify({ error: 'Order not found' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
+	} catch (error) {
+		console.error('Failed to update order status:', error);
+		return new Response(JSON.stringify({ error: 'Internal server error' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+};

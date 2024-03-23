@@ -1,3 +1,5 @@
+// API Endpoint: /api/orders
+
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 

@@ -41,12 +41,14 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	try {
 		const result = await sql`
-            INSERT INTO products (product_code, product_name, sale_unit, is_available, image_url) VALUES
-            (${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_available}, ${data.image_url})
-            RETURNING *
-        `;
+			INSERT INTO products 
+			(product_code, product_name, sale_unit, is_available, image_url) 
+			VALUES 
+			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_available}, ${data.image_url || null})
+			RETURNING *
+		`;
 
-		return new Response(JSON.stringify(result[0]), {
+		return new Response(JSON.stringify(result), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});
