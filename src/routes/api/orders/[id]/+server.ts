@@ -17,8 +17,8 @@ export const GET: RequestHandler = async ({ params }) => {
 	}
 
 	// Safely convert id to a number
-	const productId = parseInt(id, 10);
-	if (isNaN(productId)) {
+	const orderId = parseInt(id, 10);
+	if (isNaN(orderId)) {
 		return new Response(JSON.stringify({ error: 'Invalid order ID' }), {
 			status: 400
 		});
@@ -27,9 +27,9 @@ export const GET: RequestHandler = async ({ params }) => {
 	// Fetches the necessary order details along with the respective's user details
 	try {
 		const order = await sql`
-            SELECT o.order_id, u.company_name, o.timestamp, u.street, u.city, u.postal_code, u.phone_number, u.afm
+            SELECT o.order_id, u.company_name, o.timestamp, u.street_address, u.city, u.postal_code, u.phone_number, u.afm, o.status
 			FROM orders as o JOIN users as u ON o.user_id = u.user_id
-			WHERE o.order_id = ${id};
+			WHERE o.order_id = ${orderId};
         `;
 		if (order.length > 0) {
 			return new Response(JSON.stringify(order[0]), {
@@ -64,8 +64,8 @@ export const DELETE: RequestHandler = async ({ params }) => {
 	}
 
 	// Safely convert id to a number
-	const productId = parseInt(id, 10);
-	if (isNaN(productId)) {
+	const orderId = parseInt(id, 10);
+	if (isNaN(orderId)) {
 		return new Response(JSON.stringify({ error: 'Invalid order ID' }), {
 			status: 400
 		});
@@ -73,7 +73,7 @@ export const DELETE: RequestHandler = async ({ params }) => {
 
 	try {
 		const result = await sql`
-            DELETE FROM orders WHERE order_id = ${id}
+            DELETE FROM orders WHERE order_id = ${orderId}
         `;
 		if (result.count > 0) {
 			return new Response(JSON.stringify({ message: 'Order deleted successfully' }), {
@@ -109,11 +109,20 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		});
 	}
 
+	// Safely convert id to a number
+	const orderId = parseInt(id, 10);
+	if (isNaN(orderId)) {
+		return new Response(JSON.stringify({ error: 'Invalid order ID' }), {
+			status: 400
+		});
+	}
+
 	try {
 		const result = await sql`
             UPDATE orders
             SET status = ${status}
-            WHERE order_id = ${id}
+            WHERE order_id = ${orderId}
+			RETURNING *;
         `;
 
 		if (result.length > 0) {

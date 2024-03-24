@@ -26,7 +26,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		const order = await sql`
-            SELECT company_name, user_code, email, phone_number, afm, street, city, postal_code
+            SELECT company_name, user_code, email, phone_number, afm, street_address, city, postal_code
             FROM users
             WHERE user_id = ${id};
         `;

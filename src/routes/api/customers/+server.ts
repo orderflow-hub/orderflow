@@ -40,10 +40,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const result = await sql`
 			INSERT INTO users
-			(firebase_uid, company_name, user_code, email, afm, phone_number, street, street_number, city, postal_code, role)
+			(firebase_uid, company_name, user_code, email, afm, phone_number, street_address, city, postal_code, role)
 			VALUES
 			(${data.firebase_uid}, ${data.company_name}, ${data.user_code}, ${data.email}, ${data.afm}, ${data.phone_number || null},
-			${data.street || null}, ${data.street_number || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
+			${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
 			RETURNING *;
 		`;
 

@@ -91,6 +91,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		UPDATE products
 		SET ${updates.join(', ')}
 		WHERE product_id = ${productId}
+		RETURNING *
 	`;
 
 	// Filter only the values for the allowed updates
@@ -101,10 +102,13 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	try {
 		// The unsafe method allows for executing the dynamic query with parameter binding
 		const result = await sql.unsafe(query, values as ParameterOrJSON<any>[]);
-		return new Response(JSON.stringify({ message: 'Product updated successfully' }), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		return new Response(
+			JSON.stringify({ message: 'Product updated successfully', product: result[0] }),
+			{
+				status: 200,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 	} catch (error) {
 		console.error('Failed to update product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {

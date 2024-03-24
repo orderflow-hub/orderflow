@@ -11,7 +11,8 @@ import type { RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async () => {
 	try {
 		const orders = await sql`
-            SELECT * FROM orders;
+            SELECT order_id, user_order_number, timestamp, status
+			FROM orders;
         `;
 		return new Response(JSON.stringify(orders), {
 			headers: { 'Content-Type': 'application/json' },
