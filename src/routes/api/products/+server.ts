@@ -11,7 +11,8 @@ import type { RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async () => {
 	try {
 		const products = await sql`
-            SELECT * FROM products;
+            SELECT product_id, product_name, product_code
+			FROM products;
         `;
 
 		return new Response(JSON.stringify(products), {

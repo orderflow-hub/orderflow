@@ -24,9 +24,12 @@ export const GET: RequestHandler = async ({ params }) => {
 		});
 	}
 
+	// Fetches the necessary order details along with the respective's user details
 	try {
 		const order = await sql`
-            SELECT * FROM orders WHERE order_id = ${id};
+            SELECT o.order_id, u.company_name, o.timestamp, u.street, u.city, u.postal_code, u.phone_number, u.afm
+			FROM orders as o JOIN users as u ON o.user_id = u.user_id
+			WHERE o.order_id = ${id};
         `;
 		if (order.length > 0) {
 			return new Response(JSON.stringify(order[0]), {
@@ -40,7 +43,6 @@ export const GET: RequestHandler = async ({ params }) => {
 			});
 		}
 	} catch (error) {
-		console.error('Failed to fetch order:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
@@ -85,7 +87,6 @@ export const DELETE: RequestHandler = async ({ params }) => {
 			});
 		}
 	} catch (error) {
-		console.error('Failed to delete order:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
@@ -113,7 +114,6 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
             UPDATE orders
             SET status = ${status}
             WHERE order_id = ${id}
-            RETURNING *
         `;
 
 		if (result.length > 0) {
@@ -131,7 +131,6 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			});
 		}
 	} catch (error) {
-		console.error('Failed to update order status:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
