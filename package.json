@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@fontsource-variable/manrope": "^5.0.19",
 		"bits-ui": "^0.19.6",
 		"clsx": "^2.1.0",
 		"firebase": "^10.8.1",

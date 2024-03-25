@@ -2,7 +2,6 @@
 	import Input from "$lib/components/ui/input/input.svelte";
     import Button from "$lib/components/ui/button/button.svelte";
     import * as Dialog from "$lib/components/ui/dialog";
-    import ScrollArea from "$lib/components/ui/scroll-area/scroll-area.svelte";
     import CustomerEntry from "$lib/shared/CustomerEntry.svelte";
     import AddNewCustomer from "$lib/components/AddNewCustomer.svelte";
     import { Plus } from "lucide-svelte";
@@ -32,16 +31,16 @@
     }
 </script>
 
-<div class="flex items-center pt-0 pb-2">
+<div class="flex items-center sticky top-0 p-2.5 bg-white gap-2.5">
     <div class="relative flex flex-grow items-center">
-        <Input class="pl-10 mr-2.5" placeholder="Αναζήτηση" type="text"/>
+        <Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search"/>
         <div class="absolute left-2.5 w-10 p-0 inset-y-0 flex items-center pointer-events-none text-muted-foreground">
-          <Search/>
+            <Search size={18}/>
         </div>
     </div>
     <Dialog.Root bind:open={isDialogOpen}>
         <Dialog.Trigger class="text-base font-normal">
-            <Button class="w-10 p-0 grow-0 border-2 text-muted-foreground bg-transparent">
+            <Button class="w-10 p-0 grow-0 border text-muted-foreground bg-transparent">
                 <Plus/>
             </Button>
         </Dialog.Trigger>
@@ -57,7 +56,14 @@
         </Dialog.Content>
     </Dialog.Root>
 </div>
-<ScrollArea class="w-full whitespace-nowrap rounded-lg border" orientation="vertical">
-    <CustomerEntry object={object1}/>
-    <CustomerEntry object={object2}/>
-</ScrollArea>
+<div class="p-2.5 pt-0">
+    <div class="w-full border rounded-lg divide-y overflow-hidden">
+        <CustomerEntry object={object1}/>
+        <CustomerEntry object={object2}/>
+        <CustomerEntry object={object2}/>
+        <CustomerEntry object={object2}/>
+        <CustomerEntry object={object2}/>
+        <CustomerEntry object={object2}/>
+        <CustomerEntry object={object2}/>
+    </div>
+</div>
