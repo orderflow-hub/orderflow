@@ -7,9 +7,7 @@
     import User from 'lucide-svelte/icons/user';
     import ShoppingCart from 'lucide-svelte/icons/shopping-cart';
 
-    // Mock user role variable
-    // TODO: Replace with actual user role when authentication is implemented
-    let userRole = 'admin';
+    export let userRole: string | null;
 </script>
 
 <nav class="w-full h-12 bg-white border-t border-neutral-200 flex fixed bottom-0">
