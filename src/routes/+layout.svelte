@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "@fontsource-variable/manrope";
     import "../app.pcss";
     import Navbar from "$lib/components/Navbar.svelte";
     import { onMount } from "svelte";
@@ -32,10 +33,12 @@
     const userRole = data.userRole;
 </script>
 
-<div class="flex flex-col min-h-screen">
-    <header class="bg-secondary-foreground text-background flex justify-start items-center h-10 px-2.5">Αρχική</header>
+<div class="flex flex-col min-h-screen items-center">
+    <header class="bg-secondary-foreground text-background flex flex-col justify-center items-center h-10 w-full">
+        <div class="flex w-full max-w-4xl px-2.5">Αρχική</div>
+    </header>
 
-    <main class="flex flex-col p-2.5 w-full max-w-4xl box-border pb-16">
+    <main class="flex flex-col w-full max-w-4xl box-border pb-12 items-stretch">
         <slot />
     </main>
 
@@ -46,3 +49,9 @@
         <Navbar {userRole}/>
     {/if}
 </div>
+
+<style>
+    :global(body) {
+        font-family: 'Manrope Variable', sans-serif;
+    }
+</style>
