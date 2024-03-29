@@ -2,7 +2,9 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
-
+// SELECT p.product_id, p.product_name, p.product_code, oi.quantity
+// 			FROM order_items as oi JOIN products as p ON oi.product_id = p.product_id;
+// 			WHERE oi.order_id = ${orderId};
 /*
  * GET: Fetches a single order by ID from the database.
  * Validates the provided ID to ensure it's numeric and exists within the database.
@@ -26,22 +28,47 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	// Fetches the necessary order details along with the respective's user details
 	try {
-		const order = await sql`
+		// Fetches the order details
+		const orderDetails = await sql`
             SELECT o.order_id, u.company_name, o.timestamp, u.street_address, u.city, u.postal_code, u.phone_number, u.afm, o.status
 			FROM orders as o JOIN users as u ON o.user_id = u.user_id
 			WHERE o.order_id = ${orderId};
         `;
-		if (order.length > 0) {
-			return new Response(JSON.stringify(order[0]), {
-				headers: { 'Content-Type': 'application/json' },
-				status: 200
-			});
-		} else {
+
+		// Checks if the order exists
+		if (orderDetails.length === 0) {
 			return new Response(JSON.stringify({ error: 'Order not found' }), {
 				status: 404,
 				headers: { 'Content-Type': 'application/json' }
 			});
 		}
+
+		// Fetches the related products for the order
+		const products = await sql`
+            SELECT p.product_id, p.product_name, p.product_code, oi.quantity
+			FROM order_items as oi JOIN products as p ON oi.product_id = p.product_id
+			WHERE oi.order_id = ${orderId};
+        `;
+
+		// Checks if the order has any items
+		if (products.length === 0) {
+			return new Response(JSON.stringify({ error: 'Order has no items' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json' }
+			});
+		}
+
+		// Combines the order details with the products
+		const response = {
+			...orderDetails[0],
+			products: products
+		};
+
+		// Returns the response
+		return new Response(JSON.stringify(response), {
+			headers: { 'Content-Type': 'application/json' },
+			status: 200
+		});
 	} catch (error) {
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
 			status: 500,

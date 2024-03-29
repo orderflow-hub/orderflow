@@ -31,20 +31,32 @@ export const GET: RequestHandler = async () => {
  * Accepts order details in the request body and inserts a new order into the database.
  * Returns the created order details on success or an error message on failure.
  */
+
 export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json();
+	const { user_id, products } = await request.json();
+
 	try {
-		const result = await sql`
-            INSERT INTO orders (user_id, status) VALUES
-            (${data.user_id}, ${data.status})
-            RETURNING *
-        `;
-		return new Response(JSON.stringify(result[0]), {
+		await sql.begin(async (sql) => {
+			// Create the order
+			const [result] = await sql`
+	            INSERT INTO orders (user_id, status) VALUES (${user_id}, 'pending') RETURNING order_id;
+	        `;
+
+			// Insert each product as an order_item
+			for (const product of products) {
+				await sql`
+			        INSERT INTO order_items (order_id, product_id, quantity)
+			        VALUES (${result.order_id}, ${product.product_id}, ${product.quantity});
+			    `;
+			}
+		});
+
+		return new Response(JSON.stringify({ message: 'Order and order items created successfully' }), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (error) {
-		console.error('Failed to create order:', error);
+		console.error('Failed to create order and order items:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' }
