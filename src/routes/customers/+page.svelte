@@ -1,9 +1,11 @@
 <script>
+	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CustomerEntry from '$lib/shared/CustomerEntry.svelte';
 	import AddNewCustomer from '$lib/components/AddNewCustomer.svelte';
 	import { Plus } from 'lucide-svelte';
+	import { Search } from 'lucide-svelte';
 	import SearchBar from '$lib/shared/SearchBar.svelte';
 
 	let isDialogOpen = false;
