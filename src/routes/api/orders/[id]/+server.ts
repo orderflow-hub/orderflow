@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ params }) => {
 	try {
 		// Fetches the order details
 		const orderDetails = await sql`
-            SELECT o.order_id, u.company_name, o.timestamp, u.street_address, u.city, u.postal_code, u.phone_number, u.afm, o.status
+            SELECT o.order_id, o.status, o.user_order_number, u.company_name, o.timestamp, u.street_address, u.city, u.postal_code, u.phone_number, u.afm
 			FROM orders as o JOIN users as u ON o.user_id = u.user_id
 			WHERE o.order_id = ${orderId};
         `;
