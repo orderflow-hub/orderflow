@@ -3,37 +3,25 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import { Plus, Trash } from 'lucide-svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
+	import type { Product } from '$lib/types';
+	import QuantityInput from '$lib/shared/QuantityInput.svelte';
+	import { cart } from '../../stores/cartStore';
 
-	export let object = {
-		image: 'https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg',
-		product_name: 'ΣΠΑΝΑΚΙ',
-		product_code: 'ΕΙΔΗ-000000023',
-		isAvailable: true,
-		sale_unit: 'piece'
-	};
+	export let object: Product;
 
-	let isAddedToCart = false;
-	let quantity = 0;
-	let lastValidQuantity = 1;
+	// Local variable to store the quantity of the product in the cart
+	// Used to conditionally render the Add to Cart button or the QuantityInput component
+	let quantity: number;
+
+	// Update the quantity variable when the quantity of the product in the cart changes
+	$: $cart, (quantity = cart.getItemQuantity(object.id));
 
 	const addToCart = () => {
-		isAddedToCart = true;
-		quantity = 1;
+		cart.addItem(object);
 	};
 
 	const removeFromCart = () => {
-		isAddedToCart = false;
-		quantity = 0;
-	};
-
-	const validateQuantity = () => {
-		if (quantity < 1) {
-			quantity = 1;
-		} else if (quantity > 999) {
-			quantity = 999;
-		}
-		lastValidQuantity = quantity;
+		cart.removeItem(object.id);
 	};
 </script>
 
@@ -60,35 +48,26 @@
 		</Card.Header>
 	</div>
 	<Card.Footer class="mt-2 p-0">
-		{#if isAddedToCart}
+		{#if quantity > 0}
 			<div class="inline-flex w-full items-center justify-center gap-2">
 				<Button class="p-3" variant="secondary" on:click={removeFromCart}
 					><Trash size={18} /></Button
 				>
-				<div class="relative flex flex-grow items-center">
-					<Input
-						class="pr-10 text-center text-base text-base font-semibold text-zinc-700"
-						placeholder=""
-						type="number"
-						min={1}
-						max={999}
-						bind:value={quantity}
-						on:blur={validateQuantity}
-					/>
-					<p
-						class="pointer-events-none absolute right-0 flex pr-2 text-base font-semibold text-zinc-700"
-					>
-						{object.sale_unit === 'piece' ? 'τεμ.' : 'kg'}
-					</p>
-				</div>
+				<QuantityInput id={object.id} sale_unit={object.sale_unit} />
 			</div>
 		{:else}
 			<Button
 				class="w-full gap-2 px-2 text-base"
 				variant="secondary"
 				disabled={!object.isAvailable}
-				on:click={addToCart}><Plus />Προσθήκη</Button
+				on:click={addToCart}
 			>
+				{#if !object.isAvailable}
+					Μη διαθέσιμο
+				{:else}
+					<Plus />Προσθήκη
+				{/if}
+			</Button>
 		{/if}
 	</Card.Footer>
 </Card.Root>
