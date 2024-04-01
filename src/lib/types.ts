@@ -1,9 +1,9 @@
 export interface Product {
-	id: number;
-	image: string;
+	product_id: number;
+	image_url?: string;
 	product_name: string;
 	product_code: string;
-	isAvailable: boolean;
+	is_available: boolean;
 	sale_unit: string;
 	qty: number;
 }

@@ -11,6 +11,9 @@
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
 
+	export let data;
+	let { products, userRole } = data;
+
 	let isDialogOpen = false;
 	const closeDialog = () => {
 		isDialogOpen = false;
@@ -28,30 +31,6 @@
 		// On failure, show an error toast message
 		cart.clear();
 		closeCartSheet();
-	};
-
-	// TODO: Read role from user context
-	let userRole = 'customer';
-
-	// TODO: Fetch products from API
-	let object1 = {
-		id: 1,
-		image: 'https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg',
-		product_name: 'ΣΠΑΝΑΚΙ',
-		product_code: 'ΕΙΔΗ-000000023',
-		isAvailable: true,
-		sale_unit: 'piece',
-		qty: 1
-	};
-
-	let object2 = {
-		id: 2,
-		image: 'https://www.doorsteporganics.com.au/image/optimised/large/Tomatoes-Round-1kg.jpg',
-		product_name: 'ΝΤΟΜΑΤΕΣ ΚΡΗΤΗΣ',
-		product_code: 'ΕΙΔΗ-000000024',
-		isAvailable: true,
-		sale_unit: 'kg',
-		qty: 1
 	};
 </script>
 
@@ -85,16 +64,9 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
+			{#each products as product}
+				<ProductEntryAdmin {product} />
+			{/each}
 		</div>
 	</div>
 {:else if userRole === 'customer'}
@@ -114,11 +86,9 @@
 		})}
 	>
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object2} />
-			<ProductEntryCustomer object={object2} />
+			{#each products as product}
+				<ProductEntryCustomer {product} />
+			{/each}
 		</div>
 	</div>
 	{#if $itemCount > 0}
@@ -141,7 +111,7 @@
 			</Sheet.Header>
 			<div class="w-full divide-y overflow-auto rounded-lg border">
 				{#each $cart as item}
-					<CartEntry {item} />
+					<CartEntry product={item} />
 				{/each}
 			</div>
 			<Sheet.Footer class="flex flex-col items-stretch gap-2.5">
