@@ -5,12 +5,12 @@
 	import { Plus, Trash } from 'lucide-svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 
-	export let object = {
-		image: 'https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg',
-		product_name: 'ΣΠΑΝΑΚΙ',
-		product_code: 'ΕΙΔΗ-000000023',
-		isAvailable: true,
-		sale_unit: 'piece'
+	export let product = {
+		image_url: '', // Default empty string or a placeholder image URL
+		is_available: false, // Default availability
+		product_name: 'Unknown Product', // Default name
+		product_code: 'N/A', // Default code
+		sale_unit: 'N/A' // Default unit
 	};
 
 	let isAddedToCart = false;
@@ -42,20 +42,20 @@
 		<Card.Content class="p-0">
 			<img
 				class={cn('aspect-square w-full object-cover', {
-					grayscale: !object.isAvailable
+					grayscale: !product.is_available
 				})}
-				src={object.image}
+				src={product.image_url}
 				alt="Εικόνα προϊόντος"
 			/>
 		</Card.Content>
 		<Card.Header class="space-y-0 p-0">
 			<Card.Title
 				class={cn('line-clamp-2 font-normal text-zinc-700', {
-					'text-slate-400': !object.isAvailable
-				})}>{object.product_name}</Card.Title
+					'text-slate-400': !product.is_available
+				})}>{product.product_name}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{object.product_code}</Card.Description
+				>{product.product_code}</Card.Description
 			>
 		</Card.Header>
 	</div>
@@ -67,7 +67,7 @@
 				>
 				<div class="relative flex flex-grow items-center">
 					<Input
-						class="pr-10 text-center text-base text-base font-semibold text-zinc-700"
+						class="pr-10 text-center text-base font-semibold text-zinc-700"
 						placeholder=""
 						type="number"
 						min={1}
@@ -78,7 +78,7 @@
 					<p
 						class="pointer-events-none absolute right-0 flex pr-2 text-base font-semibold text-zinc-700"
 					>
-						{object.sale_unit === 'piece' ? 'τεμ.' : 'kg'}
+						{product.sale_unit === 'piece' ? 'τεμ.' : 'kg'}
 					</p>
 				</div>
 			</div>
@@ -86,7 +86,7 @@
 			<Button
 				class="w-full gap-2 px-2 text-base"
 				variant="secondary"
-				disabled={!object.isAvailable}
+				disabled={!product.is_available}
 				on:click={addToCart}><Plus />Προσθήκη</Button
 			>
 		{/if}

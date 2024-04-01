@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 // Similar to 'src/routes/+page.server.ts'
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, fetch }) => {
 	if (!locals.user) {
 		throw redirect(302, '/login');
 	}
@@ -17,5 +17,23 @@ export const load: PageServerLoad = async ({ locals }) => {
 		};
 	}
 
-	return {};
+	// Fetch products from the database
+	const response = await fetch('/api/products', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	if (!response.ok) {
+		return {
+			status: response.status,
+			error: new Error('Failed to fetch products')
+		};
+	}
+	const products = await response.json();
+	console.log('Fetched products:', products);
+
+	return {
+		products
+	};
 };

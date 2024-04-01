@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import ProductEntryAdmin from '$lib/shared/ProductEntryAdmin.svelte';
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
@@ -8,27 +8,12 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import AddNewProduct from '$lib/components/AddNewProduct.svelte';
 
+	export let data;
+	let { products, userRole } = data;
+
 	let isDialogOpen = false;
 	const closeDialog = () => {
 		isDialogOpen = false;
-	};
-
-	let userRole = 'customer';
-
-	let object1 = {
-		image: 'https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg',
-		product_name: 'ΣΠΑΝΑΚΙ',
-		product_code: 'ΕΙΔΗ-000000023',
-		isAvailable: true,
-		sale_unit: 'piece'
-	};
-
-	let object2 = {
-		image: 'https://www.doorsteporganics.com.au/image/optimised/large/Tomatoes-Round-1kg.jpg',
-		product_name: 'ΝΤΟΜΑΤΕΣ ΚΡΗΤΗΣ',
-		product_code: 'ΕΙΔΗ-000000024',
-		isAvailable: false,
-		sale_unit: 'kg'
 	};
 </script>
 
@@ -62,16 +47,9 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
-			<ProductEntryAdmin object={object1} />
-			<ProductEntryAdmin object={object2} />
+			{#each products as product}
+				<ProductEntryAdmin {product} />
+			{/each}
 		</div>
 	</div>
 {:else if userRole === 'customer'}
@@ -87,11 +65,9 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object1} />
-			<ProductEntryCustomer object={object2} />
-			<ProductEntryCustomer object={object2} />
+			{#each products as product}
+				<ProductEntryCustomer {product} />
+			{/each}
 		</div>
 	</div>
 {/if}

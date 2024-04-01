@@ -1,38 +1,64 @@
-# create-svelte
+# OrderFlow Application
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Welcome to the OrderFlow Application - a comprehensive solution for managing orders, products, and users efficiently. This application streamlines the order management process, making it easy for administrators and customers alike to keep track of orders, products availability, and user accounts.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **User Management**: Create, update, and manage user profiles, including role-based access control.
+- **Product Catalogue**: Easily add, update, and manage products along with their availability status.
+- **Order Processing**: Streamlined process for placing, updating, and tracking orders.
+- **Dynamic Reporting**: Generate reports on orders, users, and product sales to gain insights into business operations.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Getting Started
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-## Developing
+### Prerequisites
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- [Node.js](https://nodejs.org/en/download/)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- Any modern web browser.
 
-```bash
-npm run dev
+### Installing
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+A step by step series of examples that tell you how to get a development environment running.
 
-## Building
-
-To create a production version of your app:
+1. Clone the repository to your local machine:
 
 ```bash
-npm run build
+git clone https://github.com/yourusername/orderflow.git
 ```
 
-You can preview the production build with `npm run preview`.
+2. Install the dependencies:
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```bash
+git npm install
+```
+
+3. Set up your environment variables:
+
+```bash
+git cp .env.example .env
+```
+
+4. Initialize the database:
+   Make sure PostgreSQL is running and execute the initialization script located in scripts/init_db.sql to create the necessary database and tables.
+
+5. Start the application:
+
+```bash
+npm run dev -- --host
+```
+
+Access the application through http://localhost:3000.
+
+## Built With
+
+SvelteKit - The web framework used
+PostgreSQL - Database
+Firebase - Authentication and storage
+
+## Authors
+
+- **CVakratsas** - [CVakratsas](https://github.com/CVakratsas)
+- **NikolasPpd** - [NikolasPpd](https://github.com/NikolasPpd)
