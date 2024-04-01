@@ -1,26 +1,34 @@
 <script lang="ts">
-    import * as Card from "$lib/components/ui/card";
-    import { cn } from "$lib/utils";
+	import * as Card from '$lib/components/ui/card';
+	import { cn } from '$lib/utils';
 
-    export let object = {
-        image: "https://www.alrizq.sa/wp-content/uploads/2022/10/SPINACH-BUNCH.jpg",
-        product_name: "ΣΠΑΝΑΚΙ",
-        product_code: "ΕΙΔΗ-000000023",
-        isAvailable: true,
-        sale_unit: "piece"
-    }
+	export let product = {
+		image_url: '', // Default empty string or a placeholder image URL
+		is_available: false, // Default availability
+		product_name: 'Unknown Product', // Default name
+		product_code: 'N/A', // Default code
+		sale_unit: 'N/A' // Default unit
+	};
 </script>
-   
-<Card.Root class="flex h-24 rounded-none items-center justify-start border-0 p-3 gap-4">
-    <Card.Content class="p-0 h-full aspect-square">
-        <img class={cn("h-full aspect-square object-cover",
-        {
-            "grayscale" : !object.isAvailable
-        })}
-        src={object.image} alt="Εικόνα προϊόντος"/>
-    </Card.Content>
-    <Card.Header class="p-0">
-        <Card.Title class={cn("text-zinc-700 font-normal line-clamp-2", {"text-slate-400": !object.isAvailable})}>{object.product_name}</Card.Title>
-        <Card.Description class="text-slate-400 text-[13px] font-normal">{object.product_code}</Card.Description>
-    </Card.Header>
+
+<Card.Root class="flex h-24 items-center justify-start gap-4 rounded-none border-0 p-3">
+	<Card.Content class="aspect-square h-full p-0">
+		<img
+			class={cn('aspect-square h-full object-cover', {
+				grayscale: !product.is_available
+			})}
+			src={product.image_url}
+			alt="Εικόνα προϊόντος"
+		/>
+	</Card.Content>
+	<Card.Header class="p-0">
+		<Card.Title
+			class={cn('line-clamp-2 font-normal text-zinc-700', {
+				'text-slate-400': !product.is_available
+			})}>{product.product_name}</Card.Title
+		>
+		<Card.Description class="text-[13px] font-normal text-slate-400"
+			>{product.product_code}</Card.Description
+		>
+	</Card.Header>
 </Card.Root>
