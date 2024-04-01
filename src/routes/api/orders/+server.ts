@@ -35,6 +35,14 @@ export const GET: RequestHandler = async () => {
 export const POST: RequestHandler = async ({ request }) => {
 	const { user_id, products } = await request.json();
 
+	// Check if the products array is empty
+	if (products.length === 0) {
+		return new Response(JSON.stringify({ error: 'An order must contain at least one item.' }), {
+			status: 400, // Bad Request
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
 	try {
 		await sql.begin(async (sql) => {
 			// Create the order

@@ -47,7 +47,7 @@ git cp .env.example .env
 5. Start the application:
 
 ```bash
-npm run dev -- --open
+npm run dev -- --host
 ```
 
 Access the application through http://localhost:3000.
