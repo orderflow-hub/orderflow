@@ -10,6 +10,8 @@
 	import AddNewProduct from '$lib/components/AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
+	import { get } from 'svelte/store';
+	import { toast } from 'svelte-sonner';
 
 	export let data;
 	let { products, userRole } = data;
@@ -24,13 +26,22 @@
 		isCartSheetOpen = false;
 	};
 
-	const submitOrder = () => {
-		// TODO: Implement order submission
-		// Make async call to API endpoint to submit order
-		// On success, clear the cart, close the cart sheet and show a success toast message
-		// On failure, show an error toast message
-		cart.clear();
-		closeCartSheet();
+	const submitOrder = async () => {
+		const response = await fetch('/api/orders', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(get(cart))
+		});
+
+		if (response.ok) {
+			cart.clear();
+			closeCartSheet();
+			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');
+		} else {
+			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
+		}
 	};
 </script>
 
