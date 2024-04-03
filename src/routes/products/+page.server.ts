@@ -24,14 +24,15 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 			'Content-Type': 'application/json'
 		}
 	});
+
 	if (!response.ok) {
 		return {
 			status: response.status,
 			error: new Error('Failed to fetch products')
 		};
 	}
+
 	const products = await response.json();
-	console.log('Fetched products:', products);
 
 	return {
 		products

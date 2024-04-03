@@ -1,14 +1,9 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
+	import type { Product } from '$lib/types';
 
-	export let product = {
-		image_url: '', // Default empty string or a placeholder image URL
-		is_available: false, // Default availability
-		product_name: 'Unknown Product', // Default name
-		product_code: 'N/A', // Default code
-		sale_unit: 'N/A' // Default unit
-	};
+	export let product: Product;
 </script>
 
 <Card.Root class="flex h-24 items-center justify-start gap-4 rounded-none border-0 p-3">

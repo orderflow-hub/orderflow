@@ -2,6 +2,7 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
+import { getUserId } from '$lib/authUtils';
 
 /*
  * GET: Fetches all orders from the database.
@@ -33,7 +34,16 @@ export const GET: RequestHandler = async () => {
  */
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { user_id, products } = await request.json();
+	const userId = await getUserId(request);
+
+	if (userId === undefined) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 401,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
+
+	const products = await request.json();
 
 	// Check if the products array is empty
 	if (products.length === 0) {
@@ -47,14 +57,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		await sql.begin(async (sql) => {
 			// Create the order
 			const [result] = await sql`
-	            INSERT INTO orders (user_id, status) VALUES (${user_id}, 'pending') RETURNING order_id;
+	            INSERT INTO orders (user_id, status) VALUES (${userId}, 'pending') RETURNING order_id;
 	        `;
 
 			// Insert each product as an order_item
 			for (const product of products) {
 				await sql`
 			        INSERT INTO order_items (order_id, product_id, quantity)
-			        VALUES (${result.order_id}, ${product.product_id}, ${product.quantity});
+			        VALUES (${result.order_id}, ${product.product_id}, ${product.qty});
 			    `;
 			}
 		});
