@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -7,28 +7,15 @@
 	import { Plus } from 'lucide-svelte';
 	import { Search } from 'lucide-svelte';
 	import SearchBar from '$lib/shared/SearchBar.svelte';
+	import type { Customer } from '$lib/types';
+	import CustomerDetailsForm from '$lib/components/CustomerDetailsForm.svelte';
+
+	export let data;
+	const customers: Customer[] = data.customers;
 
 	let isDialogOpen = false;
 	const closeDialog = () => {
 		isDialogOpen = false;
-	};
-
-	let object1 = {
-		customer_company_name: 'Ταβέρνα - Τα 12 προβατάκια',
-		customer_code: 'Π-302',
-		email: 'provatakia@gmail.com',
-		phone: '2310123456',
-		afm: '123456789',
-		active: true
-	};
-
-	let object2 = {
-		customer_company_name: 'Εστιατόριο - Τρώγοντας έρχεται η όρεξη',
-		customer_code: 'Π-252',
-		email: 'oreksi@gmail.com',
-		phone: '2310654321',
-		afm: '987654321',
-		active: false
 	};
 </script>
 
@@ -61,12 +48,8 @@
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
-		<CustomerEntry object={object1} />
-		<CustomerEntry object={object2} />
-		<CustomerEntry object={object2} />
-		<CustomerEntry object={object2} />
-		<CustomerEntry object={object2} />
-		<CustomerEntry object={object2} />
-		<CustomerEntry object={object2} />
+		{#each customers as customer}
+			<CustomerEntry {customer} />
+		{/each}
 	</div>
 </div>

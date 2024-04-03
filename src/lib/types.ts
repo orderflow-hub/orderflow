@@ -15,3 +15,11 @@ export interface Order {
 	status: string;
 	company_name: string;
 }
+
+export interface Customer {
+	user_id: number;
+	company_name: string;
+	email: string;
+	phone_number: string;
+	is_account_disabled: boolean;
+}

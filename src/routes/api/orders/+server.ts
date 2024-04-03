@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ url }) => {
             SELECT o.order_id, o.user_order_number, o.user_order_number, o.timestamp, o.status, u.company_name
 			FROM orders as o 
 			JOIN users as u ON o.user_id = u.user_id
-			ORDER BY o.timestamp DESC
+			ORDER BY o.status DESC, o.timestamp DESC
 			LIMIT ${limit} OFFSET ${offset};
         `;
 		return new Response(JSON.stringify(orders), {

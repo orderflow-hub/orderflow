@@ -5,35 +5,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 
 /*
  * GET: Fetches all products from the database.
- * Doesn't require a request body or parameters.
- * Returns a success message on update or an error message on failure.
- */
-// export const GET: RequestHandler = async () => {
-// 	try {
-// 		const products = await sql`
-//             SELECT product_id, product_name, product_code, sale_unit, is_available, image_url
-// 			FROM products;
-//         `;
-
-// 		return new Response(JSON.stringify(products), {
-// 			headers: { 'Content-Type': 'application/json' },
-// 			status: 200
-// 		});
-// 	} catch (error) {
-// 		return new Response(
-// 			JSON.stringify({
-// 				error: 'Failed to fetch products'
-// 			}),
-// 			{
-// 				status: 500,
-// 				headers: { 'Content-Type': 'application/json' }
-// 			}
-// 		);
-// 	}
-// };
-
-/*
- * GET: Fetches all products from the database.
  * If a parameter 'counts' is present in the query, it returns the count of active and inactive products.
  * Returns a success message on update or an error message on failure.
  */
@@ -68,7 +39,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		try {
 			const products = await sql`
 				SELECT product_id, product_name, product_code, sale_unit, is_available, image_url
-				FROM products;
+				FROM products
+				ORDER BY is_available DESC, product_name ASC;
 			`;
 
 			return new Response(JSON.stringify(products), {

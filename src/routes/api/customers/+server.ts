@@ -11,9 +11,10 @@ import sql from '$lib/db';
 export const GET: RequestHandler = async () => {
 	try {
 		const customers = await sql`
-            SELECT user_id, company_name, email, phone_number
+            SELECT user_id, company_name, email, phone_number, is_account_disabled
             FROM users
-            WHERE role = 'customer';
+            WHERE role = 'customer'
+			ORDER BY company_name ASC;
         `;
 		return new Response(JSON.stringify(customers), {
 			headers: { 'Content-Type': 'application/json' },
