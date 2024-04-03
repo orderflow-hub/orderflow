@@ -12,9 +12,11 @@
 	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
+	import type { Product } from '$lib/types';
 
 	export let data;
-	let { products, userRole } = data;
+	const userRole: string = data.userRole;
+	const products: Product[] = data.products;
 
 	let isDialogOpen = false;
 	const closeDialog = () => {

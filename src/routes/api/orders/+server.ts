@@ -9,11 +9,17 @@ import { getUserId } from '$lib/authUtils';
  * Doesn't require a request body or parameters.
  * Returns a success message on update or an error message on failure.
  */
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
+	const limit = Number(url.searchParams.get('limit')) || 4; // Default to 4 for homepage
+	const offset = Number(url.searchParams.get('offset')) || 0;
+
 	try {
 		const orders = await sql`
-            SELECT order_id, user_order_number, user_order_number, timestamp, status
-			FROM orders;
+            SELECT o.order_id, o.user_order_number, o.user_order_number, o.timestamp, o.status, u.company_name
+			FROM orders as o 
+			JOIN users as u ON o.user_id = u.user_id
+			ORDER BY o.timestamp DESC
+			LIMIT ${limit} OFFSET ${offset};
         `;
 		return new Response(JSON.stringify(orders), {
 			headers: { 'Content-Type': 'application/json' },
