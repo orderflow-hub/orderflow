@@ -7,7 +7,7 @@
 	export let product: Product;
 </script>
 
-<Card.Root class="flex items-center justify-start justify-between gap-2 rounded-none border-0 p-3">
+<Card.Root class="flex items-center justify-between gap-2 rounded-none border-0 p-3">
 	<div class="flex h-full items-center justify-start">
 		<Card.Content class="aspect-square h-[72px] p-0">
 			<img
