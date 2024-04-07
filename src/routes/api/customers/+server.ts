@@ -14,7 +14,7 @@ export const GET: RequestHandler = async () => {
             SELECT user_id, company_name, email, phone_number, is_account_disabled
             FROM users
             WHERE role = 'customer'
-			ORDER BY company_name ASC;
+			ORDER BY is_account_disabled ASC, company_name ASC;
         `;
 		return new Response(JSON.stringify(customers), {
 			headers: { 'Content-Type': 'application/json' },

@@ -3,18 +3,28 @@
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import CartEntry from '$lib/shared/CartEntry.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Plus, Search, ArrowRight } from 'lucide-svelte';
+	import { Image, Plus, Search, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Label } from '$lib/components/ui/label';
+	import * as Form from '$lib/components/ui/form';
+	import * as Select from '$lib/components/ui/select';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Sheet from '$lib/components/ui/sheet';
-	import AddNewProduct from '$lib/components/AddNewProduct.svelte';
+	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
 	import type { Product } from '$lib/types';
+	import type { PageData } from './$types';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { productSchema, type FormProductSchema } from '$lib/schemas/productSchema';
 
-	export let data;
+	export let data: PageData;
+
+	console.log(data);
 	const userRole: string = data.userRole;
 	const products: Product[] = data.products;
 
@@ -45,6 +55,11 @@
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
 	};
+
+	let productName = '';
+	let productCode = '';
+	let saleUnit = 'kg';
+	let isDisabled = true;
 </script>
 
 {#if userRole === 'admin'}
@@ -57,7 +72,10 @@
 				<Search size={18} />
 			</div>
 		</div>
-		<Dialog.Root bind:open={isDialogOpen}>
+
+		<AddNewProduct data={data.form} />
+
+		<!-- <Dialog.Root bind:open={isDialogOpen}>
 			<Dialog.Trigger class="text-base font-normal">
 				<Button class="w-10 grow-0 border bg-transparent p-0 text-muted-foreground">
 					<Plus />
@@ -67,13 +85,85 @@
 				<Dialog.Header class="mb-2.5">
 					<Dialog.Title>Προσθήκη νέου προϊόντος</Dialog.Title>
 				</Dialog.Header>
-				<AddNewProduct />
+				<form method="POST">
+					<div class="flex flex-col items-start justify-center self-stretch rounded-lg">
+						<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
+							<Image class="rounded-md border" strokeWidth={1} size={80} />
+							<div class="flex w-full max-w-sm flex-col gap-1.5">
+								<Form.Field {$form} name="productName">
+									<Form.Control let:attrs>
+										<Form.Label>Όνομα προϊόντος</Form.Label>
+										<Input {...attrs} bind:value={$formData.email} />
+									</Form.Control>
+								</Form.Field>
+								<Form.Field {form} name="productCode">
+									<Form.Control let:attrs>
+										<Form.Label>Κωδικός προϊόντος</Form.Label>
+										<Input {...attrs} bind:value={$formData.email} />
+									</Form.Control>
+								</Form.Field>
+
+								<Label for="product-name">Όνομα προϊόντος</Label>
+								<Input
+									type="text"
+									id="product-name"
+									placeholder=""
+									bind:value={productName}
+									required
+								/>
+							</div>
+							<div class="mb-3 flex gap-3">
+								<div class="flex w-full max-w-sm flex-col gap-1.5">
+									<Label for="productCode">Κωδικός προϊόντος</Label>
+									<Input
+										type="text"
+										id="productCode"
+										placeholder=""
+										bind:value={productCode}
+										required
+									/>
+								</div>
+								<div class="flex w-full max-w-sm flex-col gap-1.5">
+									<Label for="saleUnit">Μονάδα μέτρησης</Label>
+									<Select.Root required selected={{ value: 'kg', label: 'kg' }}>
+										<Select.Trigger>
+											<Select.Value placeholder="Κιλό/Τεμ" />
+										</Select.Trigger>
+										<Select.Content>
+											<Select.Item value="kg">kg</Select.Item>
+											<Select.Item value="piece">τεμάχιο</Select.Item>
+										</Select.Content>
+										<Select.Input name="saleUnit" />
+									</Select.Root>
+								</div>
+							</div>
+							<div class="items-top mb-3 flex space-x-2">
+								<Checkbox
+									id="isAvailable"
+									bind:checked={isDisabled}
+									class="border-input data-[state=checked]:bg-destructive"
+								/>
+								<Label
+									for="isAvailable"
+									class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								>
+									<span>Το προϊόν δεν είναι διαθέσιμο</span>
+									<p class="text-xs text-muted-foreground">
+										Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε
+										παραγγελίες τους.
+									</p>
+								</Label>
+							</div>
+						</div>
+					</div>
+				</form>
+
 				<Dialog.Footer>
 					<Button variant="secondary" on:click={closeDialog}>Ακύρωση</Button>
 					<Button type="submit">Προσθήκη</Button>
 				</Dialog.Footer>
 			</Dialog.Content>
-		</Dialog.Root>
+		</Dialog.Root> -->
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">

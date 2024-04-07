@@ -1,5 +1,9 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
+import { fail } from 'sveltekit-superforms';
+import { productSchema } from '$lib/schemas/productSchema';
+import { zod } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms';
 
 // Similar to 'src/routes/+page.server.ts'
 export const load: PageServerLoad = async ({ locals, fetch }) => {
@@ -35,6 +39,22 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 	const products = await response.json();
 
 	return {
-		products
+		products,
+		form: await superValidate(zod(productSchema))
 	};
+};
+
+export const actions: Actions = {
+	default: async (event) => {
+		const form = await superValidate(event, zod(productSchema));
+		console.log(form);
+		if (!form.valid) {
+			return fail(400, {
+				form
+			});
+		}
+		return {
+			form
+		};
+	}
 };
