@@ -29,41 +29,29 @@
 			}
 		: undefined;
 
-	// let initialFormData: Infer<FormProductSchema> = {
-	// 	productName: '',
-	// 	productCode: '',
-	// 	saleUnit: 'kg',
-	// 	isAvailable: false
-	// };
-	// let productName = '';
-	// let productCode = '';
-	// let saleUnit = 'kg';
-	// let isDisabled = false;
-
-	async function handleSubmit() {
-		// const productData = { productName, productCode, saleUnit, isDisabled };
-		// Perform validation here if needed before sending the request
-		// console.log(productData);
-		// try {
-		// 	const response = await fetch('/api/products', {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify(productData)
-		// 	});
-		// 	if (!response.ok) {
-		// 		throw new Error('Failed to create product');
-		// 	}
-		// 	// Assuming the form is within a dialog and should be closed upon successful submission
-		// 	isDialogOpen = false; // Make sure `isDialogOpen` is a writable store or passed as a prop if it's managed outside
-		// 	toast.success('Product added successfully');
-		// } catch (error) {
-		// 	toast.error((error as Error).message);
-		// }
-	}
+	// async function handleSubmit() {
+	// const productData = { productName, productCode, saleUnit, isDisabled };
+	// Perform validation here if needed before sending the request
+	// console.log(productData);
+	// try {
+	// 	const response = await fetch('/api/products', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		body: JSON.stringify(productData)
+	// 	});
+	// 	if (!response.ok) {
+	// 		throw new Error('Failed to create product');
+	// 	}
+	// 	// Assuming the form is within a dialog and should be closed upon successful submission
+	// 	isDialogOpen = false; // Make sure `isDialogOpen` is a writable store or passed as a prop if it's managed outside
+	// 	toast.success('Product added successfully');
+	// } catch (error) {
+	// 	toast.error((error as Error).message);
+	// }
+	// }
 	let isDialogOpen = false;
-Form.
 </script>
 
 <Dialog.Root bind:open={isDialogOpen}>
@@ -78,7 +66,7 @@ Form.
 		</Dialog.Header>
 		<form method="POST" use:enhance>
 			<div class="flex flex-col items-start justify-center self-stretch rounded-lg">
-				<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
+				<div class="mb-3 flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
 					<Image class="rounded-md border" strokeWidth={1} size={80} />
 
 					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="productName">
@@ -100,9 +88,9 @@ Form.
 								<Form.Control let:attrs>
 									<Form.Label>Μονάδα μέτρησης</Form.Label>
 									<Select.Root
-										required
-										selected={(v) => {
-											v && ($formData.saleUnit = v.value);
+										bind:selected={selectedSaleUnit}
+										on:selectedChange={({ detail }) => {
+											$formData.saleUnit = detail.value;
 										}}
 									>
 										<Select.Trigger {...attrs}>
