@@ -117,6 +117,7 @@
 	<Sheet.Root bind:open={isCartSheetOpen}>
 		<Sheet.Trigger />
 		<Sheet.Content side="bottom" class="flex max-h-full flex-col gap-4 px-2 md:px-6">
+			<Sheet.Close autofocus />
 			<Sheet.Header>
 				<Sheet.Title>Καλάθι</Sheet.Title>
 			</Sheet.Header>
