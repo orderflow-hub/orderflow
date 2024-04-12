@@ -20,8 +20,8 @@
 	export let postalCodeDisabled = false;
 </script>
 
-<div class="flex flex-col items-start justify-center self-stretch rounded-lg">
-	<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
+<div class="flex items-start justify-center rounded-lg">
+	<div class="flex flex-col items-start justify-center gap-4 rounded-lg">
 		<div class="flex w-full max-w-sm flex-col gap-1.5">
 			<Label for="company-name">Επωνυμία</Label>
 			<Input

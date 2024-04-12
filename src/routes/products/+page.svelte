@@ -96,16 +96,16 @@
 			'pb-2.5': $itemCount === 0
 		})}
 	>
-		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
 			{#each products as product}
 				<ProductEntryCustomer {product} />
 			{/each}
 		</div>
 	</div>
 	{#if $itemCount > 0}
-		<div class="sticky bottom-12 flex p-2.5">
+		<div class="sticky bottom-12 flex justify-center p-2.5">
 			<Button
-				class="relative w-full gap-2 px-2 text-base"
+				class="relative w-full gap-2 px-2 text-base md:w-1/2 lg:w-1/3"
 				variant="default"
 				on:click={() => {
 					isCartSheetOpen = true;

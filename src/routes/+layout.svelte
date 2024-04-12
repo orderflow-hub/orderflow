@@ -2,29 +2,26 @@
 	import '@fontsource-variable/manrope';
 	import '../app.pcss';
 	import Navbar from '$lib/components/Navbar.svelte';
-	import { onMount } from 'svelte';
-	import { auth } from '$lib/firebase';
-	import { authStore } from '../stores/authStore';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { ModeWatcher, setMode } from 'mode-watcher';
+	import { page } from '$app/stores';
 
-	let showNavbar = false;
+	let headerText: string;
 
-	onMount(() => {
-		const unsubscribe = auth.onAuthStateChanged((user) => {
-			authStore.update((curr) => {
-				return {
-					...curr,
-					currentUser: user
-				};
-			});
-
-			if ($authStore.currentUser) {
-				showNavbar = true;
-			}
-		});
-		return unsubscribe;
-	});
+	// Change the header text based on the current page
+	$: if ($page.url.pathname === '/') {
+		headerText = 'Αρχική';
+	} else if ($page.url.pathname === '/products') {
+		headerText = 'Προϊόντα';
+	} else if ($page.url.pathname === '/orders') {
+		headerText = 'Παραγγελίες';
+	} else if ($page.url.pathname === '/customers') {
+		headerText = 'Πελάτες';
+	} else if ($page.url.pathname === '/profile') {
+		headerText = 'Προφίλ';
+	} else {
+		headerText = '';
+	}
 
 	setMode('light');
 
@@ -34,13 +31,15 @@
 </script>
 
 <div class="flex min-h-screen flex-col items-center">
-	<header
-		class="flex h-10 w-full flex-col items-center justify-center bg-secondary-foreground text-background"
-	>
-		<div class="flex w-full max-w-4xl px-2.5">Αρχική</div>
-	</header>
+	{#if userRole}
+		<header
+			class="flex h-10 w-full flex-col items-center justify-center bg-secondary-foreground text-background"
+		>
+			<div class="flex w-full px-2.5">{headerText}</div>
+		</header>
+	{/if}
 
-	<main class="box-border flex w-full max-w-4xl flex-col items-stretch pb-12">
+	<main class="box-border flex w-full flex-col items-stretch justify-start pb-12">
 		<slot />
 	</main>
 
