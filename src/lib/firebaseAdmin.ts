@@ -22,3 +22,38 @@ export async function verifyToken(token: string) {
 		return null;
 	}
 }
+
+export async function createUser(email: string, password: string) {
+	try {
+		const userRecord = await authAdmin.createUser({
+			email: email,
+			password: password
+		});
+		return userRecord;
+	} catch (error) {
+		console.error('Error creating user:', error);
+		return null;
+	}
+}
+
+export async function updateEmail(uid: string, email: string): Promise<boolean> {
+	try {
+		await authAdmin.updateUser(uid, {
+			email: email
+		});
+		return true;
+	} catch (error) {
+		console.error('Error updating email:', error);
+		return false;
+	}
+}
+
+export async function deleteUser(uid: string): Promise<boolean> {
+	try {
+		await authAdmin.deleteUser(uid);
+		return true;
+	} catch (error) {
+		console.error('Error deleting user:', error);
+		return false;
+	}
+}
