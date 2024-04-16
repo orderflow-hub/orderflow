@@ -3,7 +3,7 @@ export interface Product {
 	image_url?: string;
 	product_name: string;
 	product_code: string;
-	is_available: boolean;
+	is_disabled: boolean;
 	sale_unit: string;
 	qty?: number;
 }

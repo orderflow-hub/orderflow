@@ -15,8 +15,8 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (isCountRequest) {
 		// Fetch counts of active and inactive products
 		try {
-			const activeCount = await sql`SELECT COUNT(*) FROM products WHERE is_available = true;`;
-			const inactiveCount = await sql`SELECT COUNT(*) FROM products WHERE is_available = false;`;
+			const activeCount = await sql`SELECT COUNT(*) FROM products WHERE is_disabled = false;`;
+			const inactiveCount = await sql`SELECT COUNT(*) FROM products WHERE is_disabled = true;`;
 
 			return new Response(
 				JSON.stringify({
@@ -38,9 +38,9 @@ export const GET: RequestHandler = async ({ url }) => {
 		// Fetch all products
 		try {
 			const products = await sql`
-				SELECT product_id, product_name, product_code, sale_unit, is_available, image_url
+				SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
 				FROM products
-				ORDER BY is_available DESC, product_name ASC;
+				ORDER BY is_disabled ASC, product_name ASC;
 			`;
 
 			return new Response(JSON.stringify(products), {
@@ -68,14 +68,29 @@ export const GET: RequestHandler = async ({ url }) => {
  */
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
-	console.log(data);
+
+	// Check if the unique fields already exist in the database
+	const existingProducts = await sql`
+		SELECT product_code FROM products
+		WHERE product_code = ${data.product_code}
+	`;
+
+	if (existingProducts.length > 0) {
+		return new Response(
+			JSON.stringify({ error: 'Product with provided unique product code already exists' }),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+	}
 
 	try {
 		const result = await sql`
 			INSERT INTO products 
-			(product_code, product_name, sale_unit, is_available, image_url) 
+			(product_code, product_name, sale_unit, is_disabled, image_url) 
 			VALUES 
-			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_available}, ${data.image_url || null})
+			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_disabled}, ${data.image_url || null})
 			RETURNING *
 		`;
 

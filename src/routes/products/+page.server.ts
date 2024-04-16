@@ -58,26 +58,28 @@ export const actions: Actions = {
 		// Convert form data to snake_case with humps library
 		const formData = humps.decamelizeKeys(form.data);
 
-		try {
-			const apiResponse = await event.fetch('api/products', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(formData)
-			});
+		console.log(formData);
 
-			if (!apiResponse.ok) {
-				// TODO toast message
-				throw new Error('Failed to create product due to bad response');
-			}
+		// try {
+		// 	const apiResponse = await event.fetch('api/products', {
+		// 		method: 'POST',
+		// 		headers: {
+		// 			'Content-Type': 'application/json'
+		// 		},
+		// 		body: JSON.stringify(formData)
+		// 	});
 
-			// Returning the form is required for the superform validation to work
-			return {
-				form
-			};
-		} catch (e) {
-			throw new Error(`Failed to create product ${e}`);
-		}
+		// 	if (!apiResponse.ok) {
+		// 		// TODO toast message
+		// 		throw new Error('Failed to create product due to bad response');
+		// 	}
+
+		// 	// Returning the form is required for the superform validation to work
+		// 	return {
+		// 		form
+		// 	};
+		// } catch (e) {
+		// 	throw new Error(`Failed to create product ${e}`);
+		// }
 	}
 };

@@ -84,12 +84,12 @@
 					</div>
 					<div class="items-top mb-3 flex space-x-2">
 						<Checkbox
-							id="isAvailable"
-							bind:checked={$formData.isAvailable}
+							id="isDisabled"
+							bind:checked={$formData.isDisabled}
 							class="border-input data-[state=checked]:bg-destructive"
 						/>
 						<Label
-							for="isAvailable"
+							for="isDisabled"
 							class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 						>
 							<span>Το προϊόν δεν είναι διαθέσιμο</span>
@@ -110,45 +110,3 @@
 		</form>
 	</Dialog.Content>
 </Dialog.Root>
-
-<!-- <div class="flex flex-col items-start justify-center self-stretch rounded-lg">
-	<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
-		<Image class="rounded-md border" strokeWidth={1} size={80} />
-		<div class="flex w-full max-w-sm flex-col gap-1.5">
-			<Label for="product-name">Όνομα προϊόντος</Label>
-			<Input type="text" id="product-name" placeholder="" bind:value={productName} required />
-		</div>
-		<div class="mb-3 flex gap-3">
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="productCode">Κωδικός προϊόντος</Label>
-				<Input type="text" id="productCode" placeholder="" bind:value={productCode} required />
-			</div>
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="saleUnit">Μονάδα μέτρησης</Label>
-				<Select.Root required selected={{ value: 'kg', label: 'kg' }}>
-					<Select.Trigger>
-						<Select.Value placeholder="Κιλό/Τεμ" />
-					</Select.Trigger>
-					<Select.Content>
-						<Select.Item value="kg">kg</Select.Item>
-						<Select.Item value="piece">τεμάχιο</Select.Item>
-					</Select.Content>
-					<Select.Input name="saleUnit" />
-				</Select.Root>
-			</div>
-		</div>
-		<div class="items-top mb-3 flex space-x-2">
-			<Checkbox id="isAvailable" class="border-input data-[state=checked]:bg-destructive" />
-			<Label
-				for="isAvailable"
-				class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-			>
-				<span>Το προϊόν δεν είναι διαθέσιμο</span>
-				<p class="text-xs text-muted-foreground">
-					Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε παραγγελίες
-					τους.
-				</p>
-			</Label>
-		</div>
-	</div>
-</div> -->
