@@ -12,7 +12,7 @@
 		<Card.Content class="aspect-square h-[72px] p-0">
 			<img
 				class={cn('aspect-square h-full object-cover', {
-					grayscale: !product.is_available
+					grayscale: product.is_disabled
 				})}
 				src={product.image_url}
 				alt="Εικόνα προϊόντος"

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { fromCamel } from 'postgres';
-
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
@@ -46,12 +44,12 @@
 			<div class="flex flex-col items-start justify-center self-stretch rounded-lg">
 				<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
 					<Image class="rounded-md border" strokeWidth={1} size={80} />
-
 					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="productName">
 						<Form.Control let:attrs>
 							<Form.Label>Όνομα προϊόντος</Form.Label>
 							<Input {...attrs} bind:value={$formData.productName} />
 						</Form.Control>
+						<Form.FieldErrors />
 					</Form.Field>
 					<div class="mb-3 flex gap-3">
 						<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="productCode">
@@ -59,8 +57,8 @@
 								<Form.Label>Κωδικός προϊόντος</Form.Label>
 								<Input {...attrs} bind:value={$formData.productCode} />
 							</Form.Control>
+							<Form.FieldErrors />
 						</Form.Field>
-
 						<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="saleUnit">
 							<Form.Control let:attrs>
 								<Form.Label>Μονάδα μέτρησης</Form.Label>
@@ -102,9 +100,9 @@
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button variant="secondary" type="button" on:click={() => (isDialogOpen = false)}>
-					Ακύρωση
-				</Button>
+				<Button variant="secondary" type="button" on:click={() => (isDialogOpen = false)}
+					>Ακύρωση</Button
+				>
 				<Button type="submit">Προσθήκη</Button>
 			</Dialog.Footer>
 		</form>

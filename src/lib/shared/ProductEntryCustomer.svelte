@@ -30,7 +30,7 @@
 		<Card.Content class="p-0">
 			<img
 				class={cn('aspect-square w-full object-cover', {
-					grayscale: !product.is_available
+					grayscale: product.is_disabled
 				})}
 				src={product.image_url}
 				alt="Εικόνα προϊόντος"
@@ -39,7 +39,7 @@
 		<Card.Header class="space-y-0 p-0">
 			<Card.Title
 				class={cn('line-clamp-2 font-normal leading-normal text-zinc-700', {
-					'text-slate-400': !product.is_available
+					'text-slate-400': product.is_disabled
 				})}>{product.product_name}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
@@ -59,10 +59,10 @@
 			<Button
 				class="w-full gap-2 px-2 text-base"
 				variant="secondary"
-				disabled={!product.is_available}
+				disabled={product.is_disabled}
 				on:click={addToCart}
 			>
-				{#if !product.is_available}
+				{#if product.is_disabled}
 					Μη διαθέσιμο
 				{:else}
 					<Plus />Προσθήκη

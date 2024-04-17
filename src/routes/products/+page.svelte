@@ -27,11 +27,6 @@
 	const userRole: string = data.userRole;
 	const products: Product[] = data.products;
 
-	let isDialogOpen = false;
-	const closeDialog = () => {
-		isDialogOpen = false;
-	};
-
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
 		isCartSheetOpen = false;

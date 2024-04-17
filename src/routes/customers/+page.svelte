@@ -1,22 +1,13 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Dialog from '$lib/components/ui/dialog';
 	import CustomerEntry from '$lib/shared/CustomerEntry.svelte';
-	import AddNewCustomer from '$lib/components/AddNewCustomer.svelte';
-	import { Plus } from 'lucide-svelte';
+	import AddNewCustomer from './AddNewCustomer.svelte';
 	import { Search } from 'lucide-svelte';
-	import SearchBar from '$lib/shared/SearchBar.svelte';
 	import type { Customer } from '$lib/types';
-	import CustomerDetailsForm from '$lib/components/CustomerDetailsForm.svelte';
+	import type { PageData } from './$types';
 
-	export let data;
+	export let data: PageData;
 	const customers: Customer[] = data.customers;
-
-	let isDialogOpen = false;
-	const closeDialog = () => {
-		isDialogOpen = false;
-	};
 </script>
 
 <div class="sticky top-0 flex items-center gap-2.5 bg-white p-2.5">
@@ -28,23 +19,7 @@
 			<Search size={18} />
 		</div>
 	</div>
-	<Dialog.Root bind:open={isDialogOpen}>
-		<Dialog.Trigger class="text-base font-normal">
-			<Button class="w-10 grow-0 border bg-transparent p-0 text-muted-foreground">
-				<Plus />
-			</Button>
-		</Dialog.Trigger>
-		<Dialog.Content>
-			<Dialog.Header class="mb-2.5">
-				<Dialog.Title>Προσθήκη νέου πελάτη</Dialog.Title>
-			</Dialog.Header>
-			<AddNewCustomer />
-			<Dialog.Footer>
-				<Button variant="secondary" on:click={closeDialog}>Ακύρωση</Button>
-				<Button type="submit">Προσθήκη</Button>
-			</Dialog.Footer>
-		</Dialog.Content>
-	</Dialog.Root>
+	<AddNewCustomer data={data.form} />
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
