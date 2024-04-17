@@ -4,6 +4,6 @@ export interface Product {
 	product_name: string;
 	product_code: string;
 	is_available: boolean;
-	sale_unit: string;
+	sale_unit: 'kg' | 'piece';
 	qty: number;
 }
