@@ -11,13 +11,13 @@
 	// Change the header text based on the current page
 	$: if ($page.url.pathname === '/') {
 		headerText = 'Αρχική';
-	} else if ($page.url.pathname === '/products') {
+	} else if ($page.url.pathname.startsWith('/products')) {
 		headerText = 'Προϊόντα';
-	} else if ($page.url.pathname === '/orders') {
+	} else if ($page.url.pathname.startsWith('/orders')) {
 		headerText = 'Παραγγελίες';
-	} else if ($page.url.pathname === '/customers') {
+	} else if ($page.url.pathname.startsWith('/customers')) {
 		headerText = 'Πελάτες';
-	} else if ($page.url.pathname === '/profile') {
+	} else if ($page.url.pathname.startsWith('/profile')) {
 		headerText = 'Προφίλ';
 	} else {
 		headerText = '';
