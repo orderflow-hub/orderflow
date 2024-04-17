@@ -23,7 +23,18 @@ export async function verifyToken(token: string) {
 	}
 }
 
-export async function createUser(email: string, password: string) {
+/**
+ * Creates a new user in Firebase Authentication using firebase-admin.
+ *
+ * @param {string} email The email of the user to be created.
+ * @param {string} password The password for the new user.
+ * @returns {Promise<admin.auth.UserRecord | null>} A promise that resolves to the UserRecord (contains the user data) for the newly created user on success, or null on failure.
+ * @throws {Error} If an error occurs while creating the user, the error is logged to the console and the function returns null.
+ */
+export async function createUser(
+	email: string,
+	password: string
+): Promise<admin.auth.UserRecord | null> {
 	try {
 		const userRecord = await authAdmin.createUser({
 			email: email,
@@ -36,6 +47,14 @@ export async function createUser(email: string, password: string) {
 	}
 }
 
+/**
+ * Updates the email of a user in Firebase Authentication using firebase-admin.
+ *
+ * @param {string} uid The Firebase unique identifier of the user whose email is to be updated.
+ * @param {string} email The new email for the user.
+ * @returns {Promise<boolean>} A promise that resolves to true if the email was successfully updated, or false if an error occurred.
+ * @throws {Error} If an error occurs while updating the email, the error is logged to the console and the function returns false.
+ */
 export async function updateEmail(uid: string, email: string): Promise<boolean> {
 	try {
 		await authAdmin.updateUser(uid, {
@@ -48,6 +67,13 @@ export async function updateEmail(uid: string, email: string): Promise<boolean> 
 	}
 }
 
+/**
+ * Deletes a user from Firebase Authentication using firebase-admin.
+ *
+ * @param {string} uid The Firebase unique identifier of the user to be deleted.
+ * @returns {Promise<boolean>} A promise that resolves to true if the user was successfully deleted, or false if an error occurred.
+ * @throws {Error} If an error occurs while deleting the user, the error is logged to the console and the function returns false.
+ */
 export async function deleteUser(uid: string): Promise<boolean> {
 	try {
 		await authAdmin.deleteUser(uid);
