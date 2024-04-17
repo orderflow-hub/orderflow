@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		const product = await sql`
-            SELECT product_name, product_code, sale_unit, is_available, image_url
+            SELECT *
 			FROM products
 			WHERE product_id = ${productId}
         `;
