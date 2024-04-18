@@ -9,8 +9,10 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 
 	const { role } = locals.user;
 
-	// Allowed roles: admin, customer
-	if (role !== 'admin' && role !== 'customer') {
+	// Allowed roles: admin
+	if (role === 'customer') {
+		throw redirect(302, '/products');
+	} else if (role !== 'admin') {
 		return {
 			status: 403,
 			error: new Error('Access Denied')
