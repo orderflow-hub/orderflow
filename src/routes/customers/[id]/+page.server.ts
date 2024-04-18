@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { Product } from '$lib/types';
+import type { Customer } from '$lib/types';
 
 export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 	if (!locals.user) {
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 
 	// Allowed roles: admin
 	if (role === 'customer') {
-		throw redirect(302, '/products');
+		throw redirect(302, '/customers');
 	} else if (role !== 'admin') {
 		return {
 			status: 403,
@@ -19,8 +19,8 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 		};
 	}
 
-	// Fetch product details from the database for the specified product ID
-	const response = await fetch(`/api/products/${params.id}`, {
+	// Fetch customer details from the database for the specified customer ID
+	const response = await fetch(`/api/customers/${params.id}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'
@@ -30,29 +30,29 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 	if (!response.ok) {
 		return {
 			status: response.status,
-			error: new Error('Failed to fetch product details')
+			error: new Error('Failed to fetch customer details')
 		};
 	} else if (response.status === 404) {
 		return {
 			status: 404,
-			error: new Error('Product not found')
+			error: new Error('Customer not found')
 		};
 	}
 
 	try {
-		const product: Product = await response.json();
+		const customer: Customer = await response.json();
 
-		if (!product) {
-			throw new Error('Product not found');
+		if (!customer) {
+			throw new Error('Customer not found');
 		}
 
 		return {
-			product
+			customer
 		};
 	} catch (error) {
 		return {
 			status: 404,
-			error: new Error('Product not found')
+			error: new Error('Customer not found')
 		};
 	}
 };
