@@ -11,7 +11,7 @@ import type { RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async () => {
 	try {
 		const products = await sql`
-            SELECT product_id, product_name, product_code, sale_unit, is_available, image_url
+            SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
 			FROM products;
         `;
 
@@ -43,9 +43,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const result = await sql`
 			INSERT INTO products 
-			(product_code, product_name, sale_unit, is_available, image_url) 
+			(product_code, product_name, sale_unit, is_disabled, image_url) 
 			VALUES 
-			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_available}, ${data.image_url || null})
+			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_disabled}, ${data.image_url || null})
 			RETURNING *
 		`;
 

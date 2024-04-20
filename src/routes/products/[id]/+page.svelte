@@ -128,7 +128,7 @@
 				<Checkbox
 					id="isAvailable"
 					class="border-input data-[state=checked]:bg-destructive"
-					bind:checked={product.is_available}
+					bind:checked={product.is_disabled}
 				/>
 				<Label
 					for="isAvailable"
