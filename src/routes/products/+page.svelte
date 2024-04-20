@@ -3,23 +3,29 @@
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import CartEntry from '$lib/shared/CartEntry.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Plus, Search, ArrowRight } from 'lucide-svelte';
+	import { Image, Plus, Search, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Label } from '$lib/components/ui/label';
+	import * as Form from '$lib/components/ui/form';
+	import * as Select from '$lib/components/ui/select';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Sheet from '$lib/components/ui/sheet';
-	import AddNewProduct from '$lib/components/AddNewProduct.svelte';
+	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
+	import type { Product } from '$lib/types';
+	import type { PageData } from './$types';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { productSchema, type FormProductSchema } from '$lib/schemas/productSchema';
 
-	export let data;
-	let { products, userRole } = data;
+	export let data: PageData;
 
-	let isDialogOpen = false;
-	const closeDialog = () => {
-		isDialogOpen = false;
-	};
+	const userRole: string = data.userRole;
+	const products: Product[] = data.products;
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -55,23 +61,7 @@
 				<Search size={18} />
 			</div>
 		</div>
-		<Dialog.Root bind:open={isDialogOpen}>
-			<Dialog.Trigger class="text-base font-normal">
-				<Button class="w-10 grow-0 border bg-transparent p-0 text-muted-foreground">
-					<Plus />
-				</Button>
-			</Dialog.Trigger>
-			<Dialog.Content>
-				<Dialog.Header class="mb-2.5">
-					<Dialog.Title>Προσθήκη νέου προϊόντος</Dialog.Title>
-				</Dialog.Header>
-				<AddNewProduct />
-				<Dialog.Footer>
-					<Button variant="secondary" on:click={closeDialog}>Ακύρωση</Button>
-					<Button type="submit">Προσθήκη</Button>
-				</Dialog.Footer>
-			</Dialog.Content>
-		</Dialog.Root>
+		<AddNewProduct data={data.form} />
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">

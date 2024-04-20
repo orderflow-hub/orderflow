@@ -2,9 +2,6 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
-// SELECT p.product_id, p.product_name, p.product_code, oi.quantity
-// 			FROM order_items as oi JOIN products as p ON oi.product_id = p.product_id;
-// 			WHERE oi.order_id = ${orderId};
 /*
  * GET: Fetches a single order by ID from the database.
  * Validates the provided ID to ensure it's numeric and exists within the database.

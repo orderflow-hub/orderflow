@@ -5,7 +5,7 @@ export interface Product {
 	product_code: string;
 	is_disabled: boolean;
 	sale_unit: 'kg' | 'piece';
-	qty: number;
+	qty?: number;
 }
 
 export interface Customer {
