@@ -20,3 +20,17 @@ export interface Customer {
 	postal_code: string;
 	is_account_disabled: boolean;
 }
+
+export interface Order {
+	order_id: number;
+	status: 'pending' | 'complete';
+	user_order_number: number;
+	company_name: string;
+	timestamp: string;
+	street_address: string;
+	city: string;
+	postal_code: string;
+	phone_number: string;
+	afm: string;
+	products: Product[];
+}
