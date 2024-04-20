@@ -88,5 +88,3 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	}
 };
-
-// TODO: Implement PATCH and DELETE methods for updating and deleting customers
