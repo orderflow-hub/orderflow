@@ -12,9 +12,10 @@ import { createUser } from '$lib/firebaseAdmin';
 export const GET: RequestHandler = async () => {
 	try {
 		const customers = await sql`
-            SELECT user_id, company_name, email, phone_number
+            SELECT user_id, company_name, email, phone_number, is_account_disabled
             FROM users
-            WHERE role = 'customer';
+            WHERE role = 'customer'
+			ORDER BY is_account_disabled ASC, company_name ASC;
         `;
 		return new Response(JSON.stringify(customers), {
 			headers: { 'Content-Type': 'application/json' },

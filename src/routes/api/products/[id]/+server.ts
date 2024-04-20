@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		const product = await sql`
-            SELECT product_name, product_code, sale_unit, is_available, image_url
+            SELECT product_name, product_code, sale_unit, is_disabled, image_url
 			FROM products
 			WHERE product_id = ${productId}
         `;
@@ -77,7 +77,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	const data = await request.json();
 
 	// Define allowed keys to prevent SQL injection
-	const allowedColumns = ['product_code', 'product_name', 'sale_unit', 'is_available', 'image_url'];
+	const allowedColumns = ['product_code', 'product_name', 'sale_unit', 'is_disabled', 'image_url'];
 
 	const updates = Object.entries(data)
 		.filter(([key]) => allowedColumns.includes(key))

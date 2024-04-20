@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
 	import { Search } from 'lucide-svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
 	import SearchBar from '$lib/shared/SearchBar.svelte';
+	import type { Order } from '$lib/types';
 
-	let userRole = 'customer';
+	export let data;
+	const userRole: string = data.userRole;
+	const orders: Order[] = data.orders;
 
 	const now = new Date();
 	const dateStringInGreek = now.toLocaleDateString('el-GR', {
@@ -32,13 +35,6 @@
 		timestamp: formattedDateTime,
 		status: 'pending'
 	};
-
-	// If the user is a customer, just load different data
-	// The interface stays the same
-	if (userRole === 'customer') {
-		object1.entry_title = '#123';
-		object2.entry_title = '#456';
-	}
 </script>
 
 <div class="sticky top-0 flex items-center bg-white p-2.5">
@@ -53,13 +49,8 @@
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
-		<OrderEntry object={object1} />
-		<OrderEntry object={object2} />
-		<OrderEntry object={object1} />
-		<OrderEntry object={object2} />
-		<OrderEntry object={object2} />
-		<OrderEntry object={object2} />
-		<OrderEntry object={object2} />
-		<OrderEntry object={object2} />
+		{#each orders as order}
+			<OrderEntry {order} {userRole} />
+		{/each}
 	</div>
 </div>
