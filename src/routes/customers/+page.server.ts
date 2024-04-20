@@ -62,25 +62,25 @@ export const actions: Actions = {
 
 		console.log(formData);
 
-		// try {
-		// 	// Create a new customer
-		// 	const response = await fetch('/api/customers', {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify(formData)
-		// 	});
+		try {
+			// Create a new customer
+			const response = await event.fetch('/api/customers', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData)
+			});
 
-		// 	if (!response.ok) {
-		// 		throw new Error('Failed to create customer due to bad response');
-		// 	}
+			if (!response.ok) {
+				throw new Error('Failed to create customer due to bad response');
+			}
 
-		// 	return {
-		// 		form
-		// 	};
-		// } catch (error) {
-		// 	throw new Error(`Failed to create product ${error}`);
-		// }
+			return {
+				form
+			};
+		} catch (error) {
+			throw new Error(`Failed to create customer ${error}`);
+		}
 	}
 };

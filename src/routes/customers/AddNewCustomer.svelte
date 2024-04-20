@@ -31,45 +31,73 @@
 			<Dialog.Title>Προσθήκη νέου πελάτη</Dialog.Title>
 		</Dialog.Header>
 		<form method="POST" action="?/createCustomer" use:enhance>
-			<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
+			<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
 				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="companyName">
 					<Form.Control let:attrs>
-						<Form.Label>Επωνυμία</Form.Label>
+						<Form.Label>Επωνυμία *</Form.Label>
 						<Input {...attrs} bind:value={$formData.companyName} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="customerCode">
+				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="userCode">
 					<Form.Control let:attrs>
-						<Form.Label>Κωδικός πελάτη</Form.Label>
-						<Input {...attrs} bind:value={$formData.customerCode} />
+						<Form.Label>Κωδικός πελάτη *</Form.Label>
+						<Input {...attrs} bind:value={$formData.userCode} />
 					</Form.Control>
+					<Form.FieldErrors />
 				</Form.Field>
 				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="email">
 					<Form.Control let:attrs>
-						<Form.Label>Email</Form.Label>
+						<Form.Label>Email *</Form.Label>
 						<Input {...attrs} bind:value={$formData.email} />
 					</Form.Control>
+					<Form.FieldErrors />
 				</Form.Field>
-				<div class="mb-3 flex gap-3">
+				<div class="flex w-full gap-3">
 					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="phoneNumber">
 						<Form.Control let:attrs>
-							<Form.Label>Τηλέφωνο</Form.Label>
+							<Form.Label>Τηλέφωνο *</Form.Label>
 							<Input {...attrs} bind:value={$formData.phoneNumber} />
 						</Form.Control>
+						<Form.FieldErrors />
 					</Form.Field>
 
 					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="afm">
 						<Form.Control let:attrs>
-							<Form.Label>ΑΦΜ</Form.Label>
+							<Form.Label>ΑΦΜ *</Form.Label>
 							<Input {...attrs} bind:value={$formData.afm} />
 						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
+				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="streetAddress">
+					<Form.Control let:attrs>
+						<Form.Label>Διεύθυνση</Form.Label>
+						<Input {...attrs} bind:value={$formData.streetAddress} />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<div class="flex w-full gap-3">
+					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="city">
+						<Form.Control let:attrs>
+							<Form.Label>Πόλη</Form.Label>
+							<Input {...attrs} bind:value={$formData.city} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="postalCode">
+						<Form.Control let:attrs>
+							<Form.Label>Τ.Κ.</Form.Label>
+							<Input {...attrs} bind:value={$formData.postalCode} />
+						</Form.Control>
+						<Form.FieldErrors />
 					</Form.Field>
 				</div>
 			</div>
 			<Dialog.Footer>
 				<Button variant="secondary" on:click={() => (isDialogOpen = false)}>Ακύρωση</Button>
-				<Button type="submit">Προσθήκη</Button>
+				<Button type="submit" on:click={() => console.log($formData.afm)}>Προσθήκη</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

@@ -37,6 +37,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
 
 	// TODO: Validate the request body to ensure all required fields are present and call the firebase function to create a new user
+	// TODO: Call function to create a new user in Firebase Auth and add it to the data (here or in the customers/+page.server.ts file)
 
 	try {
 		const result = await sql`
