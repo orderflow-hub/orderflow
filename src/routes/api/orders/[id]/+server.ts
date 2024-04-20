@@ -45,7 +45,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		// Fetches the related products for the order
 		const products = await sql`
-            SELECT p.product_id, p.product_name, p.product_code, oi.quantity
+            SELECT p.product_id, oi.snapshot_product_name as product_name, oi.snapshot_product_code as product_code, oi.snapshot_sale_unit as sale_unit, oi.quantity as qty
 			FROM order_items as oi JOIN products as p ON oi.product_id = p.product_id
 			WHERE oi.order_id = ${orderId};
         `;
