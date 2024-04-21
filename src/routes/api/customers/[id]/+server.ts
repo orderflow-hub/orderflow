@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		const order = await sql`
-            SELECT company_name, user_code, email, phone_number, afm, street_address, city, postal_code
+            SELECT user_id, company_name, user_code, email, phone_number, afm, street_address, city, postal_code, is_account_disabled
             FROM users
             WHERE user_id = ${id};
         `;
@@ -99,7 +99,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 
 		const result = await sql`
             UPDATE users
-            SET company_name = ${data.company_name}, user_code = ${data.user_code}, email = ${data.email}, phone_number = ${data.phone_number}, afm = ${data.afm}, street_address = ${data.street_address}, city = ${data.city}, postal_code = ${data.postal_code}
+            SET company_name = ${data.company_name}, user_code = ${data.user_code}, email = ${data.email}, phone_number = ${data.phone_number}, afm = ${data.afm}, street_address = ${data.street_address}, city = ${data.city}, postal_code = ${data.postal_code}, is_account_disabled = ${data.is_account_disabled}
             WHERE user_id = ${id}
             RETURNING *;
         `;
