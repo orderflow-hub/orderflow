@@ -2,9 +2,14 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import type { Order } from '$lib/types';
+	import { returnToHome } from '../../stores/orderNavigationStore';
 
 	export let order: Order;
 	export let userRole: string;
+
+	function navigateToOrderDetails() {
+		returnToHome.set(window.location.pathname === '/');
+	}
 
 	const formattedDateTime = new Date(order.timestamp)
 		.toLocaleString('el-GR', {
@@ -19,7 +24,11 @@
 </script>
 
 <Card.Root class="flex rounded-none border-0">
-	<a href={`/orders/${order.order_id}`} class="flex w-full flex-col">
+	<a
+		href={`/orders/${order.order_id}`}
+		on:click={navigateToOrderDetails}
+		class="flex w-full flex-col"
+	>
 		<Card.Header class="px-3 pt-3 ">
 			{#if userRole === 'admin'}
 				<Card.Title class="text-lg font-normal">{order.company_name} #{order.order_id}</Card.Title>
