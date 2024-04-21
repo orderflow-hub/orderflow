@@ -27,6 +27,12 @@
 	const userRole: string = data.userRole;
 	const products: Product[] = data.products;
 
+	let searchQuery = '';
+	// Reactive statement to filter products based on search query
+	$: filteredProducts = products.filter((product) =>
+		product.product_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
 		isCartSheetOpen = false;
@@ -54,7 +60,12 @@
 {#if userRole === 'admin'}
 	<div class="sticky top-0 z-10 flex items-center gap-2.5 bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
-			<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+			<Input
+				class="pl-10 text-base"
+				placeholder="Αναζήτηση"
+				type="search"
+				bind:value={searchQuery}
+			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 			>
@@ -65,7 +76,7 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			{#each products as product}
+			{#each filteredProducts as product}
 				<ProductEntryAdmin {product} />
 			{/each}
 		</div>
@@ -73,7 +84,12 @@
 {:else if userRole === 'customer'}
 	<div class="sticky top-0 z-10 flex items-center bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
-			<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+			<Input
+				class="pl-10 text-base"
+				placeholder="Αναζήτηση"
+				type="search"
+				bind:value={searchQuery}
+			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 			>
@@ -87,7 +103,7 @@
 		})}
 	>
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-			{#each products as product}
+			{#each filteredProducts as product}
 				<ProductEntryCustomer {product} />
 			{/each}
 		</div>

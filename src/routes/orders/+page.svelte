@@ -9,37 +9,16 @@
 	const userRole: string = data.userRole;
 	const orders: Order[] = data.orders;
 
-	const now = new Date();
-	const dateStringInGreek = now.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-
-	const timeString = now.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
-
-	let object1 = {
-		entry_title: 'Ταβέρνα - Τα 12 προβατάκια',
-		timestamp: formattedDateTime,
-		status: 'complete'
-	};
-
-	let object2 = {
-		entry_title: 'Εστιατόριο - Τρώγοντας έρχεται η όρεξη',
-		timestamp: formattedDateTime,
-		status: 'pending'
-	};
+	let searchQuery = '';
+	// Reactive statement to filter orders based on search query
+	$: filteredOrders = orders.filter((order) =>
+		order.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 </script>
 
 <div class="sticky top-0 flex items-center bg-white p-2.5">
 	<div class="relative flex flex-grow items-center">
-		<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+		<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" bind:value={searchQuery} />
 		<div
 			class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 		>
@@ -49,7 +28,7 @@
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
-		{#each orders as order}
+		{#each filteredOrders as order}
 			<OrderEntry {order} {userRole} />
 		{/each}
 	</div>

@@ -8,11 +8,17 @@
 
 	export let data: PageData;
 	const customers: Customer[] = data.customers;
+
+	let searchQuery = '';
+	// Reactive statement to filter customers based on search query
+	$: filteredCustomers = customers.filter((customer) =>
+		customer.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 </script>
 
 <div class="sticky top-0 flex items-center gap-2.5 bg-white p-2.5">
 	<div class="relative flex flex-grow items-center">
-		<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+		<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" bind:value={searchQuery} />
 		<div
 			class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 		>
@@ -23,7 +29,7 @@
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
-		{#each customers as customer}
+		{#each filteredCustomers as customer}
 			<CustomerEntry {customer} />
 		{/each}
 	</div>
