@@ -6,20 +6,16 @@
 	export let order: Order;
 	export let userRole: string;
 
-	const orderDate = new Date(order.timestamp);
-	const dateStringInGreek = orderDate.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-
-	const timeString = orderDate.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
+	const formattedDateTime = new Date(order.timestamp)
+		.toLocaleString('el-GR', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		})
+		.replace(',', ' •');
 </script>
 
 <Card.Root class="flex rounded-none border-0">

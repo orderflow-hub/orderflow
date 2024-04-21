@@ -8,33 +8,6 @@
 	export let data;
 	const userRole: string = data.userRole;
 	const orders: Order[] = data.orders;
-
-	const now = new Date();
-	const dateStringInGreek = now.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-
-	const timeString = now.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
-
-	let object1 = {
-		entry_title: 'Ταβέρνα - Τα 12 προβατάκια',
-		timestamp: formattedDateTime,
-		status: 'complete'
-	};
-
-	let object2 = {
-		entry_title: 'Εστιατόριο - Τρώγοντας έρχεται η όρεξη',
-		timestamp: formattedDateTime,
-		status: 'pending'
-	};
 </script>
 
 <div class="sticky top-0 flex items-center bg-white p-2.5">
