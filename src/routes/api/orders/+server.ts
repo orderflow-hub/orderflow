@@ -25,7 +25,6 @@ export const GET: RequestHandler = async ({ url }) => {
 			ORDER BY o.status DESC, o.timestamp DESC
 			LIMIT ${limit} OFFSET ${offset};
 		`;
-		console.log('Request sent to /api/orders');
 		return new Response(JSON.stringify(orders), {
 			headers: { 'Content-Type': 'application/json' },
 			status: 200
