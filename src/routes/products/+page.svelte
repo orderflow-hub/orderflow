@@ -18,20 +18,45 @@
 	import { toast } from 'svelte-sonner';
 	import type { Product } from '$lib/types';
 	import type { PageData } from './$types';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { productSchema, type FormProductSchema } from '$lib/schemas/productSchema';
+	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
+	import { writable } from 'svelte/store';
 
 	export let data: PageData;
 
 	const userRole: string = data.userRole;
-	const products: Product[] = data.products;
+	// const products: Product[] = data.products;
 
-	let searchQuery = '';
-	// Reactive statement to filter products based on search query
-	$: filteredProducts = products.filter((product) =>
-		product.product_name.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	let products: Product[] = [];
+	let limit = 5;
+	let offset = 0;
+	let hasMore = true;
+	let searchQuery = writable('');
+
+	async function loadProducts(reset = false) {
+		if (reset) {
+			products = [];
+			offset = 0;
+		}
+		const query = $searchQuery.trim();
+		const response = await fetch(
+			`/api/products?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
+			{
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+		const newProducts = await response.json();
+		if (newProducts.length > 0) {
+			hasMore = true;
+			offset += newProducts.length;
+		} else {
+			hasMore = false;
+		}
+		products = [...products, ...newProducts];
+		console.log('load more');
+	}
+
+	$: $searchQuery, loadProducts(true);
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -64,7 +89,7 @@
 				class="pl-10 text-base"
 				placeholder="Αναζήτηση"
 				type="search"
-				bind:value={searchQuery}
+				bind:value={$searchQuery}
 			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
@@ -76,9 +101,10 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			{#each filteredProducts as product}
+			{#each products as product}
 				<ProductEntryAdmin {product} />
 			{/each}
+			<InfiniteScroll {hasMore} on:loadMore={() => loadProducts()} />
 		</div>
 	</div>
 {:else if userRole === 'customer'}
@@ -103,9 +129,10 @@
 		})}
 	>
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-			{#each filteredProducts as product}
+			{#each products as product}
 				<ProductEntryCustomer {product} />
 			{/each}
+			<InfiniteScroll {hasMore} on:loadMore={() => loadProducts()} />
 		</div>
 	</div>
 	{#if $itemCount > 0}

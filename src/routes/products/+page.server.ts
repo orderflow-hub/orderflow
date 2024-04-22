@@ -22,25 +22,29 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 		};
 	}
 
-	// Fetch products from the database
-	const response = await fetch('/api/products', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	// // Fetch products from the database
+	// const response = await fetch('/api/products', {
+	// 	method: 'GET',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	}
+	// });
 
-	if (!response.ok) {
-		return {
-			status: response.status,
-			error: new Error('Failed to fetch products')
-		};
-	}
+	// if (!response.ok) {
+	// 	return {
+	// 		status: response.status,
+	// 		error: new Error('Failed to fetch products')
+	// 	};
+	// }
 
-	const products = await response.json();
+	// const products = await response.json();
+
+	// return {
+	// 	products,
+	// 	form: await superValidate(zod(productSchema))
+	// };
 
 	return {
-		products,
 		form: await superValidate(zod(productSchema))
 	};
 };
