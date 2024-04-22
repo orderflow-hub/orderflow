@@ -17,24 +17,28 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 		};
 	}
 
-	// Fetch orders from the database
-	const response = await fetch('/api/orders?limit=10', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	// // Previous implementation without search functionality
+	// const limit = 5;
+	// const offset = 0;
 
-	if (!response.ok) {
-		return {
-			status: response.status,
-			error: new Error('Failed to fetch orders')
-		};
-	}
+	// // Fetch orders from the database
+	// const response = await fetch(`/api/orders?limit=${limit}&offset=${offset}`, {
+	// 	method: 'GET',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	}
+	// });
 
-	const orders = await response.json();
+	// if (!response.ok) {
+	// 	return {
+	// 		status: response.status,
+	// 		error: new Error('Failed to fetch orders')
+	// 	};
+	// }
 
-	return {
-		orders
-	};
+	// const orders = await response.json();
+
+	// return {
+	// 	orders
+	// };
 };
