@@ -27,7 +27,7 @@
 	// const products: Product[] = data.products;
 
 	let products: Product[] = [];
-	let limit = 5;
+	let limit = 6;
 	let offset = 0;
 	let hasMore = true;
 	let searchQuery = writable('');

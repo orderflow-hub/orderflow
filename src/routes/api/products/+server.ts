@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	} else {
 		// Fetch all products
 
-		const limit = Number(url.searchParams.get('limit')) || 5;
+		const limit = Number(url.searchParams.get('limit')) || 6;
 		const offset = Number(url.searchParams.get('offset')) || 0;
 		const searchQuery = url.searchParams.get('search') || '';
 		try {

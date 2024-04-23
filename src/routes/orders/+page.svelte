@@ -21,7 +21,7 @@
 	let orders: Order[] = [];
 	let isLoading = writable(false);
 	let hasMore = true;
-	let limit = 5;
+	let limit = 6;
 	let offset = 0;
 
 	let debounceTimer: number | NodeJS.Timeout;
