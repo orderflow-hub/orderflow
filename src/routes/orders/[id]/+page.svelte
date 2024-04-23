@@ -6,6 +6,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { returnToHome } from '../../../stores/orderNavigationStore';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -14,6 +15,11 @@
 	if (order === undefined) {
 		throw new Error('Order not found');
 	}
+
+	let goHome: boolean;
+	returnToHome.subscribe((value) => {
+		goHome = value;
+	});
 
 	// Handle the confirmation dialog for deleting the order
 	let isDialogOpen = false;
@@ -36,26 +42,22 @@
 		}
 	}
 
-	const orderDate = new Date(order.timestamp);
-	const dateStringInGreek = orderDate.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-
-	const timeString = orderDate.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
+	const formattedDateTime = new Date(order.timestamp)
+		.toLocaleString('el-GR', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		})
+		.replace(',', ' •');
 </script>
 
 <div class="flex flex-col gap-2.5 p-2.5">
 	{#if order}
 		<div class="flex w-full items-center gap-3">
-			<a href="/orders" class="p-1">
+			<a href={goHome ? '/' : '/orders'} class="p-1">
 				<ArrowLeft />
 			</a>
 			<div class="flex shrink grow flex-col items-start">
