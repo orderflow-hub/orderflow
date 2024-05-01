@@ -43,24 +43,24 @@
 		<form method="POST" action="?/createProduct" use:enhance>
 			<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
 				<Image class="rounded-md border" strokeWidth={1} size={80} />
-				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="productName">
+				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productName">
 					<Form.Control let:attrs>
-						<Form.Label>Όνομα προϊόντος</Form.Label>
+						<Form.Label>Όνομα προϊόντος *</Form.Label>
 						<Input {...attrs} bind:value={$formData.productName} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 				<div class="mb-3 flex w-full gap-3">
-					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="productCode">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productCode">
 						<Form.Control let:attrs>
-							<Form.Label>Κωδικός προϊόντος</Form.Label>
+							<Form.Label>Κωδικός προϊόντος *</Form.Label>
 							<Input {...attrs} bind:value={$formData.productCode} />
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="saleUnit">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnit">
 						<Form.Control let:attrs>
-							<Form.Label>Μονάδα μέτρησης</Form.Label>
+							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
 								bind:selected={selectedSaleUnit}
 								onSelectedChange={(s) => {
@@ -79,23 +79,26 @@
 						</Form.Control>
 					</Form.Field>
 				</div>
-				<div class="items-top mb-3 flex space-x-2">
-					<Checkbox
-						id="isDisabled"
-						bind:checked={$formData.isDisabled}
-						class="border-input data-[state=checked]:bg-destructive"
-					/>
-					<Label
-						for="isDisabled"
-						class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-					>
-						<span>Το προϊόν δεν είναι διαθέσιμο</span>
-						<p class="text-xs text-muted-foreground">
-							Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε
-							παραγγελίες τους.
-						</p>
-					</Label>
-				</div>
+				<Form.Field {form} name="isDisabled" class="items-top mb-6 flex space-x-2">
+					<Form.Control let:attrs>
+						<Checkbox
+							{...attrs}
+							bind:checked={$formData.isDisabled}
+							class="mt-2 border-input data-[state=checked]:bg-destructive"
+							id="is-product-disabled"
+						/>
+						<Form.Label
+							for="is-product-disabled"
+							class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							>Το προϊόν δεν είναι διαθέσιμο
+							<Form.Description class="text-xs text-muted-foreground">
+								Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε
+								παραγγελίες τους.
+							</Form.Description>
+						</Form.Label>
+						<input name={attrs.name} value={$formData.isDisabled} hidden />
+					</Form.Control>
+				</Form.Field>
 			</div>
 			<Dialog.Footer>
 				<Button variant="secondary" type="button" on:click={() => (isDialogOpen = false)}
