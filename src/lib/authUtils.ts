@@ -13,8 +13,6 @@ export const getFirebaseUidFromCookie = async (request: Request): Promise<string
 	const cookies = parse(request.headers.get('cookie') ?? '');
 	const idToken = cookies.idToken;
 
-	// let userId: number | undefined = undefined;
-
 	if (idToken) {
 		try {
 			// Verify the ID token via firebase-admin to ensure it's valid and has not been tampered with or expired
@@ -33,7 +31,7 @@ export const getFirebaseUidFromCookie = async (request: Request): Promise<string
 
 /**
  * Gets the `user_id` of the user associated with the Firebase UID.
- * @param firebaseUid
+ * @param request The request object from which the Firebase UID is extracted
  * @returns The `user_id` used to reference the user in the database
  */
 export const getUserId = async (request: Request): Promise<number | undefined> => {
