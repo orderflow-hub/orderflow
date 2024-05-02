@@ -6,6 +6,7 @@
 	import type { Product } from '$lib/types';
 	import QuantityInput from '$lib/shared/QuantityInput.svelte';
 	import { cart } from '../../stores/cartStore';
+	import { Image } from 'lucide-svelte';
 
 	export let product: Product;
 
@@ -28,13 +29,19 @@
 <Card.Root class="flex w-auto flex-col justify-between p-2">
 	<div class="flex flex-col gap-3">
 		<Card.Content class="p-0">
-			<img
-				class={cn('aspect-square w-full object-cover', {
-					grayscale: product.is_disabled
-				})}
-				src={product.image_url}
-				alt="Εικόνα προϊόντος"
-			/>
+			{#if product.image_url}
+				<img
+					class={cn('aspect-square h-full object-cover', {
+						grayscale: product.is_disabled
+					})}
+					src={product.image_url}
+					alt="Εικόνα προϊόντος"
+				/>
+			{:else}
+				<div class="flex h-full w-full items-center justify-center">
+					<Image strokeWidth={0.6} size={158.2} />
+				</div>
+			{/if}
 		</Card.Content>
 		<Card.Header class="space-y-0 p-0">
 			<Card.Title
