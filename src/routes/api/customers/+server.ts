@@ -19,7 +19,8 @@ export const GET: RequestHandler = async ({ url }) => {
             SELECT user_id, company_name, email, phone_number, is_account_disabled
             FROM users
             WHERE role = 'customer' AND LOWER(company_name) LIKE '%' || LOWER(${searchQuery}) || '%'
-			ORDER BY is_account_disabled ASC, company_name ASC;
+			ORDER BY is_account_disabled ASC, company_name ASC
+			LIMIT ${limit} OFFSET ${offset};
         `;
 		return new Response(JSON.stringify(customers), {
 			headers: { 'Content-Type': 'application/json' },

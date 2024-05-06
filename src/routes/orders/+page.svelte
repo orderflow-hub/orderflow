@@ -2,17 +2,12 @@
 	import { Search } from 'lucide-svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
-	import SearchBar from '$lib/shared/SearchBar.svelte';
 	import type { Order } from '$lib/types';
 	import { onMount } from 'svelte';
 	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
-	import { toast } from 'svelte-sonner';
 	import { writable, derived } from 'svelte/store';
 	import { Moon } from 'svelte-loading-spinners';
-
-	// TODO
-	/* Implement throttling/debouncing for search input to reduce the number of API calls made while typing. This can be done in Svelte using a timeout in the reactive statement $:. */
-	/* Implement a loading spinner while fetching data from the API, especially after a new search query is entered and while waiting for data when scrolling */
+	import debounce from 'debounce';
 
 	export let data;
 	const userRole: string = data.userRole;
@@ -24,16 +19,6 @@
 	let limit = 6;
 	let offset = 0;
 
-	let debounceTimer: number | NodeJS.Timeout;
-	const debounceDelay = 500; // milliseconds
-
-	function debounce(func: () => void, delay: number) {
-		return (...args: any) => {
-			clearTimeout(debounceTimer);
-			debounceTimer = setTimeout(() => func(...args), delay) as unknown as number;
-		};
-	}
-
 	const loadOrders = async (query = '', reset = false) => {
 		if (reset) {
 			orders = [];
@@ -42,7 +27,7 @@
 		}
 		isLoading.set(true);
 		const response = await fetch(
-			`/api/orders?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
+			`http://localhost:5173/api/orders?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
 			{
 				method: 'GET',
 				headers: { 'Content-Type': 'application/json' }
@@ -63,42 +48,14 @@
 		isLoading.set(false);
 	};
 
-	const debouncedLoadOrders = debounce(loadOrders, debounceDelay);
+	// Debounce the search query input to prevent excessive API calls
+	const debouncedLoadOrders = debounce((query) => {
+		loadOrders(query, true);
+	}, 500);
 
-	// Reactively load orders when search query changes
-	$: $searchQuery, debouncedLoadOrders($searchQuery, true);
-
-	// let orders: Order[] = [];
-	// let limit = 5;
-	// let offset = 0;
-	// let hasMore = true;
-	// let searchQuery = writable('');
-
-	// async function loadOrders(reset = false) {
-	// 	if (reset) {
-	// 		orders = [];
-	// 		offset = 0;
-	// 	}
-	// 	const query = $searchQuery.trim();
-	// 	const response = await fetch(
-	// 		`/api/orders?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
-	// 		{
-	// 			method: 'GET',
-	// 			headers: { 'Content-Type': 'application/json' }
-	// 		}
-	// 	);
-	// 	const newOrders = await response.json();
-	// 	if (newOrders.length > 0) {
-	// 		hasMore = true;
-	// 		offset += newOrders.length;
-	// 	} else {
-	// 		hasMore = false;
-	// 	}
-	// 	orders = [...orders, ...newOrders];
-	// 	console.log('load more');
-	// }
-
-	// $: $searchQuery, loadOrders(true);
+	searchQuery.subscribe(($searchQuery) => {
+		debouncedLoadOrders($searchQuery.trim());
+	});
 </script>
 
 <div class="sticky top-0 flex items-center bg-white p-2.5">
@@ -122,10 +79,5 @@
 			<OrderEntry {order} {userRole} />
 		{/each}
 		<InfiniteScroll {hasMore} on:loadMore={() => loadOrders()} />
-		<!-- {#if isLoading}
-			<Moon size="60" color="#16a34a" unit="px" duration="1s" />
-		{:else if hasMore}
-			<InfiniteScroll {hasMore} on:loadMore={() => loadOrders()} />
-		{/if} -->
 	</div>
 </div>

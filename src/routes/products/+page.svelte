@@ -3,28 +3,25 @@
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import CartEntry from '$lib/shared/CartEntry.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Image, Plus, Search, ArrowRight } from 'lucide-svelte';
+	import { Search, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import * as Form from '$lib/components/ui/form';
-	import * as Select from '$lib/components/ui/select';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
-	import type { Product } from '$lib/types';
 	import type { PageData } from './$types';
 	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
 	import { writable } from 'svelte/store';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import type { Product } from '$lib/types';
+	import debounce from 'debounce';
 
 	export let data: PageData;
 
 	const userRole: string = data.userRole;
-	// const products: Product[] = data.products;
 
 	let products: Product[] = [];
 	let limit = 6;
@@ -39,7 +36,7 @@
 		}
 		const query = $searchQuery.trim();
 		const response = await fetch(
-			`/api/products?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
+			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
 			{
 				method: 'GET',
 				headers: { 'Content-Type': 'application/json' }
@@ -53,10 +50,18 @@
 			hasMore = false;
 		}
 		products = [...products, ...newProducts];
-		console.log('load more');
 	}
 
-	$: $searchQuery, loadProducts(true);
+	// $: $searchQuery, loadProducts(true);
+
+	// Debounce the search query input to prevent excessive API calls
+	const debouncedLoadProducts = debounce((query) => {
+		loadProducts(query);
+	}, 500);
+
+	searchQuery.subscribe(($searchQuery) => {
+		debouncedLoadProducts($searchQuery.trim());
+	});
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -104,6 +109,10 @@
 			{#each products as product}
 				<ProductEntryAdmin {product} />
 			{/each}
+			<!-- <footer bind:this={footer}></footer>
+			{#if $loading}
+				<div>Loading...</div>
+			{/if} -->
 			<InfiniteScroll {hasMore} on:loadMore={() => loadProducts()} />
 		</div>
 	</div>
@@ -172,3 +181,10 @@
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}
+
+<!-- <style>
+	footer {
+		height: 20px; /* Ensure it has size to be observed */
+	}
+	/* Add additional styles as needed */
+</style> -->

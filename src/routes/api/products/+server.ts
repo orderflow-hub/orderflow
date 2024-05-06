@@ -45,7 +45,8 @@ export const GET: RequestHandler = async ({ url }) => {
 				SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
 				FROM products
 				WHERE LOWER(product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
-				ORDER BY is_disabled ASC, product_name ASC;
+				ORDER BY is_disabled ASC, product_name ASC
+				LIMIT ${limit} OFFSET ${offset};
 			`;
 
 			return new Response(JSON.stringify(products), {
