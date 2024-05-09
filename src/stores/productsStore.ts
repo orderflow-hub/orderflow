@@ -1,0 +1,74 @@
+import { writable } from 'svelte/store';
+import type { Product } from '$lib/types';
+import type { Readable } from 'svelte/store';
+
+interface ProductsStore extends Readable<Product[]> {
+	hasMore: boolean;
+	loading: boolean;
+	resetProducts: () => void;
+	loadInitialProducts: () => void;
+	loadMoreProducts: () => void;
+}
+
+const createProductsStore = (): ProductsStore => {
+	const { subscribe, set, update } = writable<Product[]>([]);
+	let limit = 6;
+	let offset = 0;
+	let hasMore = true;
+	let loading = false;
+	let initialized = false;
+	// let searchQuery = '';
+
+	const fetchProducts = async (reset = false, searchQuery = '') => {
+		// Prevent multiple requests at the same time
+		if (loading) return;
+		loading = true;
+		if (reset) {
+			set([]);
+			offset = 0;
+			initialized = false;
+		}
+		const query = searchQuery.trim();
+		const response = await fetch(
+			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${query}`,
+			{
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+		const newProducts = await response.json();
+		if (newProducts.length > 0) {
+			hasMore = true;
+			offset += newProducts.length;
+		} else {
+			hasMore = false;
+		}
+		update((current) => [...current, ...newProducts]);
+		loading = false;
+		console.log('Products fetched');
+	};
+
+	return {
+		hasMore: hasMore,
+		loading: loading,
+		subscribe,
+		loadInitialProducts: () => {
+			if (!initialized) {
+				fetchProducts();
+				initialized = true;
+			}
+		},
+		loadMoreProducts: () => {
+			if (hasMore) {
+				fetchProducts();
+			}
+		},
+		resetProducts: () => {
+			set([]);
+		}
+	};
+};
+
+const productsStore = createProductsStore();
+
+export default productsStore;

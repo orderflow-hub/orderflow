@@ -12,56 +12,44 @@
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
-	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
 	import type { Product } from '$lib/types';
 	import debounce from 'debounce';
+	import productsStore from '../../stores/productsStore';
 
 	export let data: PageData;
 
 	const userRole: string = data.userRole;
 
 	let products: Product[] = [];
-	let limit = 6;
-	let offset = 0;
-	let hasMore = true;
 	let searchQuery = writable('');
+	let intersectionRef: HTMLElement | null = null;
 
-	async function loadProducts(reset = false) {
-		if (reset) {
-			products = [];
-			offset = 0;
-		}
-		const query = $searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
+	onMount(() => {
+		productsStore.loadInitialProducts();
+	});
+
+	$: if (intersectionRef) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					productsStore.loadMoreProducts();
+				}
+			},
+			{ threshold: 1 }
 		);
-		const newProducts = await response.json();
-		if (newProducts.length > 0) {
-			hasMore = true;
-			offset += newProducts.length;
-		} else {
-			hasMore = false;
-		}
-		products = [...products, ...newProducts];
+		observer.observe(intersectionRef);
 	}
 
-	// $: $searchQuery, loadProducts(true);
-
 	// Debounce the search query input to prevent excessive API calls
-	const debouncedLoadProducts = debounce((query) => {
-		loadProducts(query);
-	}, 500);
+	// const debouncedLoadProducts = debounce((query) => {
+	// 	loadProducts(query);
+	// }, 300);
 
-	searchQuery.subscribe(($searchQuery) => {
-		debouncedLoadProducts($searchQuery.trim());
-	});
+	// searchQuery.subscribe(($searchQuery) => {
+	// 	debouncedLoadProducts($searchQuery.trim());
+	// });
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -106,14 +94,17 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			{#each products as product}
+			{#each $productsStore as product}
 				<ProductEntryAdmin {product} />
 			{/each}
-			<!-- <footer bind:this={footer}></footer>
-			{#if $loading}
+			{#if productsStore.loading}
+				<!-- Loading Indicator -->
 				<div>Loading...</div>
-			{/if} -->
-			<InfiniteScroll {hasMore} on:loadMore={() => loadProducts()} />
+			{/if}
+			{#if productsStore.hasMore}
+				<!-- Intersection Observer Target -->
+				<div bind:this={intersectionRef}></div>
+			{/if}
 		</div>
 	</div>
 {:else if userRole === 'customer'}
@@ -141,7 +132,14 @@
 			{#each products as product}
 				<ProductEntryCustomer {product} />
 			{/each}
-			<InfiniteScroll {hasMore} on:loadMore={() => loadProducts()} />
+			{#if productsStore.loading}
+				<!-- Loading Indicator -->
+				<div>Loading...</div>
+			{/if}
+			{#if productsStore.hasMore}
+				<!-- Intersection Observer Target -->
+				<div bind:this={intersectionRef}></div>
+			{/if}
 		</div>
 	</div>
 	{#if $itemCount > 0}
