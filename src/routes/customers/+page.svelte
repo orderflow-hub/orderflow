@@ -6,54 +6,31 @@
 	import type { Customer } from '$lib/types';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
-	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
-	import debounce from 'debounce';
+	import { onMount } from 'svelte';
+	import customersStore from '../../stores/customersStore';
 
 	export let data: PageData;
 
-	let customers: Customer[] = [];
 	let searchQuery = writable('');
-	let hasMore = true;
-	let limit = 6;
-	let offset = 0;
+	let intersectionRef: HTMLElement | null = null;
 
-	async function loadCustomers(reset = false) {
-		if (reset) {
-			customers = [];
-			offset = 0;
-		}
-		const query = $searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/customers?limit=${limit}&offset=${offset}&search=${encodeURIComponent(query)}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
+	onMount(() => {
+		customersStore.loadInitialCustomers();
+	});
+
+	$: if (intersectionRef) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					customersStore.loadMoreCustomers();
+				}
+			},
+			{ threshold: 1 }
 		);
-		if (response.ok) {
-			const newCustomers = await response.json();
-			if (newCustomers.length > 0) {
-				customers = reset ? newCustomers : [...customers, ...newCustomers];
-				offset += newCustomers.length;
-			} else {
-				hasMore = false;
-			}
-		} else {
-			console.error('Failed to load customers');
-			hasMore = false;
-		}
+		observer.observe(intersectionRef);
 	}
 
-	// $: $searchQuery, loadCustomers(true);
-
-	// Debounce the search query input to prevent excessive API calls
-	const debouncedLoadCustomers = debounce((query) => {
-		loadCustomers(query);
-	}, 500);
-
-	searchQuery.subscribe(($searchQuery) => {
-		debouncedLoadCustomers($searchQuery.trim());
-	});
+	$: $searchQuery, customersStore.searchCustomers($searchQuery.trim());
 </script>
 
 <div class="sticky top-0 flex items-center gap-2.5 bg-white p-2.5">
@@ -74,9 +51,10 @@
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
-		{#each customers as customer}
+		{#each $customersStore as customer}
 			<CustomerEntry {customer} />
 		{/each}
-		<InfiniteScroll {hasMore} on:loadMore={() => loadCustomers()} />
+		<!-- Intersection Observer Target -->
+		<div bind:this={intersectionRef}></div>
 	</div>
 </div>

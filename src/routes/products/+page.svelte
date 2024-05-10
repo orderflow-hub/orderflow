@@ -42,14 +42,7 @@
 		observer.observe(intersectionRef);
 	}
 
-	// Debounce the search query input to prevent excessive API calls
-	// const debouncedLoadProducts = debounce((query) => {
-	// 	loadProducts(query);
-	// }, 300);
-
-	// searchQuery.subscribe(($searchQuery) => {
-	// 	debouncedLoadProducts($searchQuery.trim());
-	// });
+	$: $searchQuery, productsStore.searchProducts($searchQuery.trim());
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -129,7 +122,7 @@
 		})}
 	>
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-			{#each products as product}
+			{#each $productsStore as product}
 				<ProductEntryCustomer {product} />
 			{/each}
 			{#if productsStore.loading}

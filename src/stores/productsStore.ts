@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Product } from '$lib/types';
 import type { Readable } from 'svelte/store';
+import debounce from 'debounce';
 
 interface ProductsStore extends Readable<Product[]> {
 	hasMore: boolean;
@@ -8,6 +9,7 @@ interface ProductsStore extends Readable<Product[]> {
 	resetProducts: () => void;
 	loadInitialProducts: () => void;
 	loadMoreProducts: () => void;
+	searchProducts: (searchQuery: string) => void;
 }
 
 const createProductsStore = (): ProductsStore => {
@@ -17,7 +19,7 @@ const createProductsStore = (): ProductsStore => {
 	let hasMore = true;
 	let loading = false;
 	let initialized = false;
-	// let searchQuery = '';
+	let currentQuery = '';
 
 	const fetchProducts = async (reset = false, searchQuery = '') => {
 		// Prevent multiple requests at the same time
@@ -45,8 +47,12 @@ const createProductsStore = (): ProductsStore => {
 		}
 		update((current) => [...current, ...newProducts]);
 		loading = false;
-		console.log('Products fetched');
+		// console.log('fetchProducts', newProducts);
 	};
+
+	const debouncedSearch = debounce((query: string) => {
+		fetchProducts(true, query);
+	}, 300);
 
 	return {
 		hasMore: hasMore,
@@ -60,8 +66,12 @@ const createProductsStore = (): ProductsStore => {
 		},
 		loadMoreProducts: () => {
 			if (hasMore) {
-				fetchProducts();
+				fetchProducts(false, currentQuery);
 			}
+		},
+		searchProducts: (searchQuery: string) => {
+			currentQuery = searchQuery;
+			debouncedSearch(searchQuery);
 		},
 		resetProducts: () => {
 			set([]);
