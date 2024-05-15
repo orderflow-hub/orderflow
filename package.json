@@ -38,6 +38,7 @@
 	"type": "module",
 	"dependencies": {
 		"@fontsource-variable/manrope": "^5.0.19",
+		"@types/pdfmake": "^0.2.9",
 		"bits-ui": "^0.21.2",
 		"clsx": "^2.1.0",
 		"firebase": "^10.6.0",
