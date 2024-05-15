@@ -9,6 +9,7 @@
 	import { returnToHome } from '../../../stores/orderNavigationStore';
 	import pdfMake from 'pdfmake/build/pdfmake';
 	import pdfFonts from 'pdfmake/build/vfs_fonts';
+	import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -58,16 +59,16 @@
 	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 	const handlePrint = () => {
-		const docDefinition = {
+		const docDefinition: TDocumentDefinitions = {
 			pageSize: { width: 230, height: 'auto' },
 			content: [
-				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' },
-				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' },
-				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' },
-				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' },
-				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' },
-				{ text: '', margin: [0, 0, 0, 10] },
-				{ text: 'Προϊόντα', style: 'sectionHeader' },
+				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
+				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
+				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' } as Content,
+				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' } as Content,
+				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' } as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
 				{
 					table: {
 						widths: ['*', 'auto', 'auto'],
@@ -78,9 +79,9 @@
 								{ text: 'Μονάδα', style: 'tableHeader' }
 							],
 							...order.products.map((product) => [
-								product.product_name,
-								product.qty,
-								product.sale_unit
+								{ text: product.product_name } as Content,
+								{ text: product.qty?.toString() } as Content,
+								{ text: product.sale_unit } as Content
 							])
 						]
 					},
@@ -88,10 +89,10 @@
 						fillColor: function (rowIndex: number, node: any, columnIndex: any) {
 							return rowIndex % 2 === 0 ? '#F5F5F5' : null;
 						},
-						hLineColor: function (i: number, node: { table: { body: string | any[] } }) {
+						hLineColor: function (i: number, node: { table: { body: any[] } }) {
 							return i === 0 || i === node.table.body.length ? 'black' : 'gray';
 						},
-						vLineColor: function (i: number, node: { table: { widths: string | any[] } }) {
+						vLineColor: function (i: number, node: { table: { widths: any[] } }) {
 							return i === 0 || i === node.table.widths.length ? 'black' : 'gray';
 						},
 						paddingLeft: function (i: number) {
@@ -107,7 +108,7 @@
 							return 2;
 						}
 					}
-				}
+				} as Content
 			],
 			styles: {
 				sectionHeader: {
@@ -126,7 +127,7 @@
 					alignment: 'center',
 					fillColor: '#CCCCCC'
 				}
-			},
+			} as StyleDictionary,
 			defaultStyle: {
 				fontSize: 8
 			}
