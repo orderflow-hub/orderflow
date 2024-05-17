@@ -2,7 +2,6 @@
 	import { Search } from 'lucide-svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
-	import type { Order } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ordersStore from '../../stores/ordersStore';
@@ -10,7 +9,6 @@
 	export let data;
 	const userRole: string = data.userRole;
 
-	let orders: Order[] = [];
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
 

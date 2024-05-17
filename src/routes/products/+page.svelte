@@ -14,14 +14,12 @@
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import type { Product } from '$lib/types';
 	import productsStore from '../../stores/productsStore';
 
 	export let data: PageData;
 
 	const userRole: string = data.userRole;
 
-	let products: Product[] = [];
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
 
