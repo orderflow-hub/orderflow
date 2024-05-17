@@ -19,21 +19,6 @@
 			goto('/orders');
 		}
 	});
-
-	const now = new Date();
-	const dateStringInGreek = now.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
-
-	const timeString = now.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
 </script>
 
 <div class="p-2.5">

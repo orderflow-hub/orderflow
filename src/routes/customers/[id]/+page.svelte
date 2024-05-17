@@ -1,20 +1,43 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { ArrowLeft, Trash, CircleAlert } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { goto } from '$app/navigation';
+	import * as Form from '$lib/components/ui/form';
+	import { customerSchema } from '$lib/schemas/customerSchema';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	// Get customer data from the server to populate the fields
 	export let data;
-	let { customer } = data;
 
+	let { customer } = data;
 	if (customer === undefined) {
 		throw new Error('Customer not found');
 	}
+
+	if (!data.form) {
+		throw new Error('Form data is not provided');
+	}
+
+	const form = superForm(data.form, {
+		validators: zodClient(customerSchema),
+		resetForm: false,
+		onUpdated({ form }) {
+			if (form.message) {
+				if (form.message.status === 'success') {
+					toast.success(form.message.text);
+				} else {
+					toast.error(form.message.text);
+				}
+			}
+		}
+	});
+
+	const { form: formData, enhance } = form;
 
 	// Handle the confirmation dialog for deleting the customer
 	let isDialogOpen = false;
@@ -36,24 +59,6 @@
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή του πελάτη');
 		}
 	}
-
-	// Save the customer detail changes to the database and show a toast notification
-	async function handleSave() {
-		// TODO: Field validation and maybe only send the fields that have changed
-		const response = await fetch(`/api/customers/${customer?.user_id}`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(customer)
-		});
-
-		if (response.ok) {
-			toast.success('Οι αλλαγές αποθηκεύτηκαν επιτυχώς');
-		} else {
-			toast.error('Υπήρξε πρόβλημα κατά την αποθήκευση των αλλαγών');
-		}
-	}
 </script>
 
 <div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
@@ -70,73 +75,103 @@
 			</Button>
 		</div>
 		<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg p-2.5">
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="customer-company-name">Επωνυμία</Label>
-				<Input
-					type="text"
-					id="customer-company-name"
-					placeholder=""
-					bind:value={customer.company_name}
-				/>
-			</div>
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="customer-code">Κωδικός πελάτη</Label>
-				<Input type="text" id="customer-code" placeholder="" bind:value={customer.user_code} />
-			</div>
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="email">Email</Label>
-				<Input type="email" id="email" placeholder="" bind:value={customer.email} />
-			</div>
-			<div class="flex gap-3">
-				<div class="flex w-full max-w-sm flex-col gap-1.5">
-					<Label for="phone">Τηλέφωνο</Label>
-					<Input type="tel" id="phone" placeholder="" bind:value={customer.phone_number} />
+			<form method="POST" action="?/editCustomer" use:enhance>
+				<!-- Hidden field for the customer ID -->
+				<Form.Field {form} name="customerId">
+					<Form.Control let:attrs>
+						<Input {...attrs} bind:value={$formData.customerId} type="hidden" />
+					</Form.Control>
+				</Form.Field>
+				<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="companyName">
+						<Form.Control let:attrs>
+							<Form.Label>Επωνυμία *</Form.Label>
+							<Input {...attrs} bind:value={$formData.companyName} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="userCode">
+						<Form.Control let:attrs>
+							<Form.Label>Κωδικός πελάτη *</Form.Label>
+							<Input {...attrs} bind:value={$formData.userCode} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="email">
+						<Form.Control let:attrs>
+							<Form.Label>Email *</Form.Label>
+							<Input {...attrs} bind:value={$formData.email} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="flex w-full gap-3">
+						<Form.Field class="flex w-full max-w-sm flex-col" {form} name="phoneNumber">
+							<Form.Control let:attrs>
+								<Form.Label>Τηλέφωνο *</Form.Label>
+								<Input {...attrs} bind:value={$formData.phoneNumber} />
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+
+						<Form.Field class="flex w-full max-w-sm flex-col" {form} name="afm">
+							<Form.Control let:attrs>
+								<Form.Label>ΑΦΜ *</Form.Label>
+								<Input {...attrs} bind:value={$formData.afm} />
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="streetAddress">
+						<Form.Control let:attrs>
+							<Form.Label>Διεύθυνση</Form.Label>
+							<Input {...attrs} bind:value={$formData.streetAddress} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+					<div class="flex w-full gap-3">
+						<Form.Field class="flex w-full max-w-sm flex-col" {form} name="city">
+							<Form.Control let:attrs>
+								<Form.Label>Πόλη</Form.Label>
+								<Input {...attrs} bind:value={$formData.city} />
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+
+						<Form.Field class="flex w-full max-w-sm flex-col" {form} name="postalCode">
+							<Form.Control let:attrs>
+								<Form.Label>Τ.Κ.</Form.Label>
+								<Input {...attrs} bind:value={$formData.postalCode} />
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					</div>
+					<Form.Field {form} name="isAccountDisabled" class="items-top mb-3 flex space-x-2">
+						<Form.Control let:attrs>
+							<Checkbox
+								{...attrs}
+								bind:checked={$formData.isAccountDisabled}
+								class="mt-2 border-input data-[state=checked]:bg-destructive"
+								id="is-account-disabled"
+							/>
+							<Form.Label
+								for="is-account-disabled"
+								class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								>Απενεργοποίηση λογαριασμού
+								<Form.Description class="text-xs text-muted-foreground">
+									Ο πελάτης δε θα μπορεί να συνδεθεί στο σύστημα όσο ο λογαριασμός του παραμένει
+									απενεργοποιημένος. Τα στοιχεία του παραμένουν στο σύστημα και εμφανίζονται στο
+									ιστορικό των παραγγελιών.
+								</Form.Description>
+							</Form.Label>
+							<input name={attrs.name} value={$formData.isAccountDisabled} hidden />
+						</Form.Control>
+					</Form.Field>
+					<Button variant="default" class="w-full text-base font-normal" type="submit"
+						>Αποθήκευση</Button
+					>
 				</div>
-				<div class="flex w-full max-w-sm flex-col gap-1.5">
-					<Label for="afm">ΑΦΜ</Label>
-					<Input type="text" id="afm" placeholder="" bind:value={customer.afm} />
-				</div>
-			</div>
-			<div class="flex w-full max-w-sm flex-col gap-1.5">
-				<Label for="street-address">Διεύθυνση</Label>
-				<Input
-					type="text"
-					id="street-address"
-					placeholder=""
-					bind:value={customer.street_address}
-				/>
-			</div>
-			<div class="mb-3 flex gap-3">
-				<div class="flex w-full max-w-sm flex-col gap-1.5">
-					<Label for="city">Πόλη</Label>
-					<Input type="text" id="city" placeholder="" bind:value={customer.city} />
-				</div>
-				<div class="flex w-full max-w-sm flex-col gap-1.5">
-					<Label for="postal-code">Τ.Κ.</Label>
-					<Input type="text" id="postal-code" placeholder="" bind:value={customer.postal_code} />
-				</div>
-			</div>
-			<div class="items-top mb-3 flex space-x-2">
-				<Checkbox
-					id="is-account-disabled"
-					class="border-input data-[state=checked]:bg-destructive"
-					bind:checked={customer.is_account_disabled}
-				/>
-				<Label
-					for="is-account-disabled"
-					class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-				>
-					<span>Απενεργοποίηση λογαριασμού</span>
-					<p class="text-xs text-muted-foreground">
-						Ο πελάτης δε θα μπορεί να συνδεθεί στο σύστημα όσο ο λογαριασμός του παραμένει
-						απενεργοποιημένος. Τα στοιχεία του παραμένουν στο σύστημα και εμφανίζονται στο ιστορικό
-						των παραγγελιών.
-					</p>
-				</Label>
-			</div>
+			</form>
 		</div>
-		<Button variant="default" class="text-base font-normal" on:click={handleSave}>Αποθήκευση</Button
-		>
 	{/if}
 </div>
 

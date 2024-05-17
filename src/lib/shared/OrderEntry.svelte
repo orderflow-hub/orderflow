@@ -2,28 +2,33 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import type { Order } from '$lib/types';
+	import { returnToHome } from '../../stores/orderNavigationStore';
 
 	export let order: Order;
 	export let userRole: string;
 
-	const orderDate = new Date(order.timestamp);
-	const dateStringInGreek = orderDate.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
+	function navigateToOrderDetails() {
+		returnToHome.set(window.location.pathname === '/');
+	}
 
-	const timeString = orderDate.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
-
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
+	const formattedDateTime = new Date(order.timestamp)
+		.toLocaleString('el-GR', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		})
+		.replace(',', ' •');
 </script>
 
 <Card.Root class="flex rounded-none border-0">
-	<a href={`/orders/${order.order_id}`} class="flex w-full flex-col">
+	<a
+		href={`/orders/${order.order_id}`}
+		on:click={navigateToOrderDetails}
+		class="flex w-full flex-col"
+	>
 		<Card.Header class="px-3 pt-3 ">
 			{#if userRole === 'admin'}
 				<Card.Title class="text-lg font-normal">{order.company_name} #{order.order_id}</Card.Title>

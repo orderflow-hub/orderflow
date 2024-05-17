@@ -6,6 +6,9 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { returnToHome } from '../../../stores/orderNavigationStore';
+	import pdfMake from 'pdfmake/build/pdfmake';
+	import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -14,6 +17,11 @@
 	if (order === undefined) {
 		throw new Error('Order not found');
 	}
+
+	let goHome: boolean;
+	returnToHome.subscribe((value) => {
+		goHome = value;
+	});
 
 	// Handle the confirmation dialog for deleting the order
 	let isDialogOpen = false;
@@ -36,26 +44,102 @@
 		}
 	}
 
-	const orderDate = new Date(order.timestamp);
-	const dateStringInGreek = orderDate.toLocaleDateString('el-GR', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric'
-	});
+	const formattedDateTime = new Date(order.timestamp)
+		.toLocaleString('el-GR', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		})
+		.replace(',', ' •');
 
-	const timeString = orderDate.toLocaleTimeString('el-GR', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
+	pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-	const formattedDateTime = `${dateStringInGreek} • ${timeString}`;
+	const handlePrint = () => {
+		const docDefinition = {
+			pageSize: { width: 230, height: 'auto' },
+			content: [
+				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' },
+				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' },
+				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' },
+				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' },
+				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' },
+				{ text: '', margin: [0, 0, 0, 10] },
+				{ text: 'Προϊόντα', style: 'sectionHeader' },
+				{
+					table: {
+						widths: ['*', 'auto', 'auto'],
+						body: [
+							[
+								{ text: 'Προϊόντα', style: 'tableHeader' },
+								{ text: 'Ποσότητα', style: 'tableHeader' },
+								{ text: 'Μονάδα', style: 'tableHeader' }
+							],
+							...order.products.map((product) => [
+								product.product_name,
+								product.qty,
+								product.sale_unit
+							])
+						]
+					},
+					layout: {
+						fillColor: function (rowIndex: number, node: any, columnIndex: any) {
+							return rowIndex % 2 === 0 ? '#F5F5F5' : null;
+						},
+						hLineColor: function (i: number, node: { table: { body: string | any[] } }) {
+							return i === 0 || i === node.table.body.length ? 'black' : 'gray';
+						},
+						vLineColor: function (i: number, node: { table: { widths: string | any[] } }) {
+							return i === 0 || i === node.table.widths.length ? 'black' : 'gray';
+						},
+						paddingLeft: function (i: number) {
+							return i === 0 ? 5 : 5;
+						},
+						paddingRight: function (i: number) {
+							return i === 0 ? 5 : 5;
+						},
+						paddingTop: function (i: any) {
+							return 2;
+						},
+						paddingBottom: function (i: any) {
+							return 2;
+						}
+					}
+				}
+			],
+			styles: {
+				sectionHeader: {
+					fontSize: 12,
+					bold: true,
+					margin: [0, 10, 0, 10],
+					alignment: 'center'
+				},
+				businessLabel: {
+					fontSize: 10,
+					margin: [0, 2, 0, 2]
+				},
+				tableHeader: {
+					fontSize: 10,
+					bold: true,
+					alignment: 'center',
+					fillColor: '#CCCCCC'
+				}
+			},
+			defaultStyle: {
+				fontSize: 8
+			}
+		};
+
+		pdfMake.createPdf(docDefinition).open();
+	};
 </script>
 
 <div class="flex flex-col gap-2.5 p-2.5">
 	{#if order}
 		<div class="flex w-full items-center gap-3">
-			<a href="/orders" class="p-1">
+			<a href={goHome ? '/' : '/orders'} class="p-1">
 				<ArrowLeft />
 			</a>
 			<div class="flex shrink grow flex-col items-start">
@@ -119,6 +203,7 @@
 				{/each}
 			</Card.Content>
 		</Card.Root>
+		<Button on:click={handlePrint}>Εκτύπωση</Button>
 	{/if}
 </div>
 

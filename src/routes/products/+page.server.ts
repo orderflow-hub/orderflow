@@ -1,9 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import { fail } from 'sveltekit-superforms';
 import { productSchema } from '$lib/schemas/productSchema';
 import { zod } from 'sveltekit-superforms/adapters';
-import { superValidate } from 'sveltekit-superforms';
+import { superValidate, fail } from 'sveltekit-superforms';
 import humps from 'humps';
 
 // Similar to 'src/routes/+page.server.ts'

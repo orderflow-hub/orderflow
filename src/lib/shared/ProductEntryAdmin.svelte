@@ -2,6 +2,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import type { Product } from '$lib/types';
+	import { Image } from 'lucide-svelte';
 
 	export let product: Product;
 </script>
@@ -12,13 +13,19 @@
 		class="flex h-24 w-full items-center justify-start gap-4 p-3"
 	>
 		<Card.Content class="aspect-square h-full p-0">
-			<img
-				class={cn('aspect-square h-full object-cover', {
-					grayscale: product.is_disabled
-				})}
-				src={product.image_url}
-				alt="Εικόνα προϊόντος"
-			/>
+			{#if product.image_url}
+				<img
+					class={cn('aspect-square h-full object-cover', {
+						grayscale: product.is_disabled
+					})}
+					src={product.image_url}
+					alt="Εικόνα προϊόντος"
+				/>
+			{:else}
+				<div class="flex h-full w-full items-center justify-center">
+					<Image strokeWidth={1} size={65} />
+				</div>
+			{/if}
 		</Card.Content>
 		<Card.Header class="p-0">
 			<Card.Title
