@@ -3,7 +3,6 @@
 	import CustomerEntry from '$lib/shared/CustomerEntry.svelte';
 	import AddNewCustomer from './AddNewCustomer.svelte';
 	import { Search } from 'lucide-svelte';
-	import type { Customer } from '$lib/types';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';

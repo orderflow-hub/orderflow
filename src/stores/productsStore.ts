@@ -14,7 +14,7 @@ interface ProductsStore extends Readable<Product[]> {
 
 const createProductsStore = (): ProductsStore => {
 	const { subscribe, set, update } = writable<Product[]>([]);
-	let limit = 6;
+	let limit = 10;
 	let offset = 0;
 	let hasMore = true;
 	let loading = false;

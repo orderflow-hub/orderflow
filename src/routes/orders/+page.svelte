@@ -4,7 +4,6 @@
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
 	import type { Order } from '$lib/types';
 	import { onMount } from 'svelte';
-	import InfiniteScroll from '$lib/shared/InfiniteScroll.svelte';
 	import { writable } from 'svelte/store';
 	import ordersStore from '../../stores/ordersStore';
 

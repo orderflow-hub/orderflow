@@ -15,7 +15,6 @@
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import type { Product } from '$lib/types';
-	import debounce from 'debounce';
 	import productsStore from '../../stores/productsStore';
 
 	export let data: PageData;

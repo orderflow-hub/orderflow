@@ -13,7 +13,7 @@ interface CustomersStore extends Readable<Customer[]> {
 
 const createCustomersStore = (): CustomersStore => {
 	const { subscribe, set, update } = writable<Customer[]>([]);
-	let limit = 6;
+	let limit = 10;
 	let offset = 0;
 	let hasMore = true;
 	let loading = false;

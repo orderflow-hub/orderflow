@@ -14,7 +14,7 @@ interface OrdersStore extends Readable<Order[]> {
 
 const createOrdersStore = (): OrdersStore => {
 	const { subscribe, set, update } = writable<Order[]>([]);
-	let limit = 6;
+	let limit = 10;
 	let offset = 0;
 	let hasMore = true;
 	let loading = false;

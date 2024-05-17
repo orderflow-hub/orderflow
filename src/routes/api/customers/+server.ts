@@ -10,7 +10,7 @@ import { createUser } from '$lib/firebaseAdmin';
  * Returns a success message on update or an error message on failure.
  */
 export const GET: RequestHandler = async ({ url }) => {
-	const limit = Number(url.searchParams.get('limit')) || 6;
+	const limit = Number(url.searchParams.get('limit')) || 10;
 	const offset = Number(url.searchParams.get('offset')) || 0;
 	const searchQuery = url.searchParams.get('search') || '';
 
