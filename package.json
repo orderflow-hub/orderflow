@@ -17,6 +17,7 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
 		"@types/humps": "^2.0.6",
+		"@types/pdfmake": "^0.2.9",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"autoprefixer": "^10.4.16",
@@ -38,7 +39,6 @@
 	"type": "module",
 	"dependencies": {
 		"@fontsource-variable/manrope": "^5.0.19",
-		"@types/pdfmake": "^0.2.9",
 		"bits-ui": "^0.21.2",
 		"clsx": "^2.1.0",
 		"firebase": "^10.6.0",
