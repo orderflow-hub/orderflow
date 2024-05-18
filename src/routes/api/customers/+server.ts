@@ -9,13 +9,18 @@ import { createUser } from '$lib/firebaseAdmin';
  * Doesn't require a request body or parameters.
  * Returns a success message on update or an error message on failure.
  */
-export const GET: RequestHandler = async () => {
+export const GET: RequestHandler = async ({ url }) => {
+	const limit = Number(url.searchParams.get('limit')) || 10;
+	const offset = Number(url.searchParams.get('offset')) || 0;
+	const searchQuery = url.searchParams.get('search') || '';
+
 	try {
 		const customers = await sql`
             SELECT user_id, company_name, email, phone_number, is_account_disabled
             FROM users
-            WHERE role = 'customer'
-			ORDER BY is_account_disabled ASC, company_name ASC;
+            WHERE role = 'customer' AND LOWER(company_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+			ORDER BY is_account_disabled ASC, company_name ASC
+			LIMIT ${limit} OFFSET ${offset};
         `;
 		return new Response(JSON.stringify(customers), {
 			headers: { 'Content-Type': 'application/json' },

@@ -36,11 +36,17 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 	} else {
 		// Fetch all products
+
+		const limit = Number(url.searchParams.get('limit')) || 10;
+		const offset = Number(url.searchParams.get('offset')) || 0;
+		const searchQuery = url.searchParams.get('search') || '';
 		try {
 			const products = await sql`
 				SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
 				FROM products
-				ORDER BY is_disabled ASC, product_name ASC;
+				WHERE LOWER(product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+				ORDER BY is_disabled ASC, product_name ASC
+				LIMIT ${limit} OFFSET ${offset};
 			`;
 
 			return new Response(JSON.stringify(products), {

@@ -3,29 +3,43 @@
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import CartEntry from '$lib/shared/CartEntry.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Image, Plus, Search, ArrowRight } from 'lucide-svelte';
+	import { Search, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import * as Form from '$lib/components/ui/form';
-	import * as Select from '$lib/components/ui/select';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
 	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
-	import type { Product } from '$lib/types';
 	import type { PageData } from './$types';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { productSchema, type FormProductSchema } from '$lib/schemas/productSchema';
+	import { writable } from 'svelte/store';
+	import { onMount } from 'svelte';
+	import productsStore from '../../stores/productsStore';
 
 	export let data: PageData;
 
 	const userRole: string = data.userRole;
-	const products: Product[] = data.products;
+
+	let searchQuery = writable('');
+	let intersectionRef: HTMLElement | null = null;
+
+	onMount(() => {
+		productsStore.loadInitialProducts();
+	});
+
+	$: if (intersectionRef) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					productsStore.loadMoreProducts();
+				}
+			},
+			{ threshold: 1 }
+		);
+		observer.observe(intersectionRef);
+	}
+
+	$: $searchQuery, productsStore.searchProducts($searchQuery.trim());
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -54,7 +68,12 @@
 {#if userRole === 'admin'}
 	<div class="sticky top-0 z-10 flex items-center gap-2.5 bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
-			<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+			<Input
+				class="pl-10 text-base"
+				placeholder="Αναζήτηση"
+				type="search"
+				bind:value={$searchQuery}
+			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 			>
@@ -65,15 +84,28 @@
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">
-			{#each products as product}
+			{#each $productsStore as product}
 				<ProductEntryAdmin {product} />
 			{/each}
+			{#if productsStore.loading}
+				<!-- Loading Indicator -->
+				<div>Loading...</div>
+			{/if}
+			{#if productsStore.hasMore}
+				<!-- Intersection Observer Target -->
+				<div bind:this={intersectionRef}></div>
+			{/if}
 		</div>
 	</div>
 {:else if userRole === 'customer'}
 	<div class="sticky top-0 z-10 flex items-center bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
-			<Input class="pl-10 text-base" placeholder="Αναζήτηση" type="search" />
+			<Input
+				class="pl-10 text-base"
+				placeholder="Αναζήτηση"
+				type="search"
+				bind:value={searchQuery}
+			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
 			>
@@ -87,9 +119,17 @@
 		})}
 	>
 		<div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-			{#each products as product}
+			{#each $productsStore as product}
 				<ProductEntryCustomer {product} />
 			{/each}
+			{#if productsStore.loading}
+				<!-- Loading Indicator -->
+				<div>Loading...</div>
+			{/if}
+			{#if productsStore.hasMore}
+				<!-- Intersection Observer Target -->
+				<div bind:this={intersectionRef}></div>
+			{/if}
 		</div>
 	</div>
 	{#if $itemCount > 0}
@@ -129,3 +169,10 @@
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}
+
+<!-- <style>
+	footer {
+		height: 20px; /* Ensure it has size to be observed */
+	}
+	/* Add additional styles as needed */
+</style> -->

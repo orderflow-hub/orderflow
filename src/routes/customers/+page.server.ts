@@ -25,25 +25,25 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 		};
 	}
 
-	// Fetch customers from the database
-	const response = await fetch('/api/customers', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+	// // Fetch customers from the database
+	// const response = await fetch('/api/customers', {
+	// 	method: 'GET',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	}
+	// });
 
-	if (!response.ok) {
-		return {
-			status: response.status,
-			error: new Error('Failed to fetch customers')
-		};
-	}
+	// if (!response.ok) {
+	// 	return {
+	// 		status: response.status,
+	// 		error: new Error('Failed to fetch customers')
+	// 	};
+	// }
 
-	const customers = await response.json();
+	// const customers = await response.json();
 
+	// customers,
 	return {
-		customers,
 		form: await superValidate(zod(customerSchema))
 	};
 };
