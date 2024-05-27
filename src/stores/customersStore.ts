@@ -6,9 +6,9 @@ import debounce from 'debounce';
 interface CustomersStore extends Readable<Customer[]> {
 	hasMore: boolean;
 	loading: boolean;
-	loadInitialCustomers: () => void;
-	loadMoreCustomers: () => void;
-	searchCustomers: (searchQuery: string) => void;
+	loadInitialCustomers: (fetch: typeof window.fetch) => void;
+	loadMoreCustomers: (fetch: typeof window.fetch) => void;
+	searchCustomers: (fetch: typeof window.fetch, searchQuery: string) => void;
 }
 
 const createCustomersStore = (): CustomersStore => {
@@ -20,7 +20,7 @@ const createCustomersStore = (): CustomersStore => {
 	let initialized = false;
 	let currentQuery = '';
 
-	const fetchCustomers = async (reset = false, searchQuery = '') => {
+	const fetchCustomers = async (fetch: typeof window.fetch, reset = false, searchQuery = '') => {
 		// Prevent multiple requests at the same time
 		if (loading) return;
 		loading = true;
@@ -30,13 +30,10 @@ const createCustomersStore = (): CustomersStore => {
 			initialized = false;
 		}
 		const query = searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/customers?limit=${limit}&offset=${offset}&search=${query}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
+		const response = await fetch(`/api/customers?limit=${limit}&offset=${offset}&search=${query}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		});
 		const newCustomers = await response.json();
 		if (newCustomers.length > 0) {
 			hasMore = true;
@@ -50,7 +47,7 @@ const createCustomersStore = (): CustomersStore => {
 	};
 
 	const debouncedSearch = debounce((query: string) => {
-		fetchCustomers(true, query);
+		fetchCustomers(fetch, true, query);
 	}, 300);
 
 	return {
@@ -59,16 +56,16 @@ const createCustomersStore = (): CustomersStore => {
 		subscribe,
 		loadInitialCustomers: () => {
 			if (!initialized) {
-				fetchCustomers();
+				fetchCustomers(fetch);
 				initialized = true;
 			}
 		},
 		loadMoreCustomers: () => {
 			if (hasMore) {
-				fetchCustomers(false, currentQuery);
+				fetchCustomers(fetch, false, currentQuery);
 			}
 		},
-		searchCustomers: (searchQuery: string) => {
+		searchCustomers: (fetch, searchQuery: string) => {
 			currentQuery = searchQuery;
 			debouncedSearch(searchQuery);
 		}

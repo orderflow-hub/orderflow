@@ -6,10 +6,9 @@ import debounce from 'debounce';
 interface OrdersStore extends Readable<Order[]> {
 	hasMore: boolean;
 	loading: boolean;
-	resetOrders: () => void;
-	loadInitialOrders: () => void;
-	loadMoreOrders: () => void;
-	searchOrders: (searchQuery: string) => void;
+	loadInitialOrders: (fetch: typeof window.fetch) => void;
+	loadMoreOrders: (fetch: typeof window.fetch) => void;
+	searchOrders: (fetch: typeof window.fetch, searchQuery: string) => void;
 }
 
 const createOrdersStore = (): OrdersStore => {
@@ -21,7 +20,7 @@ const createOrdersStore = (): OrdersStore => {
 	let initialized = false;
 	let currentQuery = '';
 
-	const fetchOrders = async (reset = false, searchQuery = '') => {
+	const fetchOrders = async (fetch: typeof window.fetch, reset = false, searchQuery = '') => {
 		// Prevent multiple requests at the same time
 		if (loading) return;
 		loading = true;
@@ -31,13 +30,10 @@ const createOrdersStore = (): OrdersStore => {
 			initialized = false;
 		}
 		const query = searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/orders?limit=${limit}&offset=${offset}&search=${query}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
+		const response = await fetch(`/api/orders?limit=${limit}&offset=${offset}&search=${query}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		});
 		const newOrders = await response.json();
 		if (newOrders.length > 0) {
 			hasMore = true;
@@ -51,7 +47,7 @@ const createOrdersStore = (): OrdersStore => {
 	};
 
 	const debouncedSearch = debounce((query: string) => {
-		fetchOrders(true, query);
+		fetchOrders(fetch, true, query);
 	}, 300);
 
 	return {
@@ -60,21 +56,18 @@ const createOrdersStore = (): OrdersStore => {
 		subscribe,
 		loadInitialOrders: () => {
 			if (!initialized) {
-				fetchOrders();
+				fetchOrders(fetch);
 				initialized = true;
 			}
 		},
 		loadMoreOrders: () => {
 			if (hasMore) {
-				fetchOrders(false, currentQuery);
+				fetchOrders(fetch, false, currentQuery);
 			}
 		},
-		searchOrders: (searchQuery: string) => {
+		searchOrders: (fetch, searchQuery: string) => {
 			currentQuery = searchQuery;
 			debouncedSearch(searchQuery);
-		},
-		resetOrders: () => {
-			set([]);
 		}
 	};
 };
