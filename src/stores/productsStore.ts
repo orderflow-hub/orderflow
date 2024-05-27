@@ -6,10 +6,9 @@ import debounce from 'debounce';
 interface ProductsStore extends Readable<Product[]> {
 	hasMore: boolean;
 	loading: boolean;
-	resetProducts: () => void;
-	loadInitialProducts: () => void;
-	loadMoreProducts: () => void;
-	searchProducts: (searchQuery: string) => void;
+	loadInitialProducts: (fetch: typeof window.fetch) => void;
+	loadMoreProducts: (fetch: typeof window.fetch) => void;
+	searchProducts: (fetch: typeof window.fetch, searchQuery: string) => void;
 }
 
 const createProductsStore = (): ProductsStore => {
@@ -21,7 +20,7 @@ const createProductsStore = (): ProductsStore => {
 	let initialized = false;
 	let currentQuery = '';
 
-	const fetchProducts = async (reset = false, searchQuery = '') => {
+	const fetchProducts = async (fetch: typeof window.fetch, reset = false, searchQuery = '') => {
 		// Prevent multiple requests at the same time
 		if (loading) return;
 		loading = true;
@@ -31,13 +30,10 @@ const createProductsStore = (): ProductsStore => {
 			initialized = false;
 		}
 		const query = searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${query}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
+		const response = await fetch(`/api/products?limit=${limit}&offset=${offset}&search=${query}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		});
 		const newProducts = await response.json();
 		if (newProducts.length > 0) {
 			hasMore = true;
@@ -50,31 +46,28 @@ const createProductsStore = (): ProductsStore => {
 		// console.log('fetchProducts', newProducts);
 	};
 
-	const debouncedSearch = debounce((query: string) => {
-		fetchProducts(true, query);
+	const debouncedSearch = debounce((fetch: typeof window.fetch, query: string) => {
+		fetchProducts(fetch, true, query);
 	}, 300);
 
 	return {
 		hasMore: hasMore,
 		loading: loading,
 		subscribe,
-		loadInitialProducts: () => {
+		loadInitialProducts: (fetch) => {
 			if (!initialized) {
-				fetchProducts();
+				fetchProducts(fetch);
 				initialized = true;
 			}
 		},
-		loadMoreProducts: () => {
+		loadMoreProducts: (fetch) => {
 			if (hasMore) {
-				fetchProducts(false, currentQuery);
+				fetchProducts(fetch, false, currentQuery);
 			}
 		},
-		searchProducts: (searchQuery: string) => {
+		searchProducts: (fetch, searchQuery: string) => {
 			currentQuery = searchQuery;
-			debouncedSearch(searchQuery);
-		},
-		resetProducts: () => {
-			set([]);
+			debouncedSearch(fetch, searchQuery);
 		}
 	};
 };

@@ -24,14 +24,14 @@
 	let intersectionRef: HTMLElement | null = null;
 
 	onMount(() => {
-		productsStore.loadInitialProducts();
+		productsStore.loadInitialProducts(fetch);
 	});
 
 	$: if (intersectionRef) {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) {
-					productsStore.loadMoreProducts();
+					productsStore.loadMoreProducts(fetch);
 				}
 			},
 			{ threshold: 1 }
@@ -39,7 +39,7 @@
 		observer.observe(intersectionRef);
 	}
 
-	$: $searchQuery, productsStore.searchProducts($searchQuery.trim());
+	$: $searchQuery, productsStore.searchProducts(fetch, $searchQuery.trim());
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -104,7 +104,7 @@
 				class="pl-10 text-base"
 				placeholder="Αναζήτηση"
 				type="search"
-				bind:value={searchQuery}
+				bind:value={$searchQuery}
 			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
@@ -169,10 +169,3 @@
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}
-
-<!-- <style>
-	footer {
-		height: 20px; /* Ensure it has size to be observed */
-	}
-	/* Add additional styles as needed */
-</style> -->
