@@ -13,8 +13,8 @@
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
-	import { onMount } from 'svelte';
 	import productsStore from '../../stores/productsStore';
+	import type { Product } from '$lib/types';
 
 	export let data: PageData;
 
@@ -22,24 +22,39 @@
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
+	let limit = 10;
 
-	onMount(() => {
-		productsStore.loadInitialProducts(fetch);
-	});
+	// Function to fetch products
+	const fetchProducts = async (reset = false) => {
+		productsStore.setLoading(true);
+		const query = $searchQuery.trim();
+		const offset = reset ? 0 : $productsStore.length;
+		// console.log($productsStore.length, offset, reset, query);
+		const response = await fetch(`/api/products?limit=${limit}&offset=${offset}&search=${query}`, {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		});
+		const newProducts: Product[] = await response.json();
+		productsStore.setProducts(newProducts, reset);
+		productsStore.setLoading(false);
+		productsStore.setHasMore(newProducts.length === limit);
+	};
+
+	$: if ($searchQuery) {
+		fetchProducts(true);
+	}
 
 	$: if (intersectionRef) {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) {
-					productsStore.loadMoreProducts(fetch);
+					fetchProducts();
 				}
 			},
-			{ threshold: 1 }
+			{ threshold: 0.5 }
 		);
 		observer.observe(intersectionRef);
 	}
-
-	$: $searchQuery, productsStore.searchProducts(fetch, $searchQuery.trim());
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -87,15 +102,14 @@
 			{#each $productsStore as product}
 				<ProductEntryAdmin {product} />
 			{/each}
-			{#if productsStore.loading}
-				<!-- Loading Indicator -->
-				<div>Loading...</div>
-			{/if}
-			{#if productsStore.hasMore}
-				<!-- Intersection Observer Target -->
-				<div bind:this={intersectionRef}></div>
-			{/if}
+			<!-- Intersection Observer Target -->
+			<div bind:this={intersectionRef}></div>
 		</div>
+		<!-- {#if $loading}
+			<div class="flex justify-center p-2.5">
+				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+			</div>
+		{/if} -->
 	</div>
 {:else if userRole === 'customer'}
 	<div class="sticky top-0 z-10 flex items-center bg-white p-2.5">
@@ -122,15 +136,14 @@
 			{#each $productsStore as product}
 				<ProductEntryCustomer {product} />
 			{/each}
-			{#if productsStore.loading}
-				<!-- Loading Indicator -->
-				<div>Loading...</div>
-			{/if}
-			{#if productsStore.hasMore}
-				<!-- Intersection Observer Target -->
-				<div bind:this={intersectionRef}></div>
-			{/if}
+			<!-- Intersection Observer Target -->
+			<div bind:this={intersectionRef}></div>
 		</div>
+		<!-- {#if $loading}
+			<div class="flex justify-center p-2.5">
+				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+			</div>
+		{/if} -->
 	</div>
 	{#if $itemCount > 0}
 		<div class="sticky bottom-12 flex justify-center p-2.5">

@@ -11,24 +11,40 @@
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
+	let limit = 10;
 
-	onMount(() => {
-		ordersStore.loadInitialOrders();
-	});
+	// Function to fetch orders
+	const fetchOrders = async (reset = false) => {
+		ordersStore.setLoading(true);
+		const query = $searchQuery.trim();
+		const response = await fetch(
+			`/api/orders?limit=${limit}&offset=${reset ? 0 : $ordersStore.length}&search=${query}`,
+			{
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+		const newOrders = await response.json();
+		ordersStore.setOrders(newOrders, reset);
+		ordersStore.setLoading(false);
+		ordersStore.setHasMore(newOrders.length === limit);
+	};
+
+	$: if ($searchQuery) {
+		fetchOrders(true);
+	}
 
 	$: if (intersectionRef) {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) {
-					ordersStore.loadMoreOrders();
+					fetchOrders();
 				}
 			},
-			{ threshold: 1 }
+			{ threshold: 0.5 }
 		);
 		observer.observe(intersectionRef);
 	}
-
-	$: $searchQuery, ordersStore.searchOrders($searchQuery.trim());
 </script>
 
 <div class="sticky top-0 flex items-center bg-white p-2.5">
