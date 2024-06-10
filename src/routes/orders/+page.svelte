@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import ordersStore from '../../stores/ordersStore';
+	import { debounce } from '$lib/debounce';
 
 	export let data;
 	const userRole: string = data.userRole;
@@ -30,8 +31,10 @@
 		ordersStore.setHasMore(newOrders.length === limit);
 	};
 
+	const debouncedFetchProducts = debounce((reset: boolean) => fetchOrders(reset), 500);
+
 	$: if ($searchQuery) {
-		fetchOrders(true);
+		debouncedFetchProducts(true);
 	}
 
 	$: if (intersectionRef) {

@@ -15,6 +15,7 @@
 	import { writable } from 'svelte/store';
 	import productsStore from '../../stores/productsStore';
 	import type { Product } from '$lib/types';
+	import { debounce } from '$lib/debounce';
 
 	export let data: PageData;
 
@@ -29,7 +30,7 @@
 		productsStore.setLoading(true);
 		const query = $searchQuery.trim();
 		const offset = reset ? 0 : $productsStore.length;
-		// console.log($productsStore.length, offset, reset, query);
+		console.log($productsStore.length, offset, reset, query);
 		const response = await fetch(`/api/products?limit=${limit}&offset=${offset}&search=${query}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
@@ -40,8 +41,10 @@
 		productsStore.setHasMore(newProducts.length === limit);
 	};
 
+	const debouncedFetchProducts = debounce((reset: boolean) => fetchProducts(reset), 500);
+
 	$: if ($searchQuery) {
-		fetchProducts(true);
+		debouncedFetchProducts(true);
 	}
 
 	$: if (intersectionRef) {

@@ -6,6 +6,7 @@
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 	import customersStore from '../../stores/customersStore';
+	import { debounce } from '$lib/debounce';
 
 	export let data: PageData;
 
@@ -29,8 +30,10 @@
 		customersStore.setHasMore(newCustomers.length === limit);
 	};
 
+	const debouncedFetchProducts = debounce((reset: boolean) => fetchCustomers(reset), 500);
+
 	$: if ($searchQuery) {
-		fetchCustomers(true);
+		debouncedFetchProducts(true);
 	}
 
 	$: if (intersectionRef) {
