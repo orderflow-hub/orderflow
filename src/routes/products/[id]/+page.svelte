@@ -76,7 +76,7 @@
 			: { value: 'kg', label: 'kg' };
 </script>
 
-<div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
+<div class="flex flex-col items-stretch justify-center gap-2.5 rounded-lg p-2.5">
 	<div class="flex w-full items-center gap-3">
 		<a href="/products" class="p-1">
 			<ArrowLeft />

@@ -3,7 +3,7 @@
 	import ProductEntryCustomer from '$lib/shared/ProductEntryCustomer.svelte';
 	import CartEntry from '$lib/shared/CartEntry.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Search, ArrowRight } from 'lucide-svelte';
+	import { Search, ArrowRight, Plus } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
@@ -16,6 +16,7 @@
 	import productsStore from '../../stores/productsStore';
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	export let data: PageData;
 
@@ -81,6 +82,12 @@
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
 	};
+
+	let isDialogOpen = writable(false);
+
+	async function refreshProducts() {
+		await fetchProducts(true);
+	}
 </script>
 
 {#if userRole === 'admin'}
@@ -98,7 +105,20 @@
 				<Search size={18} />
 			</div>
 		</div>
-		<AddNewProduct data={data.form} />
+		<!-- Testing -->
+		<Dialog.Root bind:open={$isDialogOpen}>
+			<Dialog.Trigger class="text-base font-normal">
+				<Button class="w-10 grow-0 border bg-transparent p-0 text-muted-foreground">
+					<Plus />
+				</Button>
+			</Dialog.Trigger>
+			<Dialog.Content>
+				<Dialog.Header class="mb-2.5">
+					<Dialog.Title>Προσθήκη νέου προϊόντος</Dialog.Title>
+				</Dialog.Header>
+				<AddNewProduct data={data.form} {isDialogOpen} on:success={refreshProducts} />
+			</Dialog.Content>
+		</Dialog.Root>
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">

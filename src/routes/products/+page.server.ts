@@ -3,6 +3,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { productSchema } from '$lib/schemas/productSchema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate, fail } from 'sveltekit-superforms';
+import { toast } from 'svelte-sonner';
 import humps from 'humps';
 
 // Similar to 'src/routes/+page.server.ts'
