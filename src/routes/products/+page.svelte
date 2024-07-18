@@ -13,10 +13,11 @@
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
-	import { onMount } from 'svelte';
 	import productsStore from '../../stores/productsStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
+	import type { Product } from '$lib/types';
+	import { debounce } from '$lib/debounce';
 
 	export let data: PageData;
 
@@ -24,24 +25,45 @@
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
+	let limit = 10;
+	let category = 'all';
 
-	onMount(() => {
-		productsStore.loadInitialProducts();
-	});
+	// Function to fetch products
+	const fetchProducts = async (reset = false) => {
+		productsStore.setLoading(true);
+		const query = $searchQuery.trim();
+		const offset = reset ? 0 : $productsStore.length;
+		// console.log($productsStore.length, offset, reset, query);
+		const response = await fetch(
+			`/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
+			{
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+		const newProducts: Product[] = await response.json();
+		productsStore.setProducts(newProducts, reset);
+		productsStore.setLoading(false);
+		productsStore.setHasMore(newProducts.length === limit);
+	};
+
+	const debouncedFetchProducts = debounce((reset: boolean) => fetchProducts(reset), 500);
+
+	$: if ($searchQuery) {
+		debouncedFetchProducts(true);
+	}
 
 	$: if (intersectionRef) {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) {
-					productsStore.loadMoreProducts();
+					fetchProducts();
 				}
 			},
-			{ threshold: 1 }
+			{ threshold: 0.5 }
 		);
 		observer.observe(intersectionRef);
 	}
-
-	$: $searchQuery, productsStore.searchProducts($searchQuery.trim());
 
 	let isCartSheetOpen = false;
 	const closeCartSheet = () => {
@@ -68,8 +90,9 @@
 
 	function handleSelectedChange(s: Selected<string> | undefined) {
 		if (s && s.value !== previousSelection.value) {
-			productsStore.setCategory(s.value); // Update the store with the selected category
 			previousSelection = s; // Keep track of previous value to avoid sending reqeusts for the same category
+			category = s.value;
+			fetchProducts(true);
 		}
 	}
 
@@ -99,15 +122,14 @@
 			{#each $productsStore as product}
 				<ProductEntryAdmin {product} />
 			{/each}
-			{#if productsStore.loading}
-				<!-- Loading Indicator -->
-				<div>Loading...</div>
-			{/if}
-			{#if productsStore.hasMore}
-				<!-- Intersection Observer Target -->
-				<div bind:this={intersectionRef}></div>
-			{/if}
+			<!-- Intersection Observer Target -->
+			<div bind:this={intersectionRef}></div>
 		</div>
+		<!-- {#if $loading}
+			<div class="flex justify-center p-2.5">
+				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+			</div>
+		{/if} -->
 	</div>
 {:else if userRole === 'customer'}
 	<div class="sticky top-0 z-10 flex items-center gap-2.5 bg-white p-2.5">
@@ -116,7 +138,7 @@
 				class="pl-10 text-base"
 				placeholder="Αναζήτηση"
 				type="search"
-				bind:value={searchQuery}
+				bind:value={$searchQuery}
 			/>
 			<div
 				class="pointer-events-none absolute inset-y-0 left-2.5 flex w-10 items-center p-0 text-muted-foreground"
@@ -145,15 +167,14 @@
 			{#each $productsStore as product}
 				<ProductEntryCustomer {product} />
 			{/each}
-			{#if productsStore.loading}
-				<!-- Loading Indicator -->
-				<div>Loading...</div>
-			{/if}
-			{#if productsStore.hasMore}
-				<!-- Intersection Observer Target -->
-				<div bind:this={intersectionRef}></div>
-			{/if}
+			<!-- Intersection Observer Target -->
+			<div bind:this={intersectionRef}></div>
 		</div>
+		<!-- {#if $loading}
+			<div class="flex justify-center p-2.5">
+				<div class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+			</div>
+		{/if} -->
 	</div>
 	{#if $itemCount > 0}
 		<div class="sticky bottom-12 flex justify-center p-2.5">
@@ -192,10 +213,3 @@
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}
-
-<!-- <style>
-	footer {
-		height: 20px; /* Ensure it has size to be observed */
-	}
-	/* Add additional styles as needed */
-</style> -->

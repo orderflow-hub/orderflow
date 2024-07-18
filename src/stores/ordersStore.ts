@@ -6,75 +6,38 @@ import debounce from 'debounce';
 interface OrdersStore extends Readable<Order[]> {
 	hasMore: boolean;
 	loading: boolean;
-	resetOrders: () => void;
-	loadInitialOrders: () => void;
-	loadMoreOrders: () => void;
-	searchOrders: (searchQuery: string) => void;
+	setOrders: (orders: Order[], reset: boolean) => void;
+	setLoading: (isLoading: boolean) => void;
+	setHasMore: (hasMore: boolean) => void;
+	reset: () => void;
 }
 
 const createOrdersStore = (): OrdersStore => {
 	const { subscribe, set, update } = writable<Order[]>([]);
-	let limit = 10;
-	let offset = 0;
 	let hasMore = true;
 	let loading = false;
-	let initialized = false;
-	let currentQuery = '';
-
-	const fetchOrders = async (reset = false, searchQuery = '') => {
-		// Prevent multiple requests at the same time
-		if (loading) return;
-		loading = true;
-		if (reset) {
-			set([]);
-			offset = 0;
-			initialized = false;
-		}
-		const query = searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/orders?limit=${limit}&offset=${offset}&search=${query}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
-		const newOrders = await response.json();
-		if (newOrders.length > 0) {
-			hasMore = true;
-			offset += newOrders.length;
-		} else {
-			hasMore = false;
-		}
-		update((current) => [...current, ...newOrders]);
-		loading = false;
-		// console.log('fetchOrders', newOrders);
-	};
-
-	const debouncedSearch = debounce((query: string) => {
-		fetchOrders(true, query);
-	}, 300);
 
 	return {
-		hasMore: hasMore,
-		loading: loading,
+		hasMore,
+		loading,
 		subscribe,
-		loadInitialOrders: () => {
-			if (!initialized) {
-				fetchOrders();
-				initialized = true;
+		setOrders: (orders: Order[], reset: boolean) => {
+			if (reset) {
+				set(orders);
+			} else {
+				update((current) => [...current, ...orders]);
 			}
 		},
-		loadMoreOrders: () => {
-			if (hasMore) {
-				fetchOrders(false, currentQuery);
-			}
+		setLoading: (isLoading: boolean) => {
+			loading = isLoading;
 		},
-		searchOrders: (searchQuery: string) => {
-			currentQuery = searchQuery;
-			debouncedSearch(searchQuery);
+		setHasMore: (more: boolean) => {
+			hasMore = more;
 		},
-		resetOrders: () => {
+		reset: () => {
 			set([]);
+			hasMore = true;
+			loading = false;
 		}
 	};
 };

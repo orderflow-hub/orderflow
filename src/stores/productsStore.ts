@@ -1,85 +1,42 @@
 import { writable } from 'svelte/store';
 import type { Product } from '$lib/types';
 import type { Readable } from 'svelte/store';
-import debounce from 'debounce';
 
 interface ProductsStore extends Readable<Product[]> {
 	hasMore: boolean;
 	loading: boolean;
-	resetProducts: () => void;
-	loadInitialProducts: () => void;
-	loadMoreProducts: () => void;
-	searchProducts: (searchQuery: string) => void;
-	setCategory: (category: string) => void;
+	setProducts: (products: Product[], reset: boolean) => void;
+	setLoading: (isLoading: boolean) => void;
+	setHasMore: (hasMore: boolean) => void;
+	reset: () => void;
 }
 
 const createProductsStore = (): ProductsStore => {
 	const { subscribe, set, update } = writable<Product[]>([]);
-	let limit = 10;
-	let offset = 0;
 	let hasMore = true;
 	let loading = false;
-	let initialized = false;
-	let currentQuery = '';
-	let category = 'all';
-
-	const fetchProducts = async (reset = false, searchQuery = '') => {
-		// Prevent multiple requests at the same time
-		if (loading) return;
-		loading = true;
-		if (reset) {
-			set([]);
-			offset = 0;
-			initialized = false;
-		}
-		const query = searchQuery.trim();
-		const response = await fetch(
-			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
-			{
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
-		const newProducts = await response.json();
-		if (newProducts.length > 0) {
-			hasMore = true;
-			offset += newProducts.length;
-		} else {
-			hasMore = false;
-		}
-		update((current) => [...current, ...newProducts]);
-		loading = false;
-	};
-
-	const debouncedSearch = debounce((query: string) => {
-		fetchProducts(true, query);
-	}, 300);
 
 	return {
-		hasMore: hasMore,
-		loading: loading,
+		hasMore,
+		loading,
 		subscribe,
-		loadInitialProducts: () => {
-			if (!initialized) {
-				fetchProducts();
-				initialized = true;
+		setProducts: (products: Product[], reset: boolean) => {
+			if (reset) {
+				set(products);
+			} else {
+				update((current) => [...current, ...products]);
 			}
 		},
-		loadMoreProducts: () => {
-			if (hasMore) {
-				fetchProducts(false, currentQuery);
-			}
+		setLoading: (isLoading: boolean) => {
+			loading = isLoading;
 		},
-		searchProducts: (searchQuery: string) => {
-			currentQuery = searchQuery;
-			debouncedSearch(searchQuery);
+		setHasMore: (more: boolean) => {
+			hasMore = more;
 		},
-		resetProducts: () => {
+		reset: () => {
 			set([]);
-		},
-		setCategory: (newCategory: string) => {
-			category = newCategory;
-			fetchProducts(true, currentQuery);
+			hasMore = true;
+			loading = false;
 		}
 	};
 };
