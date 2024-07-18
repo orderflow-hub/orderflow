@@ -10,6 +10,7 @@ interface ProductsStore extends Readable<Product[]> {
 	loadInitialProducts: () => void;
 	loadMoreProducts: () => void;
 	searchProducts: (searchQuery: string) => void;
+	setCategory: (category: string) => void;
 }
 
 const createProductsStore = (): ProductsStore => {
@@ -20,6 +21,7 @@ const createProductsStore = (): ProductsStore => {
 	let loading = false;
 	let initialized = false;
 	let currentQuery = '';
+	let category = 'all';
 
 	const fetchProducts = async (reset = false, searchQuery = '') => {
 		// Prevent multiple requests at the same time
@@ -32,7 +34,7 @@ const createProductsStore = (): ProductsStore => {
 		}
 		const query = searchQuery.trim();
 		const response = await fetch(
-			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${query}`,
+			`http://localhost:5173/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
 			{
 				method: 'GET',
 				headers: { 'Content-Type': 'application/json' }
@@ -47,7 +49,6 @@ const createProductsStore = (): ProductsStore => {
 		}
 		update((current) => [...current, ...newProducts]);
 		loading = false;
-		// console.log('fetchProducts', newProducts);
 	};
 
 	const debouncedSearch = debounce((query: string) => {
@@ -75,6 +76,10 @@ const createProductsStore = (): ProductsStore => {
 		},
 		resetProducts: () => {
 			set([]);
+		},
+		setCategory: (newCategory: string) => {
+			category = newCategory;
+			fetchProducts(true, currentQuery);
 		}
 	};
 };
