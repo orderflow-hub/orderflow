@@ -39,12 +39,23 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		const limit = Number(url.searchParams.get('limit')) || 10;
 		const offset = Number(url.searchParams.get('offset')) || 0;
-		const searchQuery = url.searchParams.get('search') || '';
+		const searchQuery = url.searchParams.get('search') ?? '';
+		const category = url.searchParams.get('category') ?? 'all';
+
+		// Define a function to filter by category
+		const filterByCategory = (category: string) => {
+			if (category === 'all') {
+				return sql``; // No additional filtering if 'all'
+			}
+			return sql`AND category = ${category}`;
+		};
+
 		try {
 			const products = await sql`
 				SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
 				FROM products
 				WHERE LOWER(product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+				${filterByCategory(category)}
 				ORDER BY is_disabled ASC, product_name ASC
 				LIMIT ${limit} OFFSET ${offset};
 			`;

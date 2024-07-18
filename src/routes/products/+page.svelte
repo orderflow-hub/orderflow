@@ -14,6 +14,8 @@
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 	import productsStore from '../../stores/productsStore';
+	import * as Select from '$lib/components/ui/select';
+	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
 
@@ -24,17 +26,21 @@
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
 	let limit = 10;
+	let category = 'all';
 
 	// Function to fetch products
 	const fetchProducts = async (reset = false) => {
 		productsStore.setLoading(true);
 		const query = $searchQuery.trim();
 		const offset = reset ? 0 : $productsStore.length;
-		console.log($productsStore.length, offset, reset, query);
-		const response = await fetch(`/api/products?limit=${limit}&offset=${offset}&search=${query}`, {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' }
-		});
+		// console.log($productsStore.length, offset, reset, query);
+		const response = await fetch(
+			`/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
+			{
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 		const newProducts: Product[] = await response.json();
 		productsStore.setProducts(newProducts, reset);
 		productsStore.setLoading(false);
@@ -81,6 +87,17 @@
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
 	};
+
+	function handleSelectedChange(s: Selected<string> | undefined) {
+		if (s && s.value !== previousSelection.value) {
+			previousSelection = s; // Keep track of previous value to avoid sending reqeusts for the same category
+			category = s.value;
+			fetchProducts(true);
+		}
+	}
+
+	let defaultSelection = { value: 'all', label: 'Όλα' };
+	let previousSelection = defaultSelection as Selected<string>;
 </script>
 
 {#if userRole === 'admin'}
@@ -115,7 +132,7 @@
 		{/if} -->
 	</div>
 {:else if userRole === 'customer'}
-	<div class="sticky top-0 z-10 flex items-center bg-white p-2.5">
+	<div class="sticky top-0 z-10 flex items-center gap-2.5 bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
 			<Input
 				class="pl-10 text-base"
@@ -129,6 +146,17 @@
 				<Search size={18} />
 			</div>
 		</div>
+		<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
+			<Select.Input />
+			<Select.Trigger class="w-1/3">
+				<Select.Value />
+			</Select.Trigger>
+			<Select.Content>
+				<Select.Item value="all" label="Όλα" />
+				<Select.Item value="fruits" label="Φρούτα" />
+				<Select.Item value="vegetables" label="Λαχανικά" />
+			</Select.Content>
+		</Select.Root>
 	</div>
 	<div
 		class={cn('px-2.5', {
