@@ -15,6 +15,8 @@
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import productsStore from '../../stores/productsStore';
+	import * as Select from '$lib/components/ui/select';
+	import type { Selected } from 'bits-ui';
 
 	export let data: PageData;
 
@@ -63,6 +65,16 @@
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
 	};
+
+	function handleSelectedChange(s: Selected<string> | undefined) {
+		if (s && s.value !== previousSelection.value) {
+			productsStore.setCategory(s.value); // Update the store with the selected category
+			previousSelection = s; // Keep track of previous value to avoid sending reqeusts for the same category
+		}
+	}
+
+	let defaultSelection = { value: 'all', label: 'Όλα' };
+	let previousSelection = defaultSelection as Selected<string>;
 </script>
 
 {#if userRole === 'admin'}
@@ -98,7 +110,7 @@
 		</div>
 	</div>
 {:else if userRole === 'customer'}
-	<div class="sticky top-0 z-10 flex items-center bg-white p-2.5">
+	<div class="sticky top-0 z-10 flex items-center gap-2.5 bg-white p-2.5">
 		<div class="relative flex flex-grow items-center">
 			<Input
 				class="pl-10 text-base"
@@ -112,6 +124,17 @@
 				<Search size={18} />
 			</div>
 		</div>
+		<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
+			<Select.Input />
+			<Select.Trigger class="w-1/3">
+				<Select.Value />
+			</Select.Trigger>
+			<Select.Content>
+				<Select.Item value="all" label="Όλα" />
+				<Select.Item value="fruits" label="Φρούτα" />
+				<Select.Item value="vegetables" label="Λαχανικά" />
+			</Select.Content>
+		</Select.Root>
 	</div>
 	<div
 		class={cn('px-2.5', {
