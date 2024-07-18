@@ -30,8 +30,8 @@ const createProductsStore = (): ProductsStore => {
 		setLoading: (isLoading: boolean) => {
 			loading = isLoading;
 		},
-		setHasMore: (value: boolean) => {
-			hasMore = value;
+		setHasMore: (more: boolean) => {
+			hasMore = more;
 		},
 		reset: () => {
 			set([]);
