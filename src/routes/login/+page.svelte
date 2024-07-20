@@ -3,11 +3,10 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { authHandlers, authStore } from '../../stores/authStore';
+	import { toast } from 'svelte-sonner';
 
 	let email = '';
 	let password = '';
-
-	let userRole = 'admin'; // TODO: Replace with actual user role when authentication is implemented
 
 	async function handleLogin() {
 		authHandlers
@@ -16,7 +15,7 @@
 				window.location.href = '/';
 			})
 			.catch((error) => {
-				console.log(error.errorCode, error.errorMessage);
+				toast.error('Λάθος στοιχεία σύνδεσης');
 			});
 	}
 </script>
@@ -28,11 +27,11 @@
 			<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
 				<div class="flex w-full flex-col gap-1.5">
 					<Label for="email">Email</Label>
-					<Input type="email" id="email" placeholder="" bind:value={email} />
+					<Input type="email" id="email" placeholder="" bind:value={email} required />
 				</div>
 				<div class="flex w-full flex-col gap-1.5">
 					<Label for="password">Κωδικός</Label>
-					<Input type="password" id="password" placeholder="" bind:value={password} />
+					<Input type="password" id="password" placeholder="" bind:value={password} required />
 				</div>
 			</div>
 			<div class="flex flex-col items-stretch justify-center">
