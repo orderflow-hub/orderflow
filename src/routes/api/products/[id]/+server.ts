@@ -28,10 +28,25 @@ export const GET: RequestHandler = async ({ params }) => {
 
 	try {
 		const product = await sql`
-            SELECT *
-			FROM products
-			WHERE product_id = ${productId}
-        `;
+			SELECT 
+				p.product_id,
+				p.image_url,
+				p.product_name,
+				p.product_code,
+				p.is_disabled,
+				p.category,
+				array_agg(su.sale_unit) AS sale_units
+			FROM 
+				products p
+			LEFT JOIN 
+				product_sale_unit psu ON p.product_id = psu.product_id
+			LEFT JOIN 
+				sale_units su ON psu.sale_unit_id = su.sale_unit_id
+			WHERE 
+				p.product_id = ${productId}
+			GROUP BY 
+				p.product_id
+		`;
 
 		if (product.length > 0) {
 			return new Response(JSON.stringify(product[0]), {
@@ -77,17 +92,21 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	const data = await request.json();
 
 	// Define allowed keys to prevent SQL injection
-	const allowedColumns = ['product_code', 'product_name', 'sale_unit', 'is_disabled', 'image_url'];
+	const allowedColumns = ['product_code', 'product_name', 'is_disabled', 'image_url'];
+	const saleUnitsKey = 'sale_units';
 
 	const updates = Object.entries(data)
 		.filter(([key]) => allowedColumns.includes(key))
 		.map(([key, value], index) => `${key} = $${index + 1}`); // Start indexing at 1 for values
 
-	if (updates.length === 0) {
-		throw new Error('No valid fields provided for update');
+	if (updates.length === 0 && !data[saleUnitsKey]) {
+		return new Response(JSON.stringify({ error: 'No valid fields provided for update' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' }
+		});
 	}
 
-	const query = `
+	const updateProductQuery = `
 		UPDATE products
 		SET ${updates.join(', ')}
 		WHERE product_id = ${productId}
@@ -100,10 +119,43 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	);
 
 	try {
-		// The unsafe method allows for executing the dynamic query with parameter binding
-		const result = await sql.unsafe(query, values as ParameterOrJSON<any>[]);
+		const result = await sql.begin(async (sql) => {
+			let updatedProduct;
+			if (updates.length > 0) {
+				// Execute the dynamic query with parameter binding
+				const result = await sql.unsafe(updateProductQuery, values as ParameterOrJSON<any>[]);
+				updatedProduct = result[0];
+			}
+
+			if (data[saleUnitsKey]) {
+				// Update the product_sale_unit table
+				const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crates')[];
+
+				// Delete existing sale units for the product
+				await sql`
+					DELETE FROM product_sale_unit
+					WHERE product_id = ${productId}
+				`;
+
+				// Insert new sale units for the product
+				for (const saleUnit of saleUnits) {
+					const saleUnitIdResult = await sql`
+						SELECT sale_unit_id FROM sale_units WHERE sale_unit = ${saleUnit}
+					`;
+					const saleUnitId = saleUnitIdResult[0].sale_unit_id;
+
+					await sql`
+						INSERT INTO product_sale_unit (product_id, sale_unit_id)
+						VALUES (${productId}, ${saleUnitId})
+					`;
+				}
+			}
+
+			return updatedProduct;
+		});
+
 		return new Response(
-			JSON.stringify({ message: 'Product updated successfully', product: result[0] }),
+			JSON.stringify({ message: 'Product updated successfully', product: result }),
 			{
 				status: 200,
 				headers: { 'Content-Type': 'application/json' }
