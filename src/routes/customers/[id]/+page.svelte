@@ -61,7 +61,7 @@
 	}
 </script>
 
-<div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
+<div class="flex flex-col items-stretch justify-center gap-2.5 rounded-lg p-2.5">
 	{#if customer}
 		<div class="flex w-full items-center gap-3">
 			<a href="/customers" class="p-1">
@@ -155,7 +155,7 @@
 							/>
 							<Form.Label
 								for="is-account-disabled"
-								class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 								>Απενεργοποίηση λογαριασμού
 								<Form.Description class="text-xs text-muted-foreground">
 									Ο πελάτης δε θα μπορεί να συνδεθεί στο σύστημα όσο ο λογαριασμός του παραμένει

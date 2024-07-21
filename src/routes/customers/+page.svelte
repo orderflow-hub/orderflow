@@ -1,14 +1,13 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
 	import CustomerEntry from '$lib/shared/CustomerEntry.svelte';
-	import AddNewCustomer from './AddNewCustomer.svelte';
 	import { Search } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
 	import customersStore from '../../stores/customersStore';
 	import { debounce } from '$lib/debounce';
-
-	export let data: PageData;
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;
@@ -30,10 +29,10 @@
 		customersStore.setHasMore(newCustomers.length === limit);
 	};
 
-	const debouncedFetchProducts = debounce((reset: boolean) => fetchCustomers(reset), 500);
+	const debouncedFetchCustomers = debounce((reset: boolean) => fetchCustomers(reset), 500);
 
 	$: if ($searchQuery) {
-		debouncedFetchProducts(true);
+		debouncedFetchCustomers(true);
 	}
 
 	$: if (intersectionRef) {
@@ -63,7 +62,12 @@
 			<Search size={18} />
 		</div>
 	</div>
-	<AddNewCustomer data={data.form} />
+	<Button class="w-10 grow-0 border bg-transparent p-0 text-muted-foreground">
+		<a href="/customers/create">
+			<Plus />
+		</a>
+	</Button>
+	<!-- <AddNewCustomer data={data.form} /> -->
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">
