@@ -7,9 +7,7 @@ import humps from 'humps';
 
 // Similar to 'src/routes/+page.server.ts'
 export const load: PageServerLoad = async ({ locals, fetch }) => {
-	console.log(locals.user);
 	if (!locals.user) {
-		console.log('Redirecting to login because user is not authenticated');
 		throw redirect(302, '/login');
 	}
 
@@ -17,7 +15,6 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 
 	// Allowed roles: admin
 	if (role === 'customer') {
-		console.log('Redirecting to orders because user is a customer');
 		throw redirect(302, '/orders');
 	} else if (role !== 'admin') {
 		return {

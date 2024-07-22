@@ -10,8 +10,8 @@
 	import { customerSchema, type FormCustomerSchema } from '$lib/schemas/customerSchema';
 	import type { PageData } from '../$types';
 
-	export let pData: PageData;
-	let data: SuperValidated<Infer<FormCustomerSchema>> = pData.form;
+	export let data;
+	let extractedForm = data.form;
 
 	const form = superForm(data, {
 		validators: zodClient(customerSchema),
@@ -39,7 +39,7 @@
 			<h1 class="text-base font-normal text-zinc-700">Δημιουργία πελάτη</h1>
 		</div>
 	</div>
-	<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg p-2.5">
+	<!-- <div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg p-2.5">
 		<form method="POST" action="?/createCustomer" use:enhance>
 			<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
 				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="companyName">
@@ -109,7 +109,7 @@
 				>
 			</div>
 		</form>
-	</div>
+	</div> -->
 </div>
 
 <!-- <Dialog.Root bind:open={isDialogOpen}>
