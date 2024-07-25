@@ -11,6 +11,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import productsStore from '../../../stores/productsStore';
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
 
@@ -34,6 +35,20 @@
 			if (form.message) {
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
+
+					// Updates the Product Store data.
+					let newProductList = $productsStore;
+					let productToUpdate = newProductList.find(product => product.product_id == $formData.productId);
+					
+					if(productToUpdate) {
+						productToUpdate.product_name = $formData.productName;
+						productToUpdate.product_code = $formData.productCode;
+						productToUpdate.sale_units = $formData.saleUnits;
+						productToUpdate.is_disabled = $formData.isDisabled;
+					}
+					
+					// Redirect to '/products' page
+					goto('/products');
 				} else {
 					toast.error(form.message.text);
 				}
@@ -58,7 +73,13 @@
 		if (response.ok) {
 			toast.success('Το προϊόν διαγράφηκε επιτυχώς');
 			isDialogOpen = false;
-			goto('/products'); // Redirect to '/products' page
+
+			// Filters deleted product from the store.
+			let filteredProducts = $productsStore.filter(product => product.product_id !== $formData.productId);
+			productsStore.setProducts(filteredProducts, true);
+
+			// Redirect to '/products' page
+			goto('/products');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή του προϊόντος');
 		}

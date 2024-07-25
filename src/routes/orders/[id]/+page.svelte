@@ -10,6 +10,7 @@
 	import pdfMake from 'pdfmake/build/pdfmake';
 	import pdfFonts from 'pdfmake/build/vfs_fonts';
 	import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
+	import ordersStore from '../../../stores/ordersStore';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -39,7 +40,13 @@
 		if (response.ok) {
 			toast.success('Η παραγγελία διαγράφηκε επιτυχώς');
 			isDialogOpen = false;
-			goto('/orders'); // Redirect to '/orders' page
+
+			// Filters deleted product from the store.
+			let filteredOrders = $ordersStore.filter(o => o.order_id !== order.order_id);
+			ordersStore.setOrders(filteredOrders, true);
+
+			// Redirect to '/orders' page
+			goto('/orders'); 
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή της παραγγελίας');
 		}
@@ -81,7 +88,7 @@
 							...order.products.map((product) => [
 								{ text: product.product_name } as Content,
 								{ text: product.qty?.toString() } as Content,
-								{ text: product.sale_unit } as Content
+								{ text: product.sale_units } as Content
 							])
 						]
 					},
