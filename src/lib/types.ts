@@ -4,8 +4,7 @@ export interface Product {
 	product_name: string;
 	product_code: string;
 	is_disabled: boolean;
-	sale_units: ('kg' | 'piece' | 'crates')[];
-	category: 'fruit' | 'vegetable' | 'other';
+	sale_unit: 'kg' | 'piece';
 	qty?: number;
 }
 

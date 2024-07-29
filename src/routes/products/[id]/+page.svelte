@@ -29,7 +29,6 @@
 	const form = superForm(data.form, {
 		validators: zodClient(productSchema),
 		resetForm: false,
-		dataType: 'json',
 		onUpdated({ form }) {
 			if (form.message) {
 				if (form.message.status === 'success') {
@@ -64,22 +63,17 @@
 		}
 	}
 
-	function handleSelectedChange(s: Selected<string>[] | undefined) {
+	function handleSelectedChange(s: Selected<string> | undefined) {
 		if (s) {
-			// Map over selections to extract values
-			const selectedValues = s.map((selection) => selection.value as 'kg' | 'piece' | 'crates');
-			// Update $formData.saleUnits with the new selections
-			$formData.saleUnits = selectedValues;
-		} else {
-			// If no selection, reset $formData.saleUnits to an empty array
-			$formData.saleUnits = [];
+			$formData.saleUnit = s.value as 'kg' | 'piece';
 		}
 	}
 
-	$: defaultSelection = $formData.saleUnits.map((unit) => ({
-		value: unit,
-		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
-	}));
+	// Reactive statement to determine the default sale unit selection
+	$: defaultSelection =
+		$formData.saleUnit === 'piece'
+			? { value: 'piece', label: 'τεμάχιο' }
+			: { value: 'kg', label: 'kg' };
 </script>
 
 <div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
@@ -129,12 +123,11 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnit">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
 								bind:selected={defaultSelection}
-								multiple={true}
 								onSelectedChange={(s) => handleSelectedChange(s)}
 							>
 								<Select.Input name={attrs.name} />
@@ -144,7 +137,6 @@
 								<Select.Content>
 									<Select.Item value="kg" label="κιλό" />
 									<Select.Item value="piece" label="τεμάχιο" />
-									<Select.Item value="crates" label="τελάρο" />
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>

@@ -52,27 +52,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		try {
 			const products = await sql`
-				SELECT 
-					p.product_id,
-					p.image_url,
-					p.product_name,
-					p.product_code,
-					p.is_disabled,
-					p.category,
-					array_agg(su.sale_unit) AS sale_units
-				FROM 
-					products p
-				LEFT JOIN 
-					product_sale_unit psu ON p.product_id = psu.product_id
-				LEFT JOIN 
-					sale_units su ON psu.sale_unit_id = su.sale_unit_id
-				WHERE 
-					LOWER(p.product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
-					${filterByCategory(category)}
-				GROUP BY 
-					p.product_id
-				ORDER BY 
-					p.is_disabled ASC, p.product_name ASC
+				SELECT product_id, product_name, product_code, sale_unit, is_disabled, image_url
+				FROM products
+				WHERE LOWER(product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+				${filterByCategory(category)}
+				ORDER BY is_disabled ASC, product_name ASC
 				LIMIT ${limit} OFFSET ${offset};
 			`;
 
