@@ -119,18 +119,47 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	try {
-		const result = await sql`
-			INSERT INTO products 
-			(product_code, product_name, sale_unit, is_disabled, image_url) 
-			VALUES 
-			(${data.product_code}, ${data.product_name}, ${data.sale_unit}, ${data.is_disabled}, ${data.image_url || null})
-			RETURNING *
-		`;
+		const result = await sql.begin(async (sql) => {
+			let addResult = await sql`
+				INSERT INTO products 
+				(product_code, product_name, is_disabled, image_url) 
+				VALUES 
+				(${data.product_code}, ${data.product_name}, ${data.is_disabled}, ${data.image_url || null})
+				RETURNING *
+			`;
+			
+			// Update the product_sale_unit table
+			const saleUnits = data["sale_units"] as ('kg' | 'piece' | 'crates')[];
 
-		return new Response(JSON.stringify(result), {
-			status: 201,
-			headers: { 'Content-Type': 'application/json' }
+			// Delete existing sale units for the product
+			await sql`
+				DELETE FROM product_sale_unit
+				WHERE product_id = ${addResult[0].product_id}
+			`;
+
+			// Insert new sale units for the product
+			for (const saleUnit of saleUnits) {
+				const saleUnitIdResult = await sql`
+					SELECT sale_unit_id FROM sale_units WHERE sale_unit = ${saleUnit}
+				`;
+				const saleUnitId = saleUnitIdResult[0].sale_unit_id;
+
+				await sql`
+					INSERT INTO product_sale_unit (product_id, sale_unit_id)
+					VALUES (${addResult[0].product_id}, ${saleUnitId})
+				`;
+			}
+
+			return addResult[0].product_id;
 		});
+
+		return new Response(
+			JSON.stringify({ product_id: result }),
+			{
+				status: 201,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 	} catch (error) {
 		console.error('Failed to create product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
