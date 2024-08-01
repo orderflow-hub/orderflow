@@ -46,7 +46,7 @@ export const GET: RequestHandler = async ({ params }) => {
 				p.product_id = ${productId}
 			GROUP BY 
 				p.product_id
-		`;
+        `;
 
 		if (product.length > 0) {
 			return new Response(JSON.stringify(product[0]), {

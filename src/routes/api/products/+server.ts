@@ -68,7 +68,7 @@ export const GET: RequestHandler = async ({ url }) => {
 					sale_units su ON psu.sale_unit_id = su.sale_unit_id
 				WHERE 
 					LOWER(p.product_name) LIKE '%' || LOWER(${searchQuery}) || '%'
-					${filterByCategory(category)}
+				${filterByCategory(category)}
 				GROUP BY 
 					p.product_id
 				ORDER BY 
