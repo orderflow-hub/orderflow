@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { create } from 'domain';
-import { fail } from 'sveltekit-superforms';
+import { fail, message } from 'sveltekit-superforms';
 import { customerSchema } from '$lib/schemas/customerSchema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
@@ -60,8 +60,6 @@ export const actions: Actions = {
 		// Convert form data to snake_case with humps library
 		const formData = humps.decamelizeKeys(form.data);
 
-		console.log(formData);
-
 		try {
 			// Create a new customer
 			const response = await event.fetch('/api/customers', {
@@ -76,9 +74,17 @@ export const actions: Actions = {
 				throw new Error('Failed to create customer due to bad response');
 			}
 
-			return {
-				form
-			};
+			// Gets new Product id from json response
+			const responseData = await response.json();
+			console.log(responseData);
+			const userId = responseData.user_id;
+
+			// Returning the form with a success message and customer id
+			return message(form, { 
+				status: 'success',
+				text: 'Ο χρήστης προστέθηκε επιτυχώς',
+				userId: userId
+			});
 		} catch (error) {
 			throw new Error(`Failed to create customer ${error}`);
 		}

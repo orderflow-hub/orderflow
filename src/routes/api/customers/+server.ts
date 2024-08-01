@@ -82,7 +82,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			RETURNING *;
 		`;
 
-		return new Response(JSON.stringify(result), {
+		return new Response(JSON.stringify(result[0]), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});

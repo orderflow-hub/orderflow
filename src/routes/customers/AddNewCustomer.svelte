@@ -7,12 +7,46 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Form from '$lib/components/ui/form';
 	import { customerSchema } from '$lib/schemas/customerSchema';
+	import type { Customer } from '$lib/types';
+	import { toast } from 'svelte-sonner';
+	import customersStore from '../../stores/customersStore';
+
 
 	// export let data: SuperValidated<Infer<FormCustomerSchema>>;
 	export let data;
 
-	const form = superForm(data, {
-		validators: zodClient(customerSchema)
+	const form = superForm(data.form, {
+		validators: zodClient(customerSchema),
+		resetForm: false,
+		dataType: 'json',
+		onUpdated({ form }) {
+			if (form.message) {
+				if (form.message.status === 'success') {
+					toast.success(form.message.text);
+					console.log(form);
+
+					// Adds new Customer to Store
+					const customer: Customer = {
+						user_id: form.message.userId,
+						company_name: $formData.companyName,
+						user_code: $formData.userCode,
+						email: $formData.email,
+						phone_number: $formData.phoneNumber,
+						afm: $formData.afm,
+						street_address: $formData.streetAddress,
+						city: $formData.city,
+						postal_code: $formData.postalCode,
+						is_account_disabled: $formData.isDisabled
+					};
+					customersStore.setCustomers([customer], false);
+					
+					// Hides form modal.
+					isDialogOpen = false;
+				} else {
+					toast.error(form.message.text);
+				}
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
