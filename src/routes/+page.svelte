@@ -46,16 +46,16 @@
 	<Card.Root class="mt-2.5 overflow-hidden">
 		<Card.Header class="p-0">
 			<Card.Title class="flex h-10 items-center justify-center border-b bg-secondary font-normal">
-				Προιόντα
+				Προϊόντα
 			</Card.Title>
 		</Card.Header>
 		<Card.Content class="p-0">
 			<div class="flex justify-between p-2.5 text-zinc-700">
-				<span>Ενεργά προιόντα</span>
+				<span>Ενεργά προϊόντα</span>
 				<span>{activeProductCount}</span>
 			</div>
 			<div class="flex justify-between p-2.5 text-destructive">
-				<span>Ανενεργά προιόντα</span>
+				<span>Ανενεργά προϊόντα</span>
 				<span>{inactiveProductCount}</span>
 			</div>
 			<Separator class="h-[0.8px] bg-neutral-200" />

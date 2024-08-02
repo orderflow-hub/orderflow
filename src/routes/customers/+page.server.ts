@@ -76,7 +76,6 @@ export const actions: Actions = {
 
 			// Gets new Product id from json response
 			const responseData = await response.json();
-			console.log(responseData);
 			const userId = responseData.user_id;
 
 			// Returning the form with a success message and customer id

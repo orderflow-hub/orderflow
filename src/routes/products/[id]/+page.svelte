@@ -45,6 +45,7 @@
 						productToUpdate.product_code = $formData.productCode;
 						productToUpdate.sale_units = $formData.saleUnits;
 						productToUpdate.is_disabled = $formData.isDisabled;
+						productToUpdate.category = $formData.category;
 					}
 					
 					// Redirect to '/products' page
@@ -85,7 +86,7 @@
 		}
 	}
 
-	function handleSelectedChange(s: Selected<string>[] | undefined) {
+	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
 		if (s) {
 			// Map over selections to extract values
 			const selectedValues = s.map((selection) => selection.value as 'kg' | 'piece' | 'crates');
@@ -97,10 +98,21 @@
 		}
 	}
 
-	$: defaultSelection = $formData.saleUnits.map((unit) => ({
+	function handleCategoryChange(s: Selected<string> | undefined) {
+		if(s){
+			$formData.category = s.value as 'fruits' | 'vegetables'
+		}
+	}
+
+	$: saleUnitsSelection = $formData.saleUnits.map((unit) => ({
 		value: unit,
 		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
 	}));
+
+	$: categorySelection = {
+		label: $formData.category === 'fruits' ? 'Φρούτα' : $formData.category === 'vegetables' ? 'Λαχανικά' : '',
+		value: $formData.category === 'fruits' ? 'fruits' : $formData.category === 'vegetables' ? 'vegetables' : 'other'
+	};
 </script>
 
 <div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
@@ -154,9 +166,9 @@
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
-								bind:selected={defaultSelection}
+								bind:selected={saleUnitsSelection}
 								multiple={true}
-								onSelectedChange={(s) => handleSelectedChange(s)}
+								onSelectedChange={(s) => handleSaleUnitsChange(s)}
 							>
 								<Select.Input name={attrs.name} />
 								<Select.Trigger {...attrs}>
@@ -166,6 +178,24 @@
 									<Select.Item value="kg" label="κιλό" />
 									<Select.Item value="piece" label="τεμάχιο" />
 									<Select.Item value="crates" label="τελάρο" />
+								</Select.Content>
+							</Select.Root>
+						</Form.Control>
+					</Form.Field>
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
+						<Form.Control let:attrs>
+							<Form.Label>Κατηγορία *</Form.Label>
+							<Select.Root
+								bind:selected={categorySelection}
+								onSelectedChange={(s) => handleCategoryChange(s)}
+							>
+								<Select.Input name={attrs.name} />
+								<Select.Trigger {...attrs}>
+									<Select.Value />
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="fruits" label="Φρούτα" />
+									<Select.Item value="vegetables" label="Λαχανικά" />
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>

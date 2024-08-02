@@ -131,7 +131,7 @@
 			</div>
 			<Dialog.Footer>
 				<Button variant="secondary" on:click={() => (isDialogOpen = false)}>Ακύρωση</Button>
-				<Button type="submit" on:click={() => console.log($formData.afm)}>Προσθήκη</Button>
+				<Button type="submit">Προσθήκη</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

@@ -92,7 +92,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	const data = await request.json();
 
 	// Define allowed keys to prevent SQL injection
-	const allowedColumns = ['product_code', 'product_name', 'is_disabled', 'image_url'];
+	const allowedColumns = ['product_code', 'product_name', 'category', 'is_disabled', 'image_url'];
 	const saleUnitsKey = 'sale_units';
 
 	const updates = Object.entries(data)

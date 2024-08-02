@@ -122,9 +122,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		const result = await sql.begin(async (sql) => {
 			let addResult = await sql`
 				INSERT INTO products 
-				(product_code, product_name, is_disabled, image_url) 
+				(product_code, product_name, category, is_disabled, image_url) 
 				VALUES 
-				(${data.product_code}, ${data.product_name}, ${data.is_disabled}, ${data.image_url || null})
+				(${data.product_code}, ${data.product_name}, ${data.category}, ${data.is_disabled}, ${data.image_url || null})
 				RETURNING *
 			`;
 			
