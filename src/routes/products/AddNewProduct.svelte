@@ -7,26 +7,81 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
-	import { superForm, type SuperValidated, type Infer } from 'sveltekit-superforms';
-	import { productSchema, type FormProductSchema } from '$lib/schemas/productSchema';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { productSchema } from '$lib/schemas/productSchema';
+	import productsStore from '../../stores/productsStore';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form';
+	import type { PageData } from './$types';
+	import type { Selected } from 'bits-ui';
+	import type { Product } from '$lib/types';
 
 	// export let data: SuperValidated<Infer<FormProductSchema>>;
-	export let data;
+	export let data: PageData;
 
-	const form = superForm(data, {
-		validators: zodClient(productSchema)
+	if (!data.form) {
+		throw new Error('Form error');
+	}
+
+	const form = superForm(data.form, {
+		validators: zodClient(productSchema),
+		resetForm: false,
+		dataType: 'json',
+		onUpdated({ form }) {
+			if (form.message) {
+				if (form.message.status === 'success') {
+					toast.success(form.message.text);
+
+					// Adds new Product to Store
+					const product: Product = {
+						product_id: form.message.productId,
+						product_name: $formData.productName,
+						category: $formData.category,
+						product_code: $formData.productCode,
+						sale_units: $formData.saleUnits,
+						is_disabled: $formData.isDisabled
+					};
+					productsStore.setProducts([product], false);
+
+					// Hides form modal.
+					isDialogOpen = false;
+				} else {
+					toast.error(form.message.text);
+				}
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
 
-	$: selectedSaleUnit = $formData.saleUnit
-		? {
-				label: $formData.saleUnit === 'kg' ? 'κιλό' : 'τεμάχιο',
-				value: $formData.saleUnit === 'kg' ? 'kg' : 'piece'
-			}
-		: undefined;
+	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
+		if (s) {
+			// Map over selections to extract values
+			const selectedValues = s.map((selection) => selection.value as 'kg' | 'piece' | 'crates');
+			// Update $formData.saleUnits with the new selections
+			$formData.saleUnits = selectedValues;
+		} else {
+			// If no selection, reset $formData.saleUnits to an empty array
+			$formData.saleUnits = [];
+		}
+	}
+
+	function handleCategoryChange(s: Selected<string> | undefined) {
+		if(s){
+			$formData.category = s.value as 'fruits' | 'vegetables'
+		}
+	}
+
+	$: saleUnitsSelection = $formData.saleUnits.map((unit) => ({
+		value: unit,
+		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
+	}));
+	
+	$: categorySelection = {
+		label: $formData.category === 'fruits' ? 'Φρούτα' : $formData.category === 'vegetables' ? 'Λαχανικά' : '',
+		value: $formData.category === 'fruits' ? 'fruits' : $formData.category === 'vegetables' ? 'vegetables' : 'other'
+	};
+	
 	let isDialogOpen = false;
 </script>
 
@@ -58,14 +113,13 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnit">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
-								bind:selected={selectedSaleUnit}
-								onSelectedChange={(s) => {
-									s && ($formData.saleUnit = s.value);
-								}}
+								bind:selected={saleUnitsSelection}
+								multiple={true}
+								onSelectedChange={(s) => handleSaleUnitsChange(s)}
 							>
 								<Select.Input name={attrs.name} />
 								<Select.Trigger {...attrs}>
@@ -74,6 +128,25 @@
 								<Select.Content>
 									<Select.Item value="kg" label="κιλό" />
 									<Select.Item value="piece" label="τεμάχιο" />
+									<Select.Item value="crates" label="τελάρο" />
+								</Select.Content>
+							</Select.Root>
+						</Form.Control>
+					</Form.Field>
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
+						<Form.Control let:attrs>
+							<Form.Label>Κατηγορία *</Form.Label>
+							<Select.Root
+								bind:selected={categorySelection}
+								onSelectedChange={(s) => handleCategoryChange(s)}
+							>
+								<Select.Input name={attrs.name} />
+								<Select.Trigger {...attrs}>
+									<Select.Value />
+								</Select.Trigger>
+								<Select.Content>
+									<Select.Item value="fruits" label="Φρούτα" />
+									<Select.Item value="vegetables" label="Λαχανικά" />
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>

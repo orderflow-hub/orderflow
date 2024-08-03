@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { productSchema } from '$lib/schemas/productSchema';
 import { zod } from 'sveltekit-superforms/adapters';
-import { superValidate, fail } from 'sveltekit-superforms';
+import { superValidate, fail, message } from 'sveltekit-superforms';
 import humps from 'humps';
 
 // Similar to 'src/routes/+page.server.ts'
@@ -38,9 +38,8 @@ export const actions: Actions = {
 
 		// Convert form data to snake_case with humps library
 		const formData = humps.decamelizeKeys(form.data);
-
-		// console.log(formData);
-
+		console.log('Creating product: ' + JSON.stringify(formData));
+		
 		try {
 			const apiResponse = await event.fetch('api/products', {
 				method: 'POST',
@@ -55,10 +54,16 @@ export const actions: Actions = {
 				throw new Error('Failed to create product due to bad response');
 			}
 
-			// Returning the form is required for the superform validation to work
-			return {
-				form
-			};
+			// Gets new Product id from json response
+			const responseData = await apiResponse.json();
+			const productId = responseData.product_id;
+
+			// Returning the form with a success message and product_id
+			return message(form, { 
+				status: 'success', 
+				text: 'Το προϊόν προστέθηκε επιτυχώς', 
+				productId: productId
+			});
 		} catch (error) {
 			throw new Error(`Failed to create product ${error}`);
 		}

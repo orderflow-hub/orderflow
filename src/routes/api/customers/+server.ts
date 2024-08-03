@@ -77,12 +77,12 @@ export const POST: RequestHandler = async ({ request }) => {
 			INSERT INTO users
 			(firebase_uid, company_name, user_code, email, afm, phone_number, street_address, city, postal_code, role)
 			VALUES
-			(${uid}, ${data.company_name}, ${data.user_code}, ${data.email}, ${data.afm}, ${data.phone_number || null},
+			(${uid}, ${data.company_name}, ${data.user_code}, ${data.email}, ${data.afm}, ${data.phone_number},
 			${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
 			RETURNING *;
 		`;
 
-		return new Response(JSON.stringify(result), {
+		return new Response(JSON.stringify(result[0]), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});

@@ -56,8 +56,9 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 				{
 					productId: product.product_id,
 					productName: product.product_name,
+					category: product.category,
 					productCode: product.product_code,
-					saleUnit: product.sale_unit,
+					saleUnits: product.sale_units,
 					isDisabled: product.is_disabled
 				},
 				zod(productSchema)
@@ -83,6 +84,7 @@ export const actions: Actions = {
 		// Convert form data to snake_case with humps library
 		// Assert the type to match the Product interface
 		const formData = humps.decamelizeKeys(form.data) as Product;
+		console.log('Updating product details: ' + JSON.stringify(formData));
 
 		try {
 			// TODO: Maybe only send the fields that have changed

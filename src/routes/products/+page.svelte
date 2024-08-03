@@ -41,6 +41,7 @@
 				headers: { 'Content-Type': 'application/json' }
 			}
 		);
+
 		const newProducts: Product[] = await response.json();
 		productsStore.setProducts(newProducts, reset);
 		productsStore.setLoading(false);
@@ -115,7 +116,7 @@
 				<Search size={18} />
 			</div>
 		</div>
-		<AddNewProduct data={data.form} />
+		<AddNewProduct data={data} />
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">

@@ -7,6 +7,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { goto } from '$app/navigation';
 	import * as Form from '$lib/components/ui/form';
+	import customersStore from '../../../stores/customersStore';
 	import { customerSchema } from '$lib/schemas/customerSchema';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -30,6 +31,24 @@
 			if (form.message) {
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
+
+					// Updates the Customer Store data.
+					let customerToUpdate = $customersStore.find(customer => customer.user_id == $formData.customerId);
+					
+					if(customerToUpdate){
+						customerToUpdate.company_name = $formData.companyName;
+						customerToUpdate.user_code = $formData.userCode;
+						customerToUpdate.email = $formData.email;
+						customerToUpdate.phone_number = $formData.phoneNumber;
+						customerToUpdate.afm = $formData.afm;
+						customerToUpdate.street_address = $formData.streetAddress ? $formData.streetAddress : customerToUpdate.street_address;
+						customerToUpdate.city = $formData.city ? $formData.city : customerToUpdate.city;
+						customerToUpdate.postal_code = $formData.postalCode ? $formData.postalCode : customerToUpdate.postal_code;
+						customerToUpdate.is_account_disabled = $formData.isAccountDisabled;
+					}
+
+					// Redirect to '/customers' page
+					goto('/customers');
 				} else {
 					toast.error(form.message.text);
 				}
@@ -53,8 +72,15 @@
 
 		if (response.ok) {
 			toast.success('Ο πελάτης διαγράφηκε επιτυχώς');
+
 			isDialogOpen = false;
-			goto('/customers'); // Redirect to '/customers' page
+
+			// Filters deleted product from the store.
+			let filteredCustomers = $customersStore.filter(customer => customer.user_id !== $formData.customerId);
+			customersStore.setCustomers(filteredCustomers, true);
+
+			// Redirect to '/customers' page
+			goto('/customers');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή του πελάτη');
 		}

@@ -1,27 +1,44 @@
 import { writable } from 'svelte/store';
 import { auth } from '$lib/firebase';
 import {
-	signInWithEmailAndPassword,
-	createUserWithEmailAndPassword,
-	signOut,
-	sendPasswordResetEmail,
-	updateEmail,
-	updatePassword,
-	reauthenticateWithCredential
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+  reauthenticateWithCredential,
+  onAuthStateChanged
 } from 'firebase/auth';
 import type { User, AuthCredential } from 'firebase/auth';
 
 type AuthState = {
-	currentUser: User | null;
-	idToken: string;
+  currentUser: User | null;
+  idToken: string;
 };
 
-// Create a writable store to hold the user's authentication state
-// This store is used client-side to keep track of the user's authentication state
-export const authStore = writable<AuthState>({
-	currentUser: null,
-	idToken: ''
-});
+// Create the store
+const createAuthStore = () => {
+  const { subscribe, set } = writable<AuthState>({
+    currentUser: null,
+    idToken: ''
+  });
+
+  // Set up Firebase auth state listener to update the store
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const token = await user.getIdToken();
+      set({ currentUser: user, idToken: token });
+    } else {
+      set({ currentUser: null, idToken: '' });
+    }
+  });
+
+  return {
+    subscribe,
+    set,
+  };
+};
+
+// Initialize the store
+export const authStore = createAuthStore();
 
 // Custom authHandler functions that make use of various authentication methods
 // provided by firebase-client
