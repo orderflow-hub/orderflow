@@ -86,21 +86,6 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			});
 		}
 
-		// Check if provided user code already exists.
-		const userCodeUsed = await sql`
-			SELECT COUNT(*) 
-			FROM users 
-			WHERE user_code = ${data.user_code}
-			AND user_id != ${data.user_id};
-		`;
-
-		if(userCodeUsed[0].count > 0) {
-			return new Response(JSON.stringify({ error: 'Customer code is already in use.' }), {
-				status: 500,
-				headers: { 'Content-Type': 'application/json' }
-			});
-		}
-
 		// If the email is being updated, update it in Firebase too
 		if (data.email && data.email !== user[0].email) {
 			const emailUpdated = await updateEmail(user[0].firebase_uid, data.email);
@@ -114,7 +99,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 
 		const result = await sql`
             UPDATE users
-            SET company_name = ${data.company_name}, user_code = ${data.user_code}, email = ${data.email}, phone_number = ${data.phone_number}, afm = ${data.afm}, street_address = ${data.street_address}, city = ${data.city}, postal_code = ${data.postal_code}, is_account_disabled = ${data.is_account_disabled}
+            SET company_name = ${data.company_name}, email = ${data.email}, phone_number = ${data.phone_number}, afm = ${data.afm}, street_address = ${data.street_address}, city = ${data.city}, postal_code = ${data.postal_code}, is_account_disabled = ${data.is_account_disabled}
             WHERE user_id = ${id}
             RETURNING *;
         `;

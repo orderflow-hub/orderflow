@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Check if the unique fields already exist in the database
 		const existingUser = await sql`
 			SELECT * FROM users
-			WHERE email = ${data.email} OR user_code = ${data.user_code} OR afm = ${data.afm} OR company_name = ${data.company_name}
+			WHERE email = ${data.email} OR afm = ${data.afm} OR company_name = ${data.company_name}
 		`;
 
 		if (existingUser.length > 0) {
@@ -75,9 +75,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		const result = await sql`
 			INSERT INTO users
-			(firebase_uid, company_name, user_code, email, afm, phone_number, street_address, city, postal_code, role)
+			(firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
 			VALUES
-			(${uid}, ${data.company_name}, ${data.user_code}, ${data.email}, ${data.afm}, ${data.phone_number},
+			(${uid}, ${data.company_name}, ${data.email}, ${data.afm}, ${data.phone_number},
 			${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
 			RETURNING *;
 		`;

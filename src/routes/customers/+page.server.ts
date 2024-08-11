@@ -77,15 +77,21 @@ export const actions: Actions = {
 			// Gets new Product id from json response
 			const responseData = await response.json();
 			const userId = responseData.user_id;
+			const userCode = responseData.user_code;
 
 			// Returning the form with a success message and customer id
 			return message(form, { 
 				status: 'success',
 				text: 'Ο χρήστης προστέθηκε επιτυχώς',
-				userId: userId
+				userId: userId,
+				userCode: userCode
 			});
 		} catch (error) {
-			throw new Error(`Failed to create customer ${error}`);
+			console.error(`Failed to create Customer: ${error}`);
+			return message(form, {
+				status: 'failed',
+				text: 'Υπήρξε πρόβλημα κατά την δημιουργία πελάτη'
+			});
 		}
 	}
 };
