@@ -23,13 +23,12 @@
 			if (form.message) {
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
-					console.log(form);
 
 					// Adds new Customer to Store
 					const customer: Customer = {
 						user_id: form.message.userId,
 						company_name: $formData.companyName,
-						user_code: $formData.userCode,
+						user_code: form.message.userCode,
 						email: $formData.email,
 						phone_number: $formData.phoneNumber,
 						afm: $formData.afm,
@@ -70,13 +69,6 @@
 					<Form.Control let:attrs>
 						<Form.Label>Επωνυμία *</Form.Label>
 						<Input {...attrs} bind:value={$formData.companyName} />
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
-				<Form.Field class="flex w-full max-w-sm flex-col gap-1.5" {form} name="userCode">
-					<Form.Control let:attrs>
-						<Form.Label>Κωδικός πελάτη *</Form.Label>
-						<Input {...attrs} bind:value={$formData.userCode} />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

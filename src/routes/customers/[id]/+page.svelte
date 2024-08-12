@@ -37,7 +37,6 @@
 					
 					if(customerToUpdate){
 						customerToUpdate.company_name = $formData.companyName;
-						customerToUpdate.user_code = $formData.userCode;
 						customerToUpdate.email = $formData.email;
 						customerToUpdate.phone_number = $formData.phoneNumber;
 						customerToUpdate.afm = $formData.afm;
@@ -119,7 +118,7 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="userCode">
 						<Form.Control let:attrs>
 							<Form.Label>Κωδικός πελάτη *</Form.Label>
-							<Input {...attrs} bind:value={$formData.userCode} />
+							<Input {...attrs} disabled bind:value={$formData.userCode} />
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>

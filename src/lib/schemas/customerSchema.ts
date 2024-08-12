@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const customerSchema = z.object({
 	customerId: z.number().optional(),
 	companyName: z.string().min(1, 'Company name is required'),
-	userCode: z.string().min(1, 'Product code is required'),
+	userCode: z.string().optional(),
 	email: z.string().email('Invalid email address'),
 	afm: z.string().superRefine((value, ctx) => {
 		// First, check if the length is exactly 9 digits
