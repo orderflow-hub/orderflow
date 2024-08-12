@@ -60,7 +60,7 @@
 				<Button class="p-3" variant="secondary" on:click={removeFromCart}
 					><Trash size={18} /></Button
 				>
-				<QuantityInput id={product.product_id} sale_unit={product.sale_unit} />
+				<QuantityInput id={product.product_id} sale_units={product.sale_units} />
 			</div>
 		{:else}
 			<Button
