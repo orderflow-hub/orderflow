@@ -1,11 +1,15 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { cart } from '../../stores/cartStore';
+	import { get } from 'svelte/store';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
+	import { createEventDispatcher } from 'svelte';
 
 	export let id: number;
 	export let sale_units: string[] = ['kg'];
+
+	const dispatch = createEventDispatcher();
 
 	// Flag to check if this input instance is currently being edited
 	let isCurrentlyBeingEdited = false;
@@ -56,15 +60,12 @@
 	};
 
 	function handleSelectedChange(s: Selected<string> | undefined) {
-		// if (s && s.value !== previousSelection.value) {
-		// 	previousSelection = s; // Keep track of previous value to avoid sending reqeusts for the same category
-		// 	category = s.value;
-		// 	fetchProducts(true);
-		// }
-		console.log(s);
+		if (s) {
+			cart.updateItemSaleUnit(id, s.value);
+			dispatch('saleUnitChange', { sale_unit: s.value });
+		}
 	}
 	let defaultSelection = { value: defaultValue, label: unitLabels[defaultValue] };
-	// let previousSelection = defaultSelection as Selected<string>;
 </script>
 
 <div class="relative flex w-[110px] flex-grow items-center gap-2 sm:w-[120px]">

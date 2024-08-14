@@ -99,6 +99,10 @@
 
 	let defaultSelection = { value: 'all', label: 'Όλα' };
 	let previousSelection = defaultSelection as Selected<string>;
+
+	$: if (isCartSheetOpen) {
+		console.log(get(cart));
+	}
 </script>
 
 {#if userRole === 'admin'}
@@ -116,7 +120,7 @@
 				<Search size={18} />
 			</div>
 		</div>
-		<AddNewProduct data={data} />
+		<AddNewProduct {data} />
 	</div>
 	<div class="p-2.5 pt-0">
 		<div class="w-full divide-y overflow-hidden rounded-lg border">

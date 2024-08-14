@@ -14,16 +14,34 @@
 	// Used to conditionally render the Add to Cart button or the QuantityInput component
 	let quantity: number;
 
+	let selectedSaleUnit: string;
+
+	// Set the default sale unit based on the available sale units
+	if (product.sale_units.includes('kg')) {
+		selectedSaleUnit = 'kg';
+	} else if (product.sale_units.includes('piece')) {
+		selectedSaleUnit = 'piece';
+	} else if (product.sale_units.includes('crates')) {
+		selectedSaleUnit = 'crates';
+	} else {
+		selectedSaleUnit = 'kg';
+	}
+
 	// Update the quantity variable when the quantity of the product in the cart changes
 	$: $cart, (quantity = cart.getItemQuantity(product.product_id));
 
 	const addToCart = () => {
+		product.selected_sale_unit = selectedSaleUnit;
 		cart.addItem(product);
 	};
 
 	const removeFromCart = () => {
 		cart.removeItem(product.product_id);
 	};
+
+	function handleSaleUnitChange(event: CustomEvent) {
+		selectedSaleUnit = event.detail.sale_unit;
+	}
 </script>
 
 <Card.Root class="flex w-auto flex-col justify-between p-2">
@@ -60,7 +78,11 @@
 				<Button class="p-3" variant="secondary" on:click={removeFromCart}
 					><Trash size={18} /></Button
 				>
-				<QuantityInput id={product.product_id} sale_units={product.sale_units} />
+				<QuantityInput
+					id={product.product_id}
+					sale_units={product.sale_units}
+					on:saleUnitChange={handleSaleUnitChange}
+				/>
 			</div>
 		{:else}
 			<Button

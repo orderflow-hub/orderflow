@@ -73,8 +73,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			// Insert each product as an order_item
 			for (const product of products) {
 				await sql`
-			        INSERT INTO order_items (order_id, product_id, quantity)
-			        VALUES (${result.order_id}, ${product.product_id}, ${product.qty});
+			        INSERT INTO order_items (order_id, product_id, quantity, snapshot_sale_unit)
+			        VALUES (${result.order_id}, ${product.product_id}, ${product.qty}, ${product.selected_sale_unit});
 			    `;
 			}
 		});
