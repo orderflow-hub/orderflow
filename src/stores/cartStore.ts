@@ -6,6 +6,7 @@ interface CartStore extends Readable<Product[]> {
 	addItem: (item: Product) => void;
 	updateItemQuantity: (id: number, qty: number) => void;
 	getItemQuantity: (id: number) => number;
+	updateItemSaleUnit: (id: number, sale_unit: string) => void;
 	removeItem: (id: number) => void;
 	clear: () => void;
 }
@@ -29,6 +30,13 @@ const createCartStore = (): CartStore => {
 		updateItemQuantity: (id, qty) =>
 			// Set the quantity of the item with the given id
 			update((items) => items.map((item) => (item.product_id === id ? { ...item, qty } : item))),
+		updateItemSaleUnit: (id, sale_unit) => {
+			update((items) =>
+				items.map((item) =>
+					item.product_id === id ? { ...item, selected_sale_unit: sale_unit } : item
+				)
+			);
+		},
 		getItemQuantity: (id) => {
 			const items = get({ subscribe }); // Use get to access the current state
 			const item = items.find((item) => item.product_id === id);
