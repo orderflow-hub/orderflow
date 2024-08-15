@@ -8,7 +8,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = parse(event.request.headers.get('cookie') ?? '');
 	const idToken = cookies.idToken;
 
-	// Add the database isntance to locals so pages can access it
+	// Add the database instance to locals so pages can access it
 	event.locals.sql = sql;
 
 	if (idToken) {
@@ -18,6 +18,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 			if (decodedToken) {
 				// If the token is valid, extract the user's UID and role from the database and add it to the event locals
 				const uid = decodedToken.uid;
+
+				// Checks if account is disabled and denies login
+				const isAccountDisabled = await getIsAccountDisabledFromDatabase(uid);
+                if (isAccountDisabled) {
+                    return new Response('Account is disabled', { status: 403 });
+                }
+
 				const userRole = await getUserRoleFromDatabase(uid);
 				if (userRole) {
 					event.locals.user = { uid, role: userRole };
@@ -45,4 +52,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 async function getUserRoleFromDatabase(uid: string) {
 	const userRole = await sql`SELECT role FROM users WHERE firebase_uid = ${uid}`;
 	return userRole[0].role;
+}
+
+// This function queries the database to get the user's role based on their UID retrieved from the verified user's firebase ID token
+async function getIsAccountDisabledFromDatabase(uid: string) {
+	const isAccountDisabled = await sql`SELECT is_account_disabled FROM users WHERE firebase_uid = ${uid}`;
+	return isAccountDisabled[0].is_account_disabled;
 }
