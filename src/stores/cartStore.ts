@@ -2,7 +2,7 @@ import { writable, derived, get } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 import type { Product } from '$lib/types';
 
-interface CartStore extends Readable {
+interface CartStore extends Readable<Product[]> {
 	addItem: (item: Product) => void;
 	updateItemQuantity: (id: number, qty: number) => void;
 	getItemQuantity: (id: number) => number;
