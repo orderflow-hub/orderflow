@@ -19,18 +19,19 @@
 	let { order, userRole } = data;
 
 	if (order === undefined) {
+		toast.success('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
 	}
-	
+
 	const statuses = [
-		{ value: "pending", label: "Σε εκκρεμότητα" },
-		{ value: "complete", label: "Ολοκληρωμένη" }
+		{ value: 'pending', label: 'Σε εκκρεμότητα' },
+		{ value: 'complete', label: 'Ολοκληρωμένη' }
 	];
 
 	let currentStatus = {
 		value: order.status,
-		label: statuses.find(status => status.value == order.status)?.label
-	}
+		label: statuses.find((status) => status.value == order.status)?.label
+	};
 
 	let goHome: boolean;
 	returnToHome.subscribe((value) => {
@@ -45,6 +46,8 @@
 
 	// Delete the order from the database and show a toast notification. Redirect to '/orders' page if successful
 	async function handleDelete() {
+		if (!order) return;
+
 		const response = await fetch(`/api/orders/${order?.order_id}`, {
 			method: 'DELETE'
 		});
@@ -54,11 +57,11 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredOrders = $ordersStore.filter(o => o.order_id !== order.order_id);
+			let filteredOrders = $ordersStore.filter((o) => o.order_id !== order.order_id);
 			ordersStore.setOrders(filteredOrders, true);
 
 			// Redirect to '/orders' page
-			goto('/orders'); 
+			goto('/orders');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή της παραγγελίας');
 		}
@@ -156,43 +159,40 @@
 	};
 
 	// Update the order status.
-	async function handleStatusChange(s: Selected<string>) {
-    if (s) {
+	async function handleStatusChange(s: Selected<string> | undefined) {
+		if (s && order) {
+			// Updates current status variable.
+			currentStatus = {
+				value: s.value as 'pending' | 'complete',
+				label: s.label
+			};
 
-		// Updates current status variable.
-        currentStatus = {
-            value: s.value as "pending" | "complete",
-            label: s.label
-        };
+			// Request to change status in the database
+			try {
+				const response = await fetch(`/api/orders/${order.order_id}`, {
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ status: currentStatus.value })
+				});
 
-		// Request to change status in the database
-        try {
-            const response = await fetch(`/api/orders/${order.order_id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: currentStatus.value })
-            });
+				if (response.ok) {
+					// Finds order in the Store and updates its status.
+					let orderToUpdate = $ordersStore.find((o) => o.order_id == order.order_id);
+					if (orderToUpdate) orderToUpdate.status = currentStatus.value;
 
-            if (response.ok) {
-
-				// Finds order in the Store and updates its status.
-				let orderToUpdate = $ordersStore.find(o => o.order_id == order.order_id);
-				if (orderToUpdate)
-					orderToUpdate.status = currentStatus.value;
-
-                toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
-            } else {
-                const error = await response.json();
-                toast.error(`Σφάλμα: ${error.error || 'Δεν ήταν δυνατή η ενημέρωση της κατάστασης'}`);
-            }
-        } catch (error) {
-			console.error(error);
-            toast.error('Σφάλμα κατά την επικοινωνία με τον διακομιστή');
-        }
-    }
-}
+					toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
+				} else {
+					const error = await response.json();
+					toast.error(`Σφάλμα: ${error.error || 'Δεν ήταν δυνατή η ενημέρωση της κατάστασης'}`);
+				}
+			} catch (error) {
+				console.error(error);
+				toast.error('Σφάλμα κατά την επικοινωνία με τον διακομιστή');
+			}
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-2.5 p-2.5">
@@ -250,7 +250,7 @@
 				</Card.Content>
 			</Card.Root>
 		{/if}
-		<Card.Root class="overflow-hidden" >
+		<Card.Root class="overflow-hidden">
 			<Card.Header class="p-0">
 				<Card.Title class="flex h-10 items-center justify-center border-b bg-secondary font-normal">
 					Καλάθι
@@ -263,10 +263,10 @@
 			</Card.Content>
 		</Card.Root>
 		{#if userRole === 'admin'}
-		<p>Κατάσταση παραγγελίας *</p>
+			<p>Κατάσταση παραγγελίας *</p>
 			<Select.Root bind:selected={currentStatus} onSelectedChange={(s) => handleStatusChange(s)}>
 				<Select.Input />
-				<Select.Trigger class="w-full p-1 mb-2">
+				<Select.Trigger class="mb-2 w-full p-1">
 					<Select.Value />
 				</Select.Trigger>
 				<Select.Content sameWidth={true} align="end" alignOffset={4} class="w-[110px] sm:w-[120px]">
