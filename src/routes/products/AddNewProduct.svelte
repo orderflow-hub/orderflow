@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import { Image, Plus } from 'lucide-svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { productSchema } from '$lib/schemas/productSchema';
 	import productsStore from '../../stores/productsStore';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -15,8 +14,12 @@
 	import type { PageData } from './$types';
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
+	import { z } from 'zod';
 
-	// export let data: SuperValidated<Infer<FormProductSchema>>;
+	type ProductSchema = z.infer<typeof productSchema>;
+	type Category = ProductSchema['category']; 			// Product category types
+	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
+
 	export let data: PageData;
 
 	if (!data.form) {
@@ -57,7 +60,7 @@
 	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
 		if (s) {
 			// Map over selections to extract values
-			const selectedValues = s.map((selection) => selection.value as 'kg' | 'piece' | 'crates');
+			const selectedValues = s.map((selection) => selection.value as SaleUnit);
 			// Update $formData.saleUnits with the new selections
 			$formData.saleUnits = selectedValues;
 		} else {
@@ -67,21 +70,25 @@
 	}
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
-		if(s){
-			$formData.category = s.value as 'fruits' | 'vegetables'
+		if (s) {
+			$formData.category = s.value as Category;
 		}
 	}
+	
+	// Select items of saleUnits
+	const saleUnits: Selected<string>[] = [
+		{ value: "kg", label: "Κιλό" },
+		{ value: "piece", label: "Τεμάχιο" },
+		{ value: "crates", label: "Τελάρο" }
+	];
 
-	$: saleUnitsSelection = $formData.saleUnits.map((unit) => ({
-		value: unit,
-		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
-	}));
-	
-	$: categorySelection = {
-		label: $formData.category === 'fruits' ? 'Φρούτα' : $formData.category === 'vegetables' ? 'Λαχανικά' : '',
-		value: $formData.category === 'fruits' ? 'fruits' : $formData.category === 'vegetables' ? 'vegetables' : 'other'
-	};
-	
+	// Select items of category
+	const categories: Selected<string>[] = [
+		{ value: "fruits", label: "Φρούτα" },
+		{ value: "vegetables", label: "Λαχανικά" },
+		{ value: "other", label: "Άλλο" }
+	];
+
 	let isDialogOpen = false;
 </script>
 
@@ -116,8 +123,7 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
-							<Select.Root
-								bind:selected={saleUnitsSelection}
+							<Select.Root items={saleUnits}
 								multiple={true}
 								onSelectedChange={(s) => handleSaleUnitsChange(s)}
 							>
@@ -126,18 +132,17 @@
 									<Select.Value />
 								</Select.Trigger>
 								<Select.Content>
-									<Select.Item value="kg" label="κιλό" />
-									<Select.Item value="piece" label="τεμάχιο" />
-									<Select.Item value="crates" label="τελάρο" />
+									{#each saleUnits as saleUnit}
+										<Select.Item value={saleUnit.value} label={saleUnit.label} />
+									{/each}
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
+					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
 						<Form.Control let:attrs>
 							<Form.Label>Κατηγορία *</Form.Label>
-							<Select.Root
-								bind:selected={categorySelection}
+							<Select.Root items={categories}
 								onSelectedChange={(s) => handleCategoryChange(s)}
 							>
 								<Select.Input name={attrs.name} />
@@ -145,8 +150,9 @@
 									<Select.Value />
 								</Select.Trigger>
 								<Select.Content>
-									<Select.Item value="fruits" label="Φρούτα" />
-									<Select.Item value="vegetables" label="Λαχανικά" />
+									{#each categories as category}
+										<Select.Item value={category.value} label={category.label} />
+									{/each}
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>
