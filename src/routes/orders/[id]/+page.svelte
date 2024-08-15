@@ -19,7 +19,7 @@
 	let { order, userRole } = data;
 
 	if (order === undefined) {
-		toast.success('Η παραγγελία δεν βρέθηκε');
+		toast.error('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
 	}
 
