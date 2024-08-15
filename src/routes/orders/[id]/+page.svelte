@@ -179,7 +179,8 @@
 
 				// Finds order in the Store and updates its status.
 				let orderToUpdate = $ordersStore.find(o => o.order_id == order.order_id);
-				orderToUpdate.status = currentStatus.value;
+				if (orderToUpdate)
+					orderToUpdate.status = currentStatus.value;
 
                 toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
             } else {
@@ -187,6 +188,7 @@
                 toast.error(`Σφάλμα: ${error.error || 'Δεν ήταν δυνατή η ενημέρωση της κατάστασης'}`);
             }
         } catch (error) {
+			console.error(error);
             toast.error('Σφάλμα κατά την επικοινωνία με τον διακομιστή');
         }
     }
