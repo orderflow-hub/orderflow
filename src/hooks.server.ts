@@ -19,11 +19,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 				// If the token is valid, extract the user's UID and role from the database and add it to the event locals
 				const uid = decodedToken.uid;
 
-				// Checks if account is disabled and denies login
-				const isAccountDisabled = await getIsAccountDisabledFromDatabase(uid);
-                if (isAccountDisabled) {
-                    return new Response('Account is disabled', { status: 403 });
-                }
+				// Disabled because it's redundant
+				// // Checks if account is disabled and denies login
+				// const isAccountDisabled = await getIsAccountDisabledFromDatabase(uid);
+                // if (isAccountDisabled) {
+                //     return new Response('Account is disabled', { status: 403 });
+                // }
 
 				const userRole = await getUserRoleFromDatabase(uid);
 				if (userRole) {
@@ -54,8 +55,9 @@ async function getUserRoleFromDatabase(uid: string) {
 	return userRole[0].role;
 }
 
-// This function queries the database to get the user's role based on their UID retrieved from the verified user's firebase ID token
-async function getIsAccountDisabledFromDatabase(uid: string) {
-	const isAccountDisabled = await sql`SELECT is_account_disabled FROM users WHERE firebase_uid = ${uid}`;
-	return isAccountDisabled[0].is_account_disabled;
-}
+// Disabled because it's redundant
+// // This function queries the database to get the user's role based on their UID retrieved from the verified user's firebase ID token
+// async function getIsAccountDisabledFromDatabase(uid: string) {
+// 	const isAccountDisabled = await sql`SELECT is_account_disabled FROM users WHERE firebase_uid = ${uid}`;
+// 	return isAccountDisabled[0].is_account_disabled;
+// }

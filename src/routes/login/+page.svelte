@@ -9,15 +9,18 @@
 	let password = '';
 
 	async function handleLogin() {
-		authHandlers
-			.login(email, password)
-			.then(() => {
-				window.location.href = '/';
-			})
-			.catch((error) => {
-				toast.error('Λάθος στοιχεία σύνδεσης');
-			});
-	}
+        try {
+            await authHandlers.login(email, password);
+            window.location.href = '/'; // Redirect to homepage on successful login
+        } catch (error) {
+            // Display the specific error message
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error('Άγνωστο σφάλμα');
+            }
+        }
+    }
 </script>
 
 <div class="flex h-full w-full justify-center">
