@@ -38,16 +38,18 @@
 
 					// Updates the Product Store data.
 					let newProductList = $productsStore;
-					let productToUpdate = newProductList.find(product => product.product_id == $formData.productId);
-					
-					if(productToUpdate) {
+					let productToUpdate = newProductList.find(
+						(product) => product.product_id == $formData.productId
+					);
+
+					if (productToUpdate) {
 						productToUpdate.product_name = $formData.productName;
 						productToUpdate.product_code = $formData.productCode;
 						productToUpdate.sale_units = $formData.saleUnits;
 						productToUpdate.is_disabled = $formData.isDisabled;
 						productToUpdate.category = $formData.category;
 					}
-					
+
 					// Redirect to '/products' page
 					goto('/products');
 				} else {
@@ -76,7 +78,9 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredProducts = $productsStore.filter(product => product.product_id !== $formData.productId);
+			let filteredProducts = $productsStore.filter(
+				(product) => product.product_id !== $formData.productId
+			);
 			productsStore.setProducts(filteredProducts, true);
 
 			// Redirect to '/products' page
@@ -99,8 +103,8 @@
 	}
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
-		if(s){
-			$formData.category = s.value as 'fruits' | 'vegetables'
+		if (s) {
+			$formData.category = s.value as 'fruits' | 'vegetables';
 		}
 	}
 
@@ -110,12 +114,22 @@
 	}));
 
 	$: categorySelection = {
-		label: $formData.category === 'fruits' ? 'Φρούτα' : $formData.category === 'vegetables' ? 'Λαχανικά' : '',
-		value: $formData.category === 'fruits' ? 'fruits' : $formData.category === 'vegetables' ? 'vegetables' : 'other'
+		label:
+			$formData.category === 'fruits'
+				? 'Φρούτα'
+				: $formData.category === 'vegetables'
+					? 'Λαχανικά'
+					: '',
+		value:
+			$formData.category === 'fruits'
+				? 'fruits'
+				: $formData.category === 'vegetables'
+					? 'vegetables'
+					: 'other'
 	};
 </script>
 
-<div class="flex flex-col items-start items-stretch justify-center gap-2.5 rounded-lg p-2.5">
+<div class="flex flex-col items-stretch justify-center gap-2.5 rounded-lg p-2.5">
 	<div class="flex w-full items-center gap-3">
 		<a href="/products" class="p-1">
 			<ArrowLeft />
@@ -154,7 +168,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<div class="mb-3 flex w-full gap-3">
+				<div class="flex w-full gap-3">
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productCode">
 						<Form.Control let:attrs>
 							<Form.Label>Κωδικός προϊόντος *</Form.Label>
@@ -182,25 +196,25 @@
 							</Select.Root>
 						</Form.Control>
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
-						<Form.Control let:attrs>
-							<Form.Label>Κατηγορία *</Form.Label>
-							<Select.Root
-								bind:selected={categorySelection}
-								onSelectedChange={(s) => handleCategoryChange(s)}
-							>
-								<Select.Input name={attrs.name} />
-								<Select.Trigger {...attrs}>
-									<Select.Value />
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Item value="fruits" label="Φρούτα" />
-									<Select.Item value="vegetables" label="Λαχανικά" />
-								</Select.Content>
-							</Select.Root>
-						</Form.Control>
-					</Form.Field>
 				</div>
+				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="saleUnits">
+					<Form.Control let:attrs>
+						<Form.Label>Κατηγορία *</Form.Label>
+						<Select.Root
+							bind:selected={categorySelection}
+							onSelectedChange={(s) => handleCategoryChange(s)}
+						>
+							<Select.Input name={attrs.name} />
+							<Select.Trigger {...attrs}>
+								<Select.Value />
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="fruits" label="Φρούτα" />
+								<Select.Item value="vegetables" label="Λαχανικά" />
+							</Select.Content>
+						</Select.Root>
+					</Form.Control>
+				</Form.Field>
 				<Form.Field {form} name="isDisabled" class="items-top mb-3 flex space-x-2">
 					<Form.Control let:attrs>
 						<Checkbox
@@ -211,7 +225,7 @@
 						/>
 						<Form.Label
 							for="is-product-disabled"
-							class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 							>Το προϊόν δεν είναι διαθέσιμο
 							<Form.Description class="text-xs text-muted-foreground">
 								Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε
