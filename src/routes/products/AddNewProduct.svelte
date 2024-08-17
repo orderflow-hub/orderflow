@@ -67,8 +67,8 @@
 	}
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
-		if(s){
-			$formData.category = s.value as 'fruits' | 'vegetables'
+		if (s) {
+			$formData.category = s.value as 'fruits' | 'vegetables';
 		}
 	}
 
@@ -76,12 +76,22 @@
 		value: unit,
 		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
 	}));
-	
+
 	$: categorySelection = {
-		label: $formData.category === 'fruits' ? 'Φρούτα' : $formData.category === 'vegetables' ? 'Λαχανικά' : '',
-		value: $formData.category === 'fruits' ? 'fruits' : $formData.category === 'vegetables' ? 'vegetables' : 'other'
+		label:
+			$formData.category === 'fruits'
+				? 'Φρούτα'
+				: $formData.category === 'vegetables'
+					? 'Λαχανικά'
+					: '',
+		value:
+			$formData.category === 'fruits'
+				? 'fruits'
+				: $formData.category === 'vegetables'
+					? 'vegetables'
+					: 'other'
 	};
-	
+
 	let isDialogOpen = false;
 </script>
 
@@ -105,7 +115,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<div class="mb-3 flex w-full gap-3">
+				<div class="flex w-full gap-3">
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productCode">
 						<Form.Control let:attrs>
 							<Form.Label>Κωδικός προϊόντος *</Form.Label>
@@ -133,25 +143,25 @@
 							</Select.Root>
 						</Form.Control>
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
-						<Form.Control let:attrs>
-							<Form.Label>Κατηγορία *</Form.Label>
-							<Select.Root
-								bind:selected={categorySelection}
-								onSelectedChange={(s) => handleCategoryChange(s)}
-							>
-								<Select.Input name={attrs.name} />
-								<Select.Trigger {...attrs}>
-									<Select.Value />
-								</Select.Trigger>
-								<Select.Content>
-									<Select.Item value="fruits" label="Φρούτα" />
-									<Select.Item value="vegetables" label="Λαχανικά" />
-								</Select.Content>
-							</Select.Root>
-						</Form.Control>
-					</Form.Field>
 				</div>
+				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
+					<Form.Control let:attrs>
+						<Form.Label>Κατηγορία *</Form.Label>
+						<Select.Root
+							bind:selected={categorySelection}
+							onSelectedChange={(s) => handleCategoryChange(s)}
+						>
+							<Select.Input name={attrs.name} />
+							<Select.Trigger {...attrs}>
+								<Select.Value />
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="fruits" label="Φρούτα" />
+								<Select.Item value="vegetables" label="Λαχανικά" />
+							</Select.Content>
+						</Select.Root>
+					</Form.Control>
+				</Form.Field>
 				<Form.Field {form} name="isDisabled" class="items-top mb-6 flex space-x-2">
 					<Form.Control let:attrs>
 						<Checkbox
@@ -162,7 +172,7 @@
 						/>
 						<Form.Label
 							for="is-product-disabled"
-							class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 							>Το προϊόν δεν είναι διαθέσιμο
 							<Form.Description class="text-xs text-muted-foreground">
 								Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε
