@@ -12,9 +12,13 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         // Verify the token
         const decodedToken = await verifyToken(token);
-        const uid = decodedToken.uid;
+        if (!decodedToken || !decodedToken.uid) {
+            return new Response('Invalid token', { status: 401 });
+        }
 
+        
         // Check if the user is disabled in the database
+        const uid = decodedToken.uid;
         const isAccountDisabled = await getIsAccountDisabledFromDatabase(uid);
         
         return new Response(
