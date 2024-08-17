@@ -42,10 +42,19 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64 #, linux/arm64 <-- Add for ARM support
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            FIREBASE_SERVICE_ACCOUNT=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+            VITE_PUBLIC_FIREBASE_API_KEY=${{ secrets.VITE_PUBLIC_FIREBASE_API_KEY }}
+            VITE_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+            VITE_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.VITE_PUBLIC_FIREBASE_PROJECT_ID }}
+            VITE_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+            VITE_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+            VITE_PUBLIC_FIREBASE_APP_ID=${{ secrets.VITE_PUBLIC_FIREBASE_APP_ID }}
 
       - name: Deploy on CapRover
         uses: caprover/deploy-from-github@v1.1.2
@@ -53,4 +62,4 @@ jobs:
           server: https://orderflow.gr
           app: 'orderflow'
           token: '${{ secrets.APP_TOKEN }}'
-          image: 'ghcr.io/CVakratsas/orderflow:master'
+          image: 'ghcr.io/cvakratsas/orderflow:master'

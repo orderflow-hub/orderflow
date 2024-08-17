@@ -8,7 +8,6 @@
 	import { goto } from '$app/navigation';
 	import { returnToHome } from '../../../stores/orderNavigationStore';
 	import pdfMake from 'pdfmake/build/pdfmake';
-	import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 	import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
 	import ordersStore from '../../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
@@ -17,7 +16,7 @@
 	// Get order data from the server to populate the fields
 	export let data;
 	let { order, userRole } = data;
-
+	
 	if (order === undefined) {
 		toast.error('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
@@ -78,7 +77,14 @@
 		})
 		.replace(',', ' •');
 
-	pdfMake.vfs = pdfFonts.pdfMake.vfs;
+	pdfMake.fonts = {
+		Roboto: {
+			normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+			bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+			italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+			bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
+		},
+	};
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {

@@ -1,8 +1,8 @@
 import admin from 'firebase-admin';
-import { FIREBASE_SERVICE_ACCOUNT } from '$env/static/private';
+// import { env } from '$env/dynamic/private';
 
 // Initialize the admin app
-const serviceAccount = JSON.parse(FIREBASE_SERVICE_ACCOUNT);
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
 
 // If the app is not already initialized, initialize it
 if (!admin.apps.length) {

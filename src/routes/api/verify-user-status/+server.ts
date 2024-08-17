@@ -4,7 +4,7 @@ import sql from '$lib/db';
 
 export const POST: RequestHandler = async ({ request }) => {
     const { token } = await request.json();
-
+    console.log("Token:", token);
     if (!token) {
         return new Response('No token provided', { status: 401 });
     }
@@ -12,6 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         // Verify the token
         const decodedToken = await verifyToken(token);
+        console.log("Decoded Token:", decodedToken);
         if (!decodedToken || !decodedToken.uid) {
             return new Response('Invalid token', { status: 401 });
         }
@@ -20,12 +21,13 @@ export const POST: RequestHandler = async ({ request }) => {
         // Check if the user is disabled in the database
         const uid = decodedToken.uid;
         const isAccountDisabled = await getIsAccountDisabledFromDatabase(uid);
-        
+        console.log("Account Disabled?:", isAccountDisabled);
         return new Response(
             JSON.stringify({ is_account_disabled: isAccountDisabled }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }
         );
     } catch (error) {
+        console.error(error);
         return new Response('Token verification failed', { status: 401 });
     }
 };
