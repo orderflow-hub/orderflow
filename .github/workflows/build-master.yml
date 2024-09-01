@@ -1,4 +1,4 @@
-name: build + publish
+name: build + publish for master
 
 on:
   push:
@@ -12,6 +12,7 @@ env:
 
 jobs:
   build:
+    environment: Production
     runs-on: ubuntu-latest
     #if: contains(github.event.head_commit.message, 'web')
 
