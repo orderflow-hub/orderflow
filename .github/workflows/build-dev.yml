@@ -62,4 +62,4 @@ jobs:
           server: https://orderflow.gr
           app: 'dev'
           token: '${{ secrets.APP_TOKEN }}'
-          image: 'ghcr.io/orderflow-hub/orderflow:latest'
+          image: 'ghcr.io/orderflow-hub/orderflow:dev'
