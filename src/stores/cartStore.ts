@@ -38,7 +38,7 @@ const createCartStore = (): CartStore => {
 			);
 		},
 		getItemQuantity: (id) => {
-			const items = get({ subscribe }); // Use get to access the current state
+			const items = get(cart); // Use get to access the current state
 			const item = items.find((item) => item.product_id === id);
 			return item ? item.qty : 0;
 		},
