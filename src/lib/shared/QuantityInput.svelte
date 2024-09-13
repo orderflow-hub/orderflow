@@ -3,7 +3,7 @@
 	import { cart } from '../../stores/cartStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 
 	export let id: number;
 	export let sale_units: string[] = ['kg'];
@@ -38,12 +38,21 @@
 		cart.updateItemQuantity(id, inputValue);
 	};
 
+	
 	function handleSelectedChange(s: Selected<string> | undefined) {
 		if (s) {
 			cart.updateItemSaleUnit(id, s.value);
 			dispatch('saleUnitChange', { sale_unit: s.value });
 		}
 	}
+	
+	// Subscribe to the cart store and update inputValue when the cart store changes
+	const unsubscribe = cart.subscribe(() => { inputValue = cart.getItemQuantity(id) });
+
+	// Cleanup the subscription when the component is destroyed
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
 <div class="relative flex w-[110px] flex-grow items-center gap-2 sm:w-[120px]">
@@ -55,7 +64,7 @@
 		max={999}
 		bind:value={inputValue}
 		on:input={() => updateCartItemQuantity()}
-		on:focus={event => event.target.select()} 
+		on:focus={event => event.target.select()}
 	/>
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
