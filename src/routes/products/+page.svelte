@@ -99,10 +99,6 @@
 
 	let defaultSelection = { value: 'all', label: 'Όλα' };
 	let previousSelection = defaultSelection as Selected<string>;
-
-	$: if (isCartSheetOpen) {
-		console.log(get(cart));
-	}
 </script>
 
 {#if userRole === 'admin'}
