@@ -29,20 +29,25 @@
 	function updateCartItemQuantity() {
 		// Limits value to a range between 1 and 999
 		inputValue = Math.max(1, Math.min(999, inputValue));
-		
+
 		// Update the quantity value in the CartStore
 		cart.updateItemQuantity(id, inputValue);
-	};
-	
+	}
+
 	function handleSelectedChange(s: Selected<string> | undefined) {
 		if (s) {
 			cart.updateItemSaleUnit(id, s.value);
 			dispatch('saleUnitChange', { sale_unit: s.value });
 		}
 	}
-	
+
+	function selectInput(event: FocusEvent) {
+		const target = event.target as HTMLInputElement;
+		target.select();
+	}
+
 	// Subscribe to the cart store and update inputValue when the cart store changes
-	const unsubscribe = cart.subscribe(() => inputValue = cart.getItemQuantity(id));
+	const unsubscribe = cart.subscribe(() => (inputValue = cart.getItemQuantity(id)));
 
 	// Cleanup the subscription when the component is destroyed
 	onDestroy(() => unsubscribe());
@@ -55,7 +60,7 @@
 		type="number"
 		bind:value={inputValue}
 		on:input={() => updateCartItemQuantity()}
-		on:focus={event => event.target.select()}
+		on:focus={selectInput}
 	/>
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
