@@ -27,8 +27,8 @@
 
 	// Function to validate the quantity input value
 	function updateCartItemQuantity() {
-		// Limits value to a range between 1 and 999
-		inputValue = Math.max(1, Math.min(999, inputValue));
+		// Limits value to a range between 0.1 and 999
+		inputValue = Math.max(0.1, Math.min(999, inputValue));
 
 		// Update the quantity value in the CartStore
 		cart.updateItemQuantity(id, inputValue);
@@ -59,7 +59,7 @@
 		placeholder=""
 		type="number"
 		bind:value={inputValue}
-		on:input={() => updateCartItemQuantity()}
+		on:blur={() => updateCartItemQuantity()}
 		on:focus={selectInput}
 	/>
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
