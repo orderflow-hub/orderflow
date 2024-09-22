@@ -5,9 +5,11 @@ import {
   signOut,
   updatePassword,
   reauthenticateWithCredential,
-  onAuthStateChanged
+  onAuthStateChanged,
+  AuthErrorCodes
 } from 'firebase/auth';
 import type { User, AuthCredential } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 
 type AuthState = {
   currentUser: User | null;
@@ -51,7 +53,7 @@ export const authHandlers = {
             const user = auth.currentUser;
     
             if (!user) {
-                throw new Error('Η αυθεντικοποίηση απέτυχε');
+                throw new Error('Η αυθεντικοποίηση απέτυχε.');
             }
     
             const token = await user.getIdToken();
@@ -81,14 +83,18 @@ export const authHandlers = {
                 });
             } else {
                 // Handle the case when the account is disabled
-                throw new Error('Ο λογαριασμός σας είναι απενεργοποιημένος');
+                throw new Error("Ο λογαριασμός σας είναι απενεργοποιημένος.");
             }
         } catch (error) {
             // Ensure the error thrown has a message property
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error('Άγνωστο σφάλμα');
+            if (error instanceof FirebaseError) {
+                switch (error.code) {
+                    case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
+                        throw new Error("Λάθος στοιχεία σύνδεσης.");
+                
+                    default:
+                        throw new Error("Άγνωστο σφάλμα. Παρακαλώ προσπαθήστε αργότερα.");
+                }
             }
         }
 	},

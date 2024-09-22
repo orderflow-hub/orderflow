@@ -15,15 +15,15 @@
 		<Card.Content class="aspect-square h-full p-0">
 			{#if product.image_url}
 				<img
-					class={cn('aspect-square h-full object-cover', {
+					class={cn('aspect-square w-full object-cover', {
 						grayscale: product.is_disabled
 					})}
 					src={product.image_url}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
-				<div class="flex h-full w-full items-center justify-center">
-					<Image strokeWidth={1} size={65} />
+				<div class="flex w-full items-center justify-center">
+					<Image strokeWidth={1} class="h-full w-full object-contain" />
 				</div>
 			{/if}
 		</Card.Content>

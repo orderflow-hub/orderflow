@@ -36,7 +36,9 @@
 </script>
 
 <div class="flex items-start justify-center rounded-lg">
-	<form use:enhance>
+	<!-- Temporarily disabled, since use:enhance cannot be used on a form without a POST request -->
+	<!-- <form use:enhance> -->
+	 <form>
 		<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
 			<Form.Field class="flex w-full max-w-sm flex-col" {form} name="companyName">
 				<Form.Control let:attrs>
