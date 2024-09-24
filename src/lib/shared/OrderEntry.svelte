@@ -33,7 +33,7 @@
 			{#if userRole === 'admin'}
 				<Card.Title class="text-lg font-normal">{order.company_name} #{order.order_id}</Card.Title>
 			{:else}
-				<Card.Title class="text-lg font-normal">#{order.order_id}</Card.Title>
+				<Card.Title class="text-lg font-normal">#{order.user_order_number}</Card.Title>
 			{/if}
 			<Card.Description class="text-[13px] font-normal text-slate-400"
 				>{formattedDateTime}</Card.Description

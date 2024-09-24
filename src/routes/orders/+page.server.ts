@@ -16,29 +16,4 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 			error: new Error('Access Denied')
 		};
 	}
-
-	// // Previous implementation without search functionality
-	// const limit = 5;
-	// const offset = 0;
-
-	// // Fetch orders from the database
-	// const response = await fetch(`/api/orders?limit=${limit}&offset=${offset}`, {
-	// 	method: 'GET',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	}
-	// });
-
-	// if (!response.ok) {
-	// 	return {
-	// 		status: response.status,
-	// 		error: new Error('Failed to fetch orders')
-	// 	};
-	// }
-
-	// const orders = await response.json();
-
-	// return {
-	// 	orders
-	// };
 };
