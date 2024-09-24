@@ -11,20 +11,35 @@ import { getUserId } from '$lib/authUtils';
  * "offset" specifies the number of orders to skip.
  * Returns a success message on update or an error message on failure.
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 	const limit = Number(url.searchParams.get('limit')) || 4; // Default to 4 for homepage
 	const offset = Number(url.searchParams.get('offset')) || 0;
 	const searchQuery = url.searchParams.get('search') || '';
+	const userRole = locals.user.role;
+	const userId = locals.user.uid;
 
 	try {
-		const orders = await sql`
-			SELECT o.order_id, o.user_order_number, o.user_order_number, o.timestamp, o.status, u.company_name
-			FROM orders as o
-			JOIN users as u ON o.user_id = u.user_id
-			WHERE LOWER(u.company_name) LIKE '%' || LOWER(${searchQuery}) || '%'
-			ORDER BY o.status DESC, o.timestamp DESC
-			LIMIT ${limit} OFFSET ${offset};
-		`;
+		let orders;
+		if (userRole === 'admin') {
+			orders = await sql`
+				SELECT o.order_id, o.user_order_number, o.timestamp, o.status, u.company_name
+				FROM orders as o
+				JOIN users as u ON o.user_id = u.user_id
+				WHERE LOWER(u.company_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+				ORDER BY o.status DESC, o.timestamp DESC
+				LIMIT ${limit} OFFSET ${offset};
+		 	`;
+		} else if (userRole === 'customer') {
+			orders = await sql`
+					SELECT o.order_id, o.user_order_number, o.timestamp, o.status, u.company_name
+					FROM orders as o
+					JOIN users as u ON o.user_id = u.user_id
+					WHERE u.firebase_uid = ${userId}
+					AND LOWER(u.company_name) LIKE '%' || LOWER(${searchQuery}) || '%'
+					ORDER BY o.status DESC, o.timestamp DESC
+					LIMIT ${limit} OFFSET ${offset};
+				`;
+		}
 		return new Response(JSON.stringify(orders), {
 			headers: { 'Content-Type': 'application/json' },
 			status: 200
