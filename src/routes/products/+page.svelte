@@ -178,7 +178,7 @@
 		{/if} -->
 	</div>
 	{#if $itemCount > 0}
-		<div class="sticky bottom-12 flex justify-center p-2.5">
+		<div class="fixed left-0 right-0 bottom-12 flex justify-center p-2.5">
 			<Button
 				class="relative w-full gap-2 px-2 text-base md:w-1/2 lg:w-1/3"
 				variant="default"
