@@ -25,24 +25,6 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 		};
 	}
 
-	// // Fetch customers from the database
-	// const response = await fetch('/api/customers', {
-	// 	method: 'GET',
-	// 	headers: {
-	// 		'Content-Type': 'application/json'
-	// 	}
-	// });
-
-	// if (!response.ok) {
-	// 	return {
-	// 		status: response.status,
-	// 		error: new Error('Failed to fetch customers')
-	// 	};
-	// }
-
-	// const customers = await response.json();
-
-	// customers,
 	return {
 		form: await superValidate(zod(customerSchema))
 	};
@@ -75,16 +57,13 @@ export const actions: Actions = {
 			}
 
 			// Gets new Product id from json response
-			const responseData = await response.json();
-			const userId = responseData.user_id;
-			const userCode = responseData.user_code;
+			const newUser = await response.json();
 
 			// Returning the form with a success message and customer id
 			return message(form, { 
 				status: 'success',
 				text: 'Ο χρήστης προστέθηκε επιτυχώς',
-				userId: userId,
-				userCode: userCode
+				newUser: newUser
 			});
 		} catch (error) {
 			console.error(`Failed to create Customer: ${error}`);
