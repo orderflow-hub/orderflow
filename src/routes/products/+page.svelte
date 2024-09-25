@@ -8,12 +8,13 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
-	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
+	import { cart, itemCount } from '../../stores/cartStore';
 	import productsStore from '../../stores/productsStore';
+	import ordersStore from '../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
@@ -81,6 +82,10 @@
 		});
 
 		if (response.ok) {
+			// Retrieve the new order from the json response and add it to the order store
+			const json = await response.json();
+			ordersStore.addOrder(json.newOrder);
+
 			cart.clear();
 			closeCartSheet();
 			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');

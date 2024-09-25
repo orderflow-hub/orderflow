@@ -59,50 +59,62 @@ export const GET: RequestHandler = async ({ url, locals }) => {
  */
 
 export const POST: RequestHandler = async ({ request }) => {
-	const userId = await getUserId(request);
+    const userId = await getUserId(request);
 
-	if (userId === undefined) {
-		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-			status: 401,
-			headers: { 'Content-Type': 'application/json' }
-		});
-	}
+    if (userId === undefined) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 
-	const products = await request.json();
+    const products = await request.json();
 
-	// Check if the products array is empty
-	if (products.length === 0) {
-		return new Response(JSON.stringify({ error: 'An order must contain at least one item.' }), {
-			status: 400, // Bad Request
-			headers: { 'Content-Type': 'application/json' }
-		});
-	}
+    // Check if the products array is empty
+    if (products.length === 0) {
+        return new Response(JSON.stringify({ error: 'An order must contain at least one item.' }), {
+            status: 400, // Bad Request
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 
-	try {
-		await sql.begin(async (sql) => {
-			// Create the order
-			const [result] = await sql`
-	            INSERT INTO orders (user_id, status) VALUES (${userId}, 'pending') RETURNING order_id;
-	        `;
+    try {
+        let newOrder;
 
-			// Insert each product as an order_item
-			for (const product of products) {
-				await sql`
-			        INSERT INTO order_items (order_id, product_id, quantity, snapshot_sale_unit)
-			        VALUES (${result.order_id}, ${product.product_id}, ${product.qty}, ${product.selected_sale_unit});
-			    `;
-			}
-		});
+        await sql.begin(async (sql) => {
+            // Create the order and get the inserted order ID
+            const [result] = await sql`
+                INSERT INTO orders (user_id, status)
+                VALUES (${userId}, 'pending')
+                RETURNING order_id;
+            `;
 
-		return new Response(JSON.stringify({ message: 'Order and order items created successfully' }), {
-			status: 201,
-			headers: { 'Content-Type': 'application/json' }
-		});
-	} catch (error) {
-		console.error('Failed to create order and order items:', error);
-		return new Response(JSON.stringify({ error: 'Internal server error' }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		});
-	}
+            // Insert each product as an order_item
+            for (const product of products) {
+                await sql`
+                    INSERT INTO order_items (order_id, product_id, quantity, snapshot_sale_unit)
+                    VALUES (${result.order_id}, ${product.product_id}, ${product.qty}, ${product.selected_sale_unit});
+                `;
+            }
+
+            // Fetch the newly created order
+            [newOrder] = await sql`
+                SELECT o.order_id, o.user_order_number, o.timestamp, o.status, u.company_name
+                FROM orders as o
+                JOIN users as u ON o.user_id = u.user_id
+                WHERE o.order_id = ${result.order_id};
+            `;
+        });
+
+        return new Response(JSON.stringify({ newOrder, message: 'Order and order items created successfully' }), {
+            status: 201,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        console.error('Failed to create order and order items:', error);
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 };
