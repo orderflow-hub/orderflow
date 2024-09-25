@@ -55,14 +55,13 @@ export const actions: Actions = {
 			}
 
 			// Gets new Product id from json response
-			const responseData = await apiResponse.json();
-			const productId = responseData.product_id;
+			const newProduct = await apiResponse.json();
 
 			// Returning the form with a success message and product_id
 			return message(form, { 
 				status: 'success', 
 				text: 'Το προϊόν προστέθηκε επιτυχώς', 
-				productId: productId
+				newProduct: newProduct
 			});
 		} catch (error) {
 			throw new Error(`Failed to create product ${error}`);
