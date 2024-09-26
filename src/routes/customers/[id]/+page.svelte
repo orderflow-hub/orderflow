@@ -32,19 +32,7 @@
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
 
-					// Updates the Customer Store data.
-					let customerToUpdate = $customersStore.find(customer => customer.user_id == $formData.customerId);
-					
-					if(customerToUpdate){
-						customerToUpdate.company_name = $formData.companyName;
-						customerToUpdate.email = $formData.email;
-						customerToUpdate.phone_number = $formData.phoneNumber;
-						customerToUpdate.afm = $formData.afm;
-						customerToUpdate.street_address = $formData.streetAddress ? $formData.streetAddress : customerToUpdate.street_address;
-						customerToUpdate.city = $formData.city ? $formData.city : customerToUpdate.city;
-						customerToUpdate.postal_code = $formData.postalCode ? $formData.postalCode : customerToUpdate.postal_code;
-						customerToUpdate.is_account_disabled = $formData.isAccountDisabled;
-					}
+					customersStore.updateCustomer(form.message.updatedCustomer);
 
 					// Redirect to '/customers' page
 					goto('/customers');

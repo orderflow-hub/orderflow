@@ -9,6 +9,7 @@ interface CustomersStore extends Readable<Customer[]> {
 	setCustomers: (orders: Customer[], reset: boolean) => void;
 	setLoading: (isLoading: boolean) => void;
 	setHasMore: (hasMore: boolean) => void;
+	updateCustomer: (updatedCustomer: Customer) => void;
 	reset: () => void;
 }
 
@@ -33,6 +34,15 @@ const createCustomersStore = (): CustomersStore => {
 		},
 		setHasMore: (more: boolean) => {
 			hasMore = more;
+		},
+		updateCustomer: (updatedCustomer: Customer) => {
+			update((current) =>
+				current.map((customer) =>
+					customer.user_id === updatedCustomer.user_id
+						? updatedCustomer
+						: customer
+				)
+			);
 		},
 		reset: () => {
 			set([]);

@@ -105,8 +105,15 @@ export const actions: Actions = {
 				throw new Error(`Failed to update customer due to bad response: ${errorMessage}`);
 			}
 
+			// Gets updated Customer from json response
+			const updatedCustomer = await response.json();
+
 			// Returning the form is required for the superform validation to work
-			return message(form, { status: 'success', text: 'Οι αλλαγές αποθηκεύτηκαν επιτυχώς' });
+			return message(form, { 
+				status: 'success', 
+				text: 'Οι αλλαγές αποθηκεύτηκαν επιτυχώς', 
+				updatedCustomer: updatedCustomer 
+			});
 		} catch (error) {
 			console.error(`Failed to update customer: ${error}`);
 			return message(form, {
