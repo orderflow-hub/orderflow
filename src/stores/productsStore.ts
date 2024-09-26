@@ -8,6 +8,7 @@ interface ProductsStore extends Readable<Product[]> {
 	setProducts: (products: Product[], reset: boolean) => void;
 	setLoading: (isLoading: boolean) => void;
 	setHasMore: (hasMore: boolean) => void;
+	updateProduct: (updatedProduct: Product) => void;
 	reset: () => void;
 }
 
@@ -32,6 +33,13 @@ const createProductsStore = (): ProductsStore => {
 		},
 		setHasMore: (more: boolean) => {
 			hasMore = more;
+		},
+		updateProduct: (updatedProduct: Product) => {
+			update((current) =>
+				current.map((product) =>
+					product.product_id === updatedProduct.product_id ? updatedProduct : product
+				)
+			);
 		},
 		reset: () => {
 			set([]);

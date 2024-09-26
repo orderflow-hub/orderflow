@@ -37,18 +37,7 @@
 					toast.success(form.message.text);
 
 					// Updates the Product Store data.
-					let newProductList = $productsStore;
-					let productToUpdate = newProductList.find(
-						(product) => product.product_id == $formData.productId
-					);
-
-					if (productToUpdate) {
-						productToUpdate.product_name = $formData.productName;
-						productToUpdate.product_code = $formData.productCode;
-						productToUpdate.sale_units = $formData.saleUnits;
-						productToUpdate.is_disabled = $formData.isDisabled;
-						productToUpdate.category = $formData.category;
-					}
+					productsStore.updateProduct(form.message.updatedProduct);	
 
 					// Redirect to '/products' page
 					goto('/products');
