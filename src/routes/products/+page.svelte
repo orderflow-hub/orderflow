@@ -34,7 +34,7 @@
 		productsStore.setLoading(true);
 		const query = $searchQuery.trim();
 		const offset = reset ? 0 : $productsStore.length;
-		// console.log($productsStore.length, offset, reset, query);
+
 		const response = await fetch(
 			`/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
 			{
@@ -84,7 +84,7 @@
 		if (response.ok) {
 			// Retrieve the new order from the json response and add it to the order store
 			const json = await response.json();
-			ordersStore.addOrder(json.newOrder);
+			ordersStore.setOrders([json.newOrder], false);
 
 			cart.clear();
 			closeCartSheet();

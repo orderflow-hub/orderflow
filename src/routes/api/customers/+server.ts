@@ -59,31 +59,27 @@ export const POST: RequestHandler = async ({ request }) => {
     }
 
     try {
-        const result = await sql.begin(async (sql) => {
-            // Create a new user using firebaseAdmin
-            const userRecord = await createUser(data.email, 'password');
-            const uid = userRecord?.uid;
+        // Create a new user using firebaseAdmin
+        const userRecord = await createUser(data.email, 'password');
+        const uid = userRecord?.uid;
 
-            if (!uid) {
-                throw new Error('Failed to create user');
-            }
+        if (!uid) {
+            throw new Error('Failed to create user');
+        }
 
-            // Insert the new customer into the database
-            const [newCustomer] = await sql`
-                INSERT INTO users
-                (firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
-                VALUES
-                (${uid}, ${data.company_name}, ${data.email}, ${data.afm}, ${data.phone_number},
-                ${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
-                RETURNING *;
-            `;
-
-            return newCustomer;
-        });
+        // Insert the new customer into the database
+        const [newCustomer] = await sql`
+            INSERT INTO users
+            (firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
+            VALUES
+            (${uid}, ${data.company_name}, ${data.email}, ${data.afm}, ${data.phone_number},
+            ${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
+            RETURNING *;
+        `;
 
         // Return the newly created customer details
         return new Response(
-            JSON.stringify(result),
+            JSON.stringify(newCustomer),
             {
                 status: 201,
                 headers: { 'Content-Type': 'application/json' }

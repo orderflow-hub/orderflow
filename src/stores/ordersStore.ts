@@ -9,7 +9,6 @@ interface OrdersStore extends Readable<Order[]> {
 	setOrders: (orders: Order[], reset: boolean) => void;
 	setLoading: (isLoading: boolean) => void;
 	setHasMore: (hasMore: boolean) => void;
-	addOrder: (newOrder: Order) => void;
 	reset: () => void;
 }
 
@@ -26,7 +25,7 @@ const createOrdersStore = (): OrdersStore => {
 			if (reset) {
 				set(orders);
 			} else {
-				update((current) => [...current, ...orders]);
+				update((current) => [...orders, ...current]);
 			}
 		},
 		setLoading: (isLoading: boolean) => {
@@ -34,9 +33,6 @@ const createOrdersStore = (): OrdersStore => {
 		},
 		setHasMore: (more: boolean) => {
 			hasMore = more;
-		},
-		addOrder: (newOrder: Order) => {
-			update((current) => [newOrder, ...current]);
 		},
 		reset: () => {
 			set([]);

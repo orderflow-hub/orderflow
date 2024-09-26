@@ -38,7 +38,6 @@ export const actions: Actions = {
 
 		// Convert form data to snake_case with humps library
 		const formData = humps.decamelizeKeys(form.data);
-		console.log('Creating product: ' + JSON.stringify(formData));
 		
 		try {
 			const apiResponse = await event.fetch('api/products', {
@@ -54,7 +53,7 @@ export const actions: Actions = {
 				throw new Error('Failed to create product due to bad response');
 			}
 
-			// Gets new Product id from json response
+			// Gets new Product from json response
 			const newProduct = await apiResponse.json();
 
 			// Returning the form with a success message and product_id
