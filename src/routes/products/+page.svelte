@@ -19,6 +19,7 @@
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -89,6 +90,7 @@
 			cart.clear();
 			closeCartSheet();
 			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');
+			goto('/orders');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
