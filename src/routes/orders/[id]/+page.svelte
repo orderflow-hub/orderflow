@@ -8,17 +8,29 @@
 	import { goto } from '$app/navigation';
 	import { returnToHome } from '../../../stores/orderNavigationStore';
 	import pdfMake from 'pdfmake/build/pdfmake';
-	import pdfFonts from 'pdfmake/build/vfs_fonts';
 	import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
 	import ordersStore from '../../../stores/ordersStore';
+	import * as Select from '$lib/components/ui/select';
+	import type { Selected } from 'bits-ui';
 
 	// Get order data from the server to populate the fields
 	export let data;
 	let { order, userRole } = data;
-
+	
 	if (order === undefined) {
+		toast.error('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
 	}
+
+	const statuses = [
+		{ value: 'pending', label: 'Σε εκκρεμότητα' },
+		{ value: 'complete', label: 'Ολοκληρωμένη' }
+	];
+
+	let currentStatus = {
+		value: order.status,
+		label: statuses.find((status) => status.value == order.status)?.label
+	};
 
 	let goHome: boolean;
 	returnToHome.subscribe((value) => {
@@ -33,6 +45,8 @@
 
 	// Delete the order from the database and show a toast notification. Redirect to '/orders' page if successful
 	async function handleDelete() {
+		if (!order) return;
+
 		const response = await fetch(`/api/orders/${order?.order_id}`, {
 			method: 'DELETE'
 		});
@@ -42,11 +56,11 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredOrders = $ordersStore.filter(o => o.order_id !== order.order_id);
+			let filteredOrders = $ordersStore.filter((o) => o.order_id !== order.order_id);
 			ordersStore.setOrders(filteredOrders, true);
 
 			// Redirect to '/orders' page
-			goto('/orders'); 
+			goto('/orders');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή της παραγγελίας');
 		}
@@ -63,7 +77,14 @@
 		})
 		.replace(',', ' •');
 
-	pdfMake.vfs = pdfFonts.pdfMake.vfs;
+	pdfMake.fonts = {
+		Roboto: {
+			normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+			bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+			italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+			bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
+		},
+	};
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
@@ -142,6 +163,42 @@
 
 		pdfMake.createPdf(docDefinition).open();
 	};
+
+	// Update the order status.
+	async function handleStatusChange(s: Selected<string> | undefined) {
+		if (s && order) {
+			// Updates current status variable.
+			currentStatus = {
+				value: s.value as 'pending' | 'complete',
+				label: s.label
+			};
+
+			// Request to change status in the database
+			try {
+				const response = await fetch(`/api/orders/${order.order_id}`, {
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ status: currentStatus.value })
+				});
+
+				if (response.ok) {
+					// Finds order in the Store and updates its status.
+					let orderToUpdate = $ordersStore.find((o) => o.order_id == order.order_id);
+					if (orderToUpdate) orderToUpdate.status = currentStatus.value;
+
+					toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
+				} else {
+					const error = await response.json();
+					toast.error(`Σφάλμα: ${error.error || 'Δεν ήταν δυνατή η ενημέρωση της κατάστασης'}`);
+				}
+			} catch (error) {
+				console.error(error);
+				toast.error('Σφάλμα κατά την επικοινωνία με τον διακομιστή');
+			}
+		}
+	}
 </script>
 
 <div class="flex flex-col gap-2.5 p-2.5">
@@ -211,6 +268,20 @@
 				{/each}
 			</Card.Content>
 		</Card.Root>
+		{#if userRole === 'admin'}
+			<p>Κατάσταση παραγγελίας *</p>
+			<Select.Root bind:selected={currentStatus} onSelectedChange={(s) => handleStatusChange(s)}>
+				<Select.Input />
+				<Select.Trigger class="mb-2 w-full p-1">
+					<Select.Value />
+				</Select.Trigger>
+				<Select.Content sameWidth={true} align="end" alignOffset={4} class="w-[110px] sm:w-[120px]">
+					{#each statuses as status}
+						<Select.Item value={status.value} label={status.label} />
+					{/each}
+				</Select.Content>
+			</Select.Root>
+		{/if}
 		<Button on:click={handlePrint}>Εκτύπωση</Button>
 	{/if}
 </div>

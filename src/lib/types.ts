@@ -7,6 +7,7 @@ export interface Product {
 	sale_units: ('kg' | 'piece' | 'crates')[];
 	category: 'fruits' | 'vegetables' | 'other';
 	qty?: number;
+	selected_sale_unit?: string;
 }
 
 export interface Customer {

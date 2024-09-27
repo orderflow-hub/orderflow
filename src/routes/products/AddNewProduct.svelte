@@ -112,7 +112,7 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-				<div class="mb-3 flex w-full gap-3">
+				<div class="flex w-full gap-3">
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productCode">
 						<Form.Control let:attrs>
 							<Form.Label>Κωδικός προϊόντος *</Form.Label>
@@ -168,7 +168,7 @@
 						/>
 						<Form.Label
 							for="is-product-disabled"
-							class="text-md flex flex-col gap-1.5 font-medium leading-none leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							class="text-md flex flex-col gap-1.5 font-medium leading-none text-destructive peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 							>Το προϊόν δεν είναι διαθέσιμο
 							<Form.Description class="text-xs text-muted-foreground">
 								Το προϊόν θα εμφανίζεται στους πελάτες αλλά δε θα μπορούν να το προσθέσουν σε

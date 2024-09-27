@@ -14,16 +14,34 @@
 	// Used to conditionally render the Add to Cart button or the QuantityInput component
 	let quantity: number;
 
+	let selectedSaleUnit: string;
+
+	// Set the default sale unit based on the available sale units
+	if (product.sale_units.includes('kg')) {
+		selectedSaleUnit = 'kg';
+	} else if (product.sale_units.includes('piece')) {
+		selectedSaleUnit = 'piece';
+	} else if (product.sale_units.includes('crates')) {
+		selectedSaleUnit = 'crates';
+	} else {
+		selectedSaleUnit = 'kg';
+	}
+
 	// Update the quantity variable when the quantity of the product in the cart changes
 	$: $cart, (quantity = cart.getItemQuantity(product.product_id));
 
 	const addToCart = () => {
+		product.selected_sale_unit = selectedSaleUnit;
 		cart.addItem(product);
 	};
 
 	const removeFromCart = () => {
 		cart.removeItem(product.product_id);
 	};
+
+	function handleSaleUnitChange(event: CustomEvent) {
+		selectedSaleUnit = event.detail.sale_unit;
+	}
 </script>
 
 <Card.Root class="flex w-auto flex-col justify-between p-2">
@@ -31,15 +49,15 @@
 		<Card.Content class="p-0">
 			{#if product.image_url}
 				<img
-					class={cn('aspect-square h-full object-cover', {
+					class={cn('w-full object-cover', {
 						grayscale: product.is_disabled
 					})}
 					src={product.image_url}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
-				<div class="flex h-full w-full items-center justify-center">
-					<Image strokeWidth={0.6} size={158.2} />
+				<div class="flex aspect-square w-full items-center justify-center object-cover">
+					<Image strokeWidth={0.6} class="h-full w-full object-contain" />
 				</div>
 			{/if}
 		</Card.Content>
@@ -60,7 +78,11 @@
 				<Button class="p-3" variant="secondary" on:click={removeFromCart}
 					><Trash size={18} /></Button
 				>
-				<QuantityInput id={product.product_id} sale_unit={product.sale_unit} />
+				<QuantityInput
+					id={product.product_id}
+					sale_units={product.sale_units}
+					on:saleUnitChange={handleSaleUnitChange}
+				/>
 			</div>
 		{:else}
 			<Button
