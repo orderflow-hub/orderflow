@@ -26,7 +26,7 @@ const createCustomersStore = (): CustomersStore => {
 			if (reset) {
 				set(customers);
 			} else {
-				update((current) => [...customers, ...current]);
+				update((current) => [...current, ...customers]);
 			}
 		},
 		setLoading: (isLoading: boolean) => {

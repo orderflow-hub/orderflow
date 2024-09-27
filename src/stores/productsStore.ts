@@ -25,7 +25,7 @@ const createProductsStore = (): ProductsStore => {
 			if (reset) {
 				set(products);
 			} else {
-				update((current) => [...products, ...current]);
+				update((current) => [...current, ...products]);
 			}
 		},
 		setLoading: (isLoading: boolean) => {

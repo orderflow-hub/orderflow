@@ -25,7 +25,7 @@ const createOrdersStore = (): OrdersStore => {
 			if (reset) {
 				set(orders);
 			} else {
-				update((current) => [...orders, ...current]);
+				update((current) => [...current, ...orders]);
 			}
 		},
 		setLoading: (isLoading: boolean) => {
