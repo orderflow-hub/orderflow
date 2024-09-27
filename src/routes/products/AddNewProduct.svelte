@@ -79,13 +79,16 @@
 	const saleUnits: Selected<string>[] = [
 		{ value: "kg", label: "Κιλό" },
 		{ value: "piece", label: "Τεμάχιο" },
-		{ value: "crates", label: "Τελάρο" }
+		{ value: "crate", label: "Τελάρο" },
+		{ value: "bunch", label: "Μάτσο" },
+		{ value: "cup", label: "Κουπάκι" }
 	];
 
 	// Select items of category
 	const categories: Selected<string>[] = [
 		{ value: "fruits", label: "Φρούτα" },
-		{ value: "vegetables", label: "Λαχανικά" },
+		{ value: "vegetables", label: "Κηπευτικά" },
+		{ value: "bundles", label: "Δεματικά" },
 		{ value: "other", label: "Άλλο" }
 	];
 

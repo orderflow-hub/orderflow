@@ -155,7 +155,8 @@
 			<Select.Content>
 				<Select.Item value="all" label="Όλα" />
 				<Select.Item value="fruits" label="Φρούτα" />
-				<Select.Item value="vegetables" label="Λαχανικά" />
+				<Select.Item value="vegetables" label="Κηπευτικά" />
+				<Select.Item value="bundles" label="Δεματικά" />
 			</Select.Content>
 		</Select.Root>
 	</div>

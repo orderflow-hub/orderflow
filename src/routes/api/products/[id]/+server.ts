@@ -129,7 +129,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 
 			if (data[saleUnitsKey]) {
 				// Update the product_sale_unit table
-				const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crates')[];
+				const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
 
 				// Delete existing sale units for the product
 				await sql`

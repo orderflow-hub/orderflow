@@ -14,9 +14,11 @@
 	let inputValue: number = cart.getItemQuantity(id);
 
 	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'kg',
-		piece: 'τεμ',
-		crates: 'τελ'
+		kg: 'Κιλό',
+		piece: 'Τεμάχιο',
+		crate: 'Τελάρο',
+		bunch: 'Μάτσο',
+		cup: 'Κουπάκι'
 	};
 
 	// Determine the default selection based on the priority
@@ -53,7 +55,7 @@
 	onDestroy(() => unsubscribe());
 </script>
 
-<div class="relative flex w-[110px] flex-grow items-center gap-2 sm:w-[120px]">
+<div class="relative flex w-[125px] flex-grow items-center gap-2 sm:w-[120px]">
 	<Input
 		class="pr-2 text-center text-base font-semibold text-zinc-700"
 		placeholder=""
@@ -67,7 +69,7 @@
 		<Select.Trigger class="w-full p-1">
 			<Select.Value />
 		</Select.Trigger>
-		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[120px]">
+		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[100px]">
 			{#each sale_units as unit}
 				<Select.Item value={unit} label={saleUnitLabels[unit]} />
 			{/each}
