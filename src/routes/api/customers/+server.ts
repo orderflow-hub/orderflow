@@ -40,35 +40,35 @@ export const GET: RequestHandler = async ({ url }) => {
  * Returns the created customer details on success or an error message on failure.
  */
 export const POST: RequestHandler = async ({ request }) => {
-    const data = await request.json();
+	const data = await request.json();
 
-    // Check if the unique fields already exist in the database
-    const existingUser = await sql`
+	// Check if the unique fields already exist in the database
+	const existingUser = await sql`
         SELECT * FROM users
         WHERE email = ${data.email} OR afm = ${data.afm} OR company_name = ${data.company_name}
     `;
 
-    if (existingUser.length > 0) {
-        return new Response(
-            JSON.stringify({ error: 'User with provided unique fields already exists' }),
-            {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            }
-        );
-    }
+	if (existingUser.length > 0) {
+		return new Response(
+			JSON.stringify({ error: 'User with provided unique fields already exists' }),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+	}
 
-    try {
-        // Create a new user using firebaseAdmin
-        const userRecord = await createUser(data.email, 'password');
-        const uid = userRecord?.uid;
+	try {
+		// Create a new user using firebaseAdmin
+		const userRecord = await createUser(data.email, 'password');
+		const uid = userRecord?.uid;
 
-        if (!uid) {
-            throw new Error('Failed to create user');
-        }
+		if (!uid) {
+			throw new Error('Failed to create user');
+		}
 
-        // Insert the new customer into the database
-        const [newCustomer] = await sql`
+		// Insert the new customer into the database
+		const [newCustomer] = await sql`
             INSERT INTO users
             (firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
             VALUES
@@ -77,19 +77,16 @@ export const POST: RequestHandler = async ({ request }) => {
             RETURNING *;
         `;
 
-        // Return the newly created customer details
-        return new Response(
-            JSON.stringify(newCustomer),
-            {
-                status: 201,
-                headers: { 'Content-Type': 'application/json' }
-            }
-        );
-    } catch (error) {
-        console.error('Failed to create user:', error);
-        return new Response(JSON.stringify({ error: 'Internal server error' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+		// Return the newly created customer details
+		return new Response(JSON.stringify(newCustomer), {
+			status: 201,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	} catch (error) {
+		console.error('Failed to create user:', error);
+		return new Response(JSON.stringify({ error: 'Internal server error' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
 };

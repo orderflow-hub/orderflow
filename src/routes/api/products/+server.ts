@@ -100,27 +100,27 @@ export const GET: RequestHandler = async ({ url }) => {
  * Returns the created product details on success or an error message on failure.
  */
 export const POST: RequestHandler = async ({ request }) => {
-    const data = await request.json();
+	const data = await request.json();
 
-    // Check if the unique fields already exist in the database
-    const existingProducts = await sql`
+	// Check if the unique fields already exist in the database
+	const existingProducts = await sql`
         SELECT product_code FROM products
         WHERE product_code = ${data.product_code}
     `;
 
-    if (existingProducts.length > 0) {
-        return new Response(
-            JSON.stringify({ error: 'Product with provided unique product code already exists' }),
-            {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
-            }
-        );
-    }
+	if (existingProducts.length > 0) {
+		return new Response(
+			JSON.stringify({ error: 'Product with provided unique product code already exists' }),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+	}
 
-    try {
-        // Insert the new product
-        const [newProduct] = await sql`
+	try {
+		// Insert the new product
+		const [newProduct] = await sql`
             INSERT INTO products 
             (product_code, product_name, category, is_disabled, image_url) 
             VALUES 
@@ -128,29 +128,29 @@ export const POST: RequestHandler = async ({ request }) => {
             RETURNING *;
         `;
 
-        const saleUnits = data.sale_units as ('kg' | 'piece' | 'crates')[];
+		const saleUnits = data.sale_units as ('kg' | 'piece' | 'crates')[];
 
-        // Delete any existing sale units (though not necessary for new products)
-        await sql`
+		// Delete any existing sale units (though not necessary for new products)
+		await sql`
             DELETE FROM product_sale_unit
             WHERE product_id = ${newProduct.product_id};
         `;
 
-        // Insert the new sale units for the product
-        for (const saleUnit of saleUnits) {
-            const [saleUnitIdResult] = await sql`
+		// Insert the new sale units for the product
+		for (const saleUnit of saleUnits) {
+			const [saleUnitIdResult] = await sql`
                 SELECT sale_unit_id FROM sale_units WHERE sale_unit = ${saleUnit};
             `;
-            const saleUnitId = saleUnitIdResult.sale_unit_id;
+			const saleUnitId = saleUnitIdResult.sale_unit_id;
 
-            await sql`
+			await sql`
                 INSERT INTO product_sale_unit (product_id, sale_unit_id)
                 VALUES (${newProduct.product_id}, ${saleUnitId});
             `;
-        }
+		}
 
-        // Fetch the inserted product details along with the sale units
-        const [createdProduct] = await sql`
+		// Fetch the inserted product details along with the sale units
+		const [createdProduct] = await sql`
             SELECT 
                 p.product_id,
                 p.image_url,
@@ -171,19 +171,16 @@ export const POST: RequestHandler = async ({ request }) => {
                 p.product_id;
         `;
 
-        // Return the newly created product details
-        return new Response(
-            JSON.stringify(createdProduct),
-            {
-                status: 201,
-                headers: { 'Content-Type': 'application/json' }
-            }
-        );
-    } catch (error) {
-        console.error('Failed to create product:', error);
-        return new Response(JSON.stringify({ error: 'Internal server error' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+		// Return the newly created product details
+		return new Response(JSON.stringify(createdProduct), {
+			status: 201,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	} catch (error) {
+		console.error('Failed to create product:', error);
+		return new Response(JSON.stringify({ error: 'Internal server error' }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' }
+		});
+	}
 };

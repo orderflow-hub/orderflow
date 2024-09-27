@@ -170,14 +170,11 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 				p.product_id;
 		`;
 
-        // Return the updated product details
-        return new Response(
-            JSON.stringify(updatedProduct),
-            {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
-            }
-		);
+		// Return the updated product details
+		return new Response(JSON.stringify(updatedProduct), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' }
+		});
 	} catch (error) {
 		console.error('Failed to update product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {

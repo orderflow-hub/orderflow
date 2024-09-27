@@ -37,7 +37,7 @@
 					toast.success(form.message.text);
 
 					// Updates the Product Store data.
-					productsStore.updateProduct(form.message.updatedProduct);	
+					productsStore.updateProduct(form.message.updatedProduct);
 
 					// Redirect to '/products' page
 					goto('/products');

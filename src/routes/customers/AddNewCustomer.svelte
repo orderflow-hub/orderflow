@@ -11,7 +11,6 @@
 	import { toast } from 'svelte-sonner';
 	import customersStore from '../../stores/customersStore';
 
-
 	// export let data: SuperValidated<Infer<FormCustomerSchema>>;
 	export let data;
 
@@ -25,7 +24,7 @@
 					toast.success(form.message.text);
 
 					customersStore.setCustomers([form.message.newUser], false);
-					
+
 					isDialogOpen = false; // Hides form modal.
 				} else {
 					toast.error(form.message.text);

@@ -38,9 +38,7 @@ const createCustomersStore = (): CustomersStore => {
 		updateCustomer: (updatedCustomer: Customer) => {
 			update((current) =>
 				current.map((customer) =>
-					customer.user_id === updatedCustomer.user_id
-						? updatedCustomer
-						: customer
+					customer.user_id === updatedCustomer.user_id ? updatedCustomer : customer
 				)
 			);
 		},

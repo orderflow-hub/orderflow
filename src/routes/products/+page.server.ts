@@ -38,7 +38,7 @@ export const actions: Actions = {
 
 		// Convert form data to snake_case with humps library
 		const formData = humps.decamelizeKeys(form.data);
-		
+
 		try {
 			const apiResponse = await event.fetch('api/products', {
 				method: 'POST',
@@ -57,9 +57,9 @@ export const actions: Actions = {
 			const newProduct = await apiResponse.json();
 
 			// Returning the form with a success message and product_id
-			return message(form, { 
-				status: 'success', 
-				text: 'Το προϊόν προστέθηκε επιτυχώς', 
+			return message(form, {
+				status: 'success',
+				text: 'Το προϊόν προστέθηκε επιτυχώς',
 				newProduct: newProduct
 			});
 		} catch (error) {

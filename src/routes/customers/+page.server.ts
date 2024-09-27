@@ -60,7 +60,7 @@ export const actions: Actions = {
 			const newUser = await response.json();
 
 			// Returning the form with a success message and customer id
-			return message(form, { 
+			return message(form, {
 				status: 'success',
 				text: 'Ο χρήστης προστέθηκε επιτυχώς',
 				newUser: newUser

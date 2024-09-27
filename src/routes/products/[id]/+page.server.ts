@@ -103,8 +103,8 @@ export const actions: Actions = {
 			const updatedProduct = await response.json();
 
 			// Returning the form is required for the superform validation to work
-			return message(form, { 
-				status: 'success', 
+			return message(form, {
+				status: 'success',
 				text: 'Οι αλλαγές αποθηκεύτηκαν επιτυχώς',
 				updatedProduct: updatedProduct
 			});

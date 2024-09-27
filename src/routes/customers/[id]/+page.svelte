@@ -63,7 +63,9 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredCustomers = $customersStore.filter(customer => customer.user_id !== $formData.customerId);
+			let filteredCustomers = $customersStore.filter(
+				(customer) => customer.user_id !== $formData.customerId
+			);
 			customersStore.setCustomers(filteredCustomers, true);
 
 			// Redirect to '/customers' page

@@ -33,7 +33,7 @@
 					toast.success(form.message.text);
 
 					productsStore.setProducts([form.message.newProduct], false);
-					
+
 					isDialogOpen = false; // Hides form modal.
 				} else {
 					toast.error(form.message.text);
