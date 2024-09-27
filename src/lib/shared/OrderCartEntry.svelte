@@ -5,7 +5,7 @@
 
 	export let product;
 	export let showImage: boolean = true;
-	
+
 	const saleUnitLabels: { [key: string]: string } = {
 		kg: 'Κιλό',
 		piece: 'Τεμάχιο',

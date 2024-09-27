@@ -17,7 +17,7 @@
 	import { z } from 'zod';
 
 	type ProductSchema = z.infer<typeof productSchema>;
-	type Category = ProductSchema['category']; 			// Product category types
+	type Category = ProductSchema['category']; // Product category types
 	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	export let data: PageData;
@@ -74,22 +74,22 @@
 			$formData.category = s.value as Category;
 		}
 	}
-	
+
 	// Select items of saleUnits
 	const saleUnits: Selected<string>[] = [
-		{ value: "kg", label: "Κιλό" },
-		{ value: "piece", label: "Τεμάχιο" },
-		{ value: "crate", label: "Τελάρο" },
-		{ value: "bunch", label: "Μάτσο" },
-		{ value: "cup", label: "Κουπάκι" }
+		{ value: 'kg', label: 'Κιλό' },
+		{ value: 'piece', label: 'Τεμάχιο' },
+		{ value: 'crate', label: 'Τελάρο' },
+		{ value: 'bunch', label: 'Μάτσο' },
+		{ value: 'cup', label: 'Κουπάκι' }
 	];
 
 	// Select items of category
 	const categories: Selected<string>[] = [
-		{ value: "fruits", label: "Φρούτα" },
-		{ value: "vegetables", label: "Κηπευτικά" },
-		{ value: "bundles", label: "Δεματικά" },
-		{ value: "other", label: "Άλλο" }
+		{ value: 'fruits', label: 'Φρούτα' },
+		{ value: 'vegetables', label: 'Κηπευτικά' },
+		{ value: 'bundles', label: 'Δεματικά' },
+		{ value: 'other', label: 'Άλλο' }
 	];
 
 	let isDialogOpen = false;
@@ -126,7 +126,8 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
-							<Select.Root items={saleUnits}
+							<Select.Root
+								items={saleUnits}
 								multiple={true}
 								onSelectedChange={(s) => handleSaleUnitsChange(s)}
 							>
@@ -145,9 +146,7 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
 						<Form.Control let:attrs>
 							<Form.Label>Κατηγορία *</Form.Label>
-							<Select.Root items={categories}
-								onSelectedChange={(s) => handleCategoryChange(s)}
-							>
+							<Select.Root items={categories} onSelectedChange={(s) => handleCategoryChange(s)}>
 								<Select.Input name={attrs.name} />
 								<Select.Trigger {...attrs}>
 									<Select.Value />

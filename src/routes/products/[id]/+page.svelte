@@ -17,7 +17,7 @@
 	import { z } from 'zod';
 
 	type ProductSchema = z.infer<typeof productSchema>;
-	type Category = ProductSchema['category']; 			// Product category types
+	type Category = ProductSchema['category']; // Product category types
 	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	// Get product data from the server to populate the fields
@@ -122,13 +122,13 @@
 
 	// Select items of category
 	const categoryLabels: { [key: string]: string } = {
-		fruits: "Φρούτα",
-		vegetables: "Κηπευτικά",
-		bundles: "Δεματικά",
-		other: "Άλλο"
+		fruits: 'Φρούτα',
+		vegetables: 'Κηπευτικά',
+		bundles: 'Δεματικά',
+		other: 'Άλλο'
 	};
 
-    const saleUnits = Object.entries(saleUnitLabels).map(([value, label]) => ({ value, label }));
+	const saleUnits = Object.entries(saleUnitLabels).map(([value, label]) => ({ value, label }));
 	const categories = Object.entries(categoryLabels).map(([value, label]) => ({ value, label }));
 
 	$: defaultSaleUnits = $formData.saleUnits.map((unit) => ({
@@ -192,7 +192,8 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
-							<Select.Root items={saleUnits}
+							<Select.Root
+								items={saleUnits}
 								bind:selected={defaultSaleUnits}
 								multiple={true}
 								onSelectedChange={(s) => handleSaleUnitsChange(s)}
@@ -213,7 +214,8 @@
 				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
 					<Form.Control let:attrs>
 						<Form.Label>Κατηγορία *</Form.Label>
-						<Select.Root items={categories}
+						<Select.Root
+							items={categories}
 							bind:selected={defaultCategory}
 							onSelectedChange={(s) => handleCategoryChange(s)}
 						>

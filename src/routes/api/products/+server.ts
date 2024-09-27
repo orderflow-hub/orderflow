@@ -127,9 +127,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				(${data.product_code}, ${data.product_name}, ${data.category}, ${data.is_disabled}, ${data.image_url || null})
 				RETURNING *
 			`;
-			
+
 			// Update the product_sale_unit table
-			const saleUnits = data["sale_units"] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
+			const saleUnits = data['sale_units'] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
 
 			// Delete existing sale units for the product
 			await sql`
@@ -153,13 +153,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			return addResult[0].product_id;
 		});
 
-		return new Response(
-			JSON.stringify({ product_id: result }),
-			{
-				status: 201,
-				headers: { 'Content-Type': 'application/json' }
-			}
-		);
+		return new Response(JSON.stringify({ product_id: result }), {
+			status: 201,
+			headers: { 'Content-Type': 'application/json' }
+		});
 	} catch (error) {
 		console.error('Failed to create product:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {
