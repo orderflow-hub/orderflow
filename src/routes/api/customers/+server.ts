@@ -42,47 +42,43 @@ export const GET: RequestHandler = async ({ url }) => {
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
 
-	// TODO: Validate the request body to ensure all required fields are present
+	// Check if the unique fields already exist in the database
+	const existingUser = await sql`
+        SELECT * FROM users
+        WHERE email = ${data.email} OR afm = ${data.afm} OR company_name = ${data.company_name}
+    `;
+
+	if (existingUser.length > 0) {
+		return new Response(
+			JSON.stringify({ error: 'User with provided unique fields already exists' }),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
+	}
 
 	try {
-		// Check if the unique fields already exist in the database
-		const existingUser = await sql`
-			SELECT * FROM users
-			WHERE email = ${data.email} OR afm = ${data.afm} OR company_name = ${data.company_name}
-		`;
-
-		if (existingUser.length > 0) {
-			return new Response(
-				JSON.stringify({ error: 'User with provided unique fields already exists' }),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' }
-				}
-			);
-		}
-
-		// Create a new user using firebaseAdmin. If the user is created successfully
-		// userRecord will contain the user's UID
-		// Docs: https://firebase.google.com/docs/auth/admin/manage-users#create_a_user
+		// Create a new user using firebaseAdmin
 		const userRecord = await createUser(data.email, 'password');
 		const uid = userRecord?.uid;
+
 		if (!uid) {
-			return new Response(JSON.stringify({ error: 'Failed to create user' }), {
-				status: 500,
-				headers: { 'Content-Type': 'application/json' }
-			});
+			throw new Error('Failed to create user');
 		}
 
-		const result = await sql`
-			INSERT INTO users
-			(firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
-			VALUES
-			(${uid}, ${data.company_name}, ${data.email}, ${data.afm}, ${data.phone_number},
-			${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
-			RETURNING *;
-		`;
+		// Insert the new customer into the database
+		const [newCustomer] = await sql`
+            INSERT INTO users
+            (firebase_uid, company_name, email, afm, phone_number, street_address, city, postal_code, role)
+            VALUES
+            (${uid}, ${data.company_name}, ${data.email}, ${data.afm}, ${data.phone_number},
+            ${data.street_address || null}, ${data.city || null}, ${data.postal_code || null}, 'customer')
+            RETURNING *;
+        `;
 
-		return new Response(JSON.stringify(result[0]), {
+		// Return the newly created customer details
+		return new Response(JSON.stringify(newCustomer), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});

@@ -11,7 +11,6 @@
 	import { toast } from 'svelte-sonner';
 	import customersStore from '../../stores/customersStore';
 
-
 	// export let data: SuperValidated<Infer<FormCustomerSchema>>;
 	export let data;
 
@@ -24,23 +23,9 @@
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
 
-					// Adds new Customer to Store
-					const customer: Customer = {
-						user_id: form.message.userId,
-						company_name: $formData.companyName,
-						user_code: form.message.userCode,
-						email: $formData.email,
-						phone_number: $formData.phoneNumber,
-						afm: $formData.afm,
-						street_address: $formData.streetAddress,
-						city: $formData.city,
-						postal_code: $formData.postalCode,
-						is_account_disabled: $formData.isDisabled
-					};
-					customersStore.setCustomers([customer], false);
-					
-					// Hides form modal.
-					isDialogOpen = false;
+					customersStore.setCustomers([form.message.newUser], false);
+
+					isDialogOpen = false; // Hides form modal.
 				} else {
 					toast.error(form.message.text);
 				}
