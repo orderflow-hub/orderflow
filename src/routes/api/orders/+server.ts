@@ -79,25 +79,40 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	try {
+		let newOrder;
+
 		await sql.begin(async (sql) => {
-			// Create the order
+			// Create the order and get the inserted order ID
 			const [result] = await sql`
-	            INSERT INTO orders (user_id, status) VALUES (${userId}, 'pending') RETURNING order_id;
-	        `;
+                INSERT INTO orders (user_id, status)
+                VALUES (${userId}, 'pending')
+                RETURNING order_id;
+            `;
 
 			// Insert each product as an order_item
 			for (const product of products) {
 				await sql`
-			        INSERT INTO order_items (order_id, product_id, quantity, snapshot_sale_unit)
-			        VALUES (${result.order_id}, ${product.product_id}, ${product.qty}, ${product.selected_sale_unit});
-			    `;
+                    INSERT INTO order_items (order_id, product_id, quantity, snapshot_sale_unit)
+                    VALUES (${result.order_id}, ${product.product_id}, ${product.qty}, ${product.selected_sale_unit});
+                `;
 			}
+
+			// Fetch the newly created order
+			[newOrder] = await sql`
+                SELECT o.order_id, o.user_order_number, o.timestamp, o.status, u.company_name
+                FROM orders as o
+                JOIN users as u ON o.user_id = u.user_id
+                WHERE o.order_id = ${result.order_id};
+            `;
 		});
 
-		return new Response(JSON.stringify({ message: 'Order and order items created successfully' }), {
-			status: 201,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		return new Response(
+			JSON.stringify({ newOrder, message: 'Order and order items created successfully' }),
+			{
+				status: 201,
+				headers: { 'Content-Type': 'application/json' }
+			}
+		);
 	} catch (error) {
 		console.error('Failed to create order and order items:', error);
 		return new Response(JSON.stringify({ error: 'Internal server error' }), {

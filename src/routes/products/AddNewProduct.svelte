@@ -35,19 +35,9 @@
 				if (form.message.status === 'success') {
 					toast.success(form.message.text);
 
-					// Adds new Product to Store
-					const product: Product = {
-						product_id: form.message.productId,
-						product_name: $formData.productName,
-						category: $formData.category,
-						product_code: $formData.productCode,
-						sale_units: $formData.saleUnits,
-						is_disabled: $formData.isDisabled
-					};
-					productsStore.setProducts([product], false);
+					productsStore.setProducts([form.message.newProduct], false);
 
-					// Hides form modal.
-					isDialogOpen = false;
+					isDialogOpen = false; // Hides form modal.
 				} else {
 					toast.error(form.message.text);
 				}

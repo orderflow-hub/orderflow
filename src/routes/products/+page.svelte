@@ -8,16 +8,18 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
-	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
+	import { cart, itemCount } from '../../stores/cartStore';
 	import productsStore from '../../stores/productsStore';
+	import ordersStore from '../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -33,7 +35,7 @@
 		productsStore.setLoading(true);
 		const query = $searchQuery.trim();
 		const offset = reset ? 0 : $productsStore.length;
-		// console.log($productsStore.length, offset, reset, query);
+
 		const response = await fetch(
 			`/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
 			{
@@ -81,9 +83,14 @@
 		});
 
 		if (response.ok) {
+			// Retrieve the new order from the json response and add it to the order store
+			const json = await response.json();
+			ordersStore.setOrders([json.newOrder], false);
+
 			cart.clear();
 			closeCartSheet();
 			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');
+			goto('/orders');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
