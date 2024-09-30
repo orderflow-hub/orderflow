@@ -49,7 +49,10 @@
 	}
 
 	// Subscribe to the cart store and update inputValue when the cart store changes
-	const unsubscribe = cart.subscribe(() => (inputValue = cart.getItemQuantity(id)));
+	const unsubscribe = cart.subscribe(() => {
+		inputValue = cart.getItemQuantity(id);
+		defaultSelection = { value: cart.getSaleUnit(id), label: saleUnitLabels[cart.getSaleUnit(id)] };
+	});
 
 	// Cleanup the subscription when the component is destroyed
 	onDestroy(() => unsubscribe());

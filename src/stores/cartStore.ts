@@ -6,6 +6,7 @@ interface CartStore extends Readable<Product[]> {
 	addItem: (item: Product) => void;
 	updateItemQuantity: (id: number, qty: number) => void;
 	getItemQuantity: (id: number) => number;
+	getSaleUnit: (id: number) => string;
 	updateItemSaleUnit: (id: number, sale_unit: string) => void;
 	removeItem: (id: number) => void;
 	clear: () => void;
@@ -41,6 +42,11 @@ const createCartStore = (): CartStore => {
 			const items = get(cart); // Use get to access the current state
 			const item = items.find((item) => item.product_id === id);
 			return item ? item.qty : 0;
+		},
+		getSaleUnit: (id) => {
+			const items = get(cart); // Access current state
+			const item = items.find((item) => item.product_id === id);
+			return item ? item.selected_sale_unit || null : null;
 		},
 		removeItem: (id) => update((items) => items.filter((item) => item.product_id !== id)),
 		clear: () => set([]) // Clear the cart
