@@ -57,9 +57,10 @@
 
 <div class="relative flex w-[125px] flex-grow items-center gap-2 sm:w-[120px]">
 	<Input
-		class="pr-2 text-center text-base font-semibold text-zinc-700"
+		class="text-center font-semibold text-zinc-700"
 		placeholder=""
 		type="number"
+		style="appearance: none; -moz-appearance: textfield;"
 		bind:value={inputValue}
 		on:blur={() => updateCartItemQuantity()}
 		on:focus={selectInput}
@@ -67,7 +68,7 @@
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
 		<Select.Trigger class="w-full p-1">
-			<Select.Value />
+			<Select.Value class="w-[30px]" />
 		</Select.Trigger>
 		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[100px]">
 			{#each sale_units as unit}
