@@ -14,11 +14,11 @@
 	let inputValue: number = cart.getItemQuantity(id);
 
 	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλό',
-		piece: 'Τεμάχιο',
-		crate: 'Τελάρο',
-		bunch: 'Μάτσο',
-		cup: 'Κουπάκι'
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
 	};
 
 	// Determine the default selection based on the priority

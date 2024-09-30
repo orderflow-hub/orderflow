@@ -7,11 +7,11 @@
 	export let showImage: boolean = true;
 
 	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλό',
-		piece: 'Τεμάχιο',
-		crate: 'Τελάρο',
-		bunch: 'Μάτσο',
-		cup: 'Κουπάκι'
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
 	};
 </script>
 

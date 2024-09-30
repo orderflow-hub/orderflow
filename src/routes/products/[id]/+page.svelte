@@ -113,11 +113,11 @@
 		}
 	}
 	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλό',
-		piece: 'Τεμάχιο',
-		crate: 'Τελάρο',
-		bunch: 'Μάτσο',
-		cup: 'Κουπάκι'
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
 	};
 
 	// Select items of category
@@ -211,7 +211,7 @@
 						</Form.Control>
 					</Form.Field>
 				</div>
-				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
+				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="category">
 					<Form.Control let:attrs>
 						<Form.Label>Κατηγορία *</Form.Label>
 						<Select.Root

@@ -77,11 +77,11 @@
 
 	// Select items of saleUnits
 	const saleUnits: Selected<string>[] = [
-		{ value: 'kg', label: 'Κιλό' },
-		{ value: 'piece', label: 'Τεμάχιο' },
-		{ value: 'crate', label: 'Τελάρο' },
-		{ value: 'bunch', label: 'Μάτσο' },
-		{ value: 'cup', label: 'Κουπάκι' }
+		{ value: 'kg', label: 'Κιλά' },
+		{ value: 'piece', label: 'Τεμάχια' },
+		{ value: 'crate', label: 'Τελάρα' },
+		{ value: 'bunch', label: 'Ματσάκια' },
+		{ value: 'cup', label: 'Κουπάκια' }
 	];
 
 	// Select items of category
@@ -143,23 +143,23 @@
 							</Select.Root>
 						</Form.Control>
 					</Form.Field>
-					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
-						<Form.Control let:attrs>
-							<Form.Label>Κατηγορία *</Form.Label>
-							<Select.Root items={categories} onSelectedChange={(s) => handleCategoryChange(s)}>
-								<Select.Input name={attrs.name} />
-								<Select.Trigger {...attrs}>
-									<Select.Value />
-								</Select.Trigger>
-								<Select.Content>
-									{#each categories as category}
-										<Select.Item value={category.value} label={category.label} />
-									{/each}
-								</Select.Content>
-							</Select.Root>
-						</Form.Control>
-					</Form.Field>
 				</div>
+				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
+					<Form.Control let:attrs>
+						<Form.Label>Κατηγορία *</Form.Label>
+						<Select.Root items={categories} onSelectedChange={(s) => handleCategoryChange(s)}>
+							<Select.Input name={attrs.name} />
+							<Select.Trigger {...attrs}>
+								<Select.Value />
+							</Select.Trigger>
+							<Select.Content>
+								{#each categories as category}
+									<Select.Item value={category.value} label={category.label} />
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					</Form.Control>
+				</Form.Field>
 				<Form.Field {form} name="isDisabled" class="items-top mb-6 flex space-x-2">
 					<Form.Control let:attrs>
 						<Checkbox
