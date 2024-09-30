@@ -124,9 +124,9 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			const result = await sql.unsafe(updateProductQuery, values as ParameterOrJSON<any>[]);
 		}
 
-		// Handle the sale units if they are provided in the request
 		if (data[saleUnitsKey]) {
-			const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crates')[];
+			// Update the product_sale_unit table
+			const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
 
 			// Delete existing sale units for the product
 			await sql`

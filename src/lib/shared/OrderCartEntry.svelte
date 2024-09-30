@@ -3,8 +3,16 @@
 	import { cn } from '$lib/utils';
 	import type { Product } from '$lib/types';
 
-	export let product: Product;
+	export let product;
 	export let showImage: boolean = true;
+
+	const saleUnitLabels: { [key: string]: string } = {
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
+	};
 </script>
 
 <Card.Root class="flex items-center justify-between gap-2 rounded-none border-0 p-3">
@@ -36,7 +44,7 @@
 			</p>
 
 			<p class="text-center text-base font-semibold text-zinc-700">
-				{product.sale_unit === 'piece' ? 'τεμ' : 'kg'}
+				{saleUnitLabels[product.sale_unit]}
 			</p>
 		</div>
 	</Card.Footer>

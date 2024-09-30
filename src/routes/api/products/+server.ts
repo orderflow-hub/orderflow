@@ -128,7 +128,8 @@ export const POST: RequestHandler = async ({ request }) => {
             RETURNING *;
         `;
 
-		const saleUnits = data.sale_units as ('kg' | 'piece' | 'crates')[];
+		// Update the product_sale_unit table
+		const saleUnits = data['sale_units'] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
 
 		// Delete any existing sale units (though not necessary for new products)
 		await sql`
