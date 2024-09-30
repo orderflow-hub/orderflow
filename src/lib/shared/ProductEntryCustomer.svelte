@@ -21,8 +21,12 @@
 		selectedSaleUnit = 'kg';
 	} else if (product.sale_units.includes('piece')) {
 		selectedSaleUnit = 'piece';
-	} else if (product.sale_units.includes('crates')) {
-		selectedSaleUnit = 'crates';
+	} else if (product.sale_units.includes('crate')) {
+		selectedSaleUnit = 'crate';
+	} else if (product.sale_units.includes('bunch')) {
+		selectedSaleUnit = 'bunch';
+	} else if (product.sale_units.includes('cup')) {
+		selectedSaleUnit = 'cup';
 	} else {
 		selectedSaleUnit = 'kg';
 	}

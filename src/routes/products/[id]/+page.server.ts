@@ -84,7 +84,6 @@ export const actions: Actions = {
 		// Convert form data to snake_case with humps library
 		// Assert the type to match the Product interface
 		const formData = humps.decamelizeKeys(form.data) as Product;
-		console.log('Updating product details: ' + JSON.stringify(formData));
 
 		try {
 			// TODO: Maybe only send the fields that have changed
@@ -100,8 +99,15 @@ export const actions: Actions = {
 				throw new Error('Failed to update product due to bad response');
 			}
 
+			// Gets updated Product from json response
+			const updatedProduct = await response.json();
+
 			// Returning the form is required for the superform validation to work
-			return message(form, { status: 'success', text: 'Οι αλλαγές αποθηκεύτηκαν επιτυχώς' });
+			return message(form, {
+				status: 'success',
+				text: 'Οι αλλαγές αποθηκεύτηκαν επιτυχώς',
+				updatedProduct: updatedProduct
+			});
 		} catch (error) {
 			console.error(`Failed to update product: ${error}`);
 			return message(form, {

@@ -8,16 +8,18 @@
 	import * as Sheet from '$lib/components/ui/sheet';
 	import AddNewProduct from './AddNewProduct.svelte';
 	import { cn } from '$lib/utils';
-	import { cart, itemCount } from '../../stores/cartStore';
 	import { get } from 'svelte/store';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
+	import { cart, itemCount } from '../../stores/cartStore';
 	import productsStore from '../../stores/productsStore';
+	import ordersStore from '../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -33,7 +35,7 @@
 		productsStore.setLoading(true);
 		const query = $searchQuery.trim();
 		const offset = reset ? 0 : $productsStore.length;
-		// console.log($productsStore.length, offset, reset, query);
+
 		const response = await fetch(
 			`/api/products?limit=${limit}&offset=${offset}&search=${query}&category=${category}`,
 			{
@@ -81,9 +83,14 @@
 		});
 
 		if (response.ok) {
+			// Retrieve the new order from the json response and add it to the order store
+			const json = await response.json();
+			ordersStore.setOrders([json.newOrder], false);
+
 			cart.clear();
 			closeCartSheet();
 			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');
+			goto('/orders');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά την υποβολή της παραγγελίας');
 		}
@@ -155,7 +162,8 @@
 			<Select.Content>
 				<Select.Item value="all" label="Όλα" />
 				<Select.Item value="fruits" label="Φρούτα" />
-				<Select.Item value="vegetables" label="Λαχανικά" />
+				<Select.Item value="vegetables" label="Κηπευτικά" />
+				<Select.Item value="bundles" label="Δεματικά" />
 			</Select.Content>
 		</Select.Root>
 	</div>
@@ -178,7 +186,7 @@
 		{/if} -->
 	</div>
 	{#if $itemCount > 0}
-		<div class="fixed left-0 right-0 bottom-12 flex justify-center p-2.5">
+		<div class="fixed bottom-12 left-0 right-0 flex justify-center p-2.5">
 			<Button
 				class="relative w-full gap-2 px-2 text-base md:w-1/2 lg:w-1/3"
 				variant="default"

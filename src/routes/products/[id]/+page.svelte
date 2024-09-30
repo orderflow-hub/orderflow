@@ -14,6 +14,11 @@
 	import productsStore from '../../../stores/productsStore';
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
+	import { z } from 'zod';
+
+	type ProductSchema = z.infer<typeof productSchema>;
+	type Category = ProductSchema['category']; // Product category types
+	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	// Get product data from the server to populate the fields
 	export let data;
@@ -37,18 +42,7 @@
 					toast.success(form.message.text);
 
 					// Updates the Product Store data.
-					let newProductList = $productsStore;
-					let productToUpdate = newProductList.find(
-						(product) => product.product_id == $formData.productId
-					);
-
-					if (productToUpdate) {
-						productToUpdate.product_name = $formData.productName;
-						productToUpdate.product_code = $formData.productCode;
-						productToUpdate.sale_units = $formData.saleUnits;
-						productToUpdate.is_disabled = $formData.isDisabled;
-						productToUpdate.category = $formData.category;
-					}
+					productsStore.updateProduct(form.message.updatedProduct);
 
 					// Redirect to '/products' page
 					goto('/products');
@@ -93,7 +87,7 @@
 	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
 		if (s) {
 			// Map over selections to extract values
-			const selectedValues = s.map((selection) => selection.value as 'kg' | 'piece' | 'crates');
+			const selectedValues = s.map((selection) => selection.value as SaleUnit);
 			// Update $formData.saleUnits with the new selections
 			$formData.saleUnits = selectedValues;
 		} else {
@@ -104,28 +98,36 @@
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
 		if (s) {
-			$formData.category = s.value as 'fruits' | 'vegetables';
+			$formData.category = s.value as Category;
 		}
 	}
+	const saleUnitLabels: { [key: string]: string } = {
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
+	};
 
-	$: saleUnitsSelection = $formData.saleUnits.map((unit) => ({
+	// Select items of category
+	const categoryLabels: { [key: string]: string } = {
+		fruits: 'Φρούτα',
+		vegetables: 'Κηπευτικά',
+		bundles: 'Δεματικά',
+		other: 'Άλλο'
+	};
+
+	const saleUnits = Object.entries(saleUnitLabels).map(([value, label]) => ({ value, label }));
+	const categories = Object.entries(categoryLabels).map(([value, label]) => ({ value, label }));
+
+	$: defaultSaleUnits = $formData.saleUnits.map((unit) => ({
 		value: unit,
-		label: unit === 'piece' ? 'τεμάχιο' : unit === 'kg' ? 'κιλό' : 'τελάρο'
+		label: saleUnitLabels[unit]
 	}));
 
-	$: categorySelection = {
-		label:
-			$formData.category === 'fruits'
-				? 'Φρούτα'
-				: $formData.category === 'vegetables'
-					? 'Λαχανικά'
-					: '',
-		value:
-			$formData.category === 'fruits'
-				? 'fruits'
-				: $formData.category === 'vegetables'
-					? 'vegetables'
-					: 'other'
+	$: defaultCategory = {
+		value: $formData.category,
+		label: categoryLabels[$formData.category]
 	};
 </script>
 
@@ -180,7 +182,8 @@
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
-								bind:selected={saleUnitsSelection}
+								items={saleUnits}
+								bind:selected={defaultSaleUnits}
 								multiple={true}
 								onSelectedChange={(s) => handleSaleUnitsChange(s)}
 							>
@@ -189,19 +192,20 @@
 									<Select.Value />
 								</Select.Trigger>
 								<Select.Content>
-									<Select.Item value="kg" label="κιλό" />
-									<Select.Item value="piece" label="τεμάχιο" />
-									<Select.Item value="crates" label="τελάρο" />
+									{#each saleUnits as saleUnit}
+										<Select.Item value={saleUnit.value} label={saleUnit.label} />
+									{/each}
 								</Select.Content>
 							</Select.Root>
 						</Form.Control>
 					</Form.Field>
 				</div>
-				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="saleUnits">
+				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="category">
 					<Form.Control let:attrs>
 						<Form.Label>Κατηγορία *</Form.Label>
 						<Select.Root
-							bind:selected={categorySelection}
+							items={categories}
+							bind:selected={defaultCategory}
 							onSelectedChange={(s) => handleCategoryChange(s)}
 						>
 							<Select.Input name={attrs.name} />
@@ -209,8 +213,9 @@
 								<Select.Value />
 							</Select.Trigger>
 							<Select.Content>
-								<Select.Item value="fruits" label="Φρούτα" />
-								<Select.Item value="vegetables" label="Λαχανικά" />
+								{#each categories as category}
+									<Select.Item value={category.value} label={category.label} />
+								{/each}
 							</Select.Content>
 						</Select.Root>
 					</Form.Control>
