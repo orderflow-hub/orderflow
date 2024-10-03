@@ -17,8 +17,6 @@ export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		// Parse the form data
 		const formData = Object.fromEntries(await request.formData());
-		const email = formData.email.toString();
-		const password = formData.password.toString();
 
 		// Validate the input data
 		try {
