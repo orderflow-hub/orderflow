@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const loginFormSchema = z.object({
 	email: z
-		.string({ required_error: 'Η διεύθυνση email είναι απαραίτητη' })
-		.min(1, { message: 'Η διεύθυνση email είναι απαραίτητη' })
-		.email({ message: 'Το πεδίο πρέπει να είναι διεύθυνση email' }),
+		.string({ required_error: 'Παρακαλώ εισάγετε τη διεύθυνση email σας' })
+		.min(1, { message: 'Παρακαλώ εισάγετε τη διεύθυνση email σας' })
+		.email({ message: 'Παρακαλώ εισάγετε έγκυρη διεύθυνση email' }),
 	password: z
-		.string({ required_error: 'Ο κωδικός πρόσβασης είναι απαραίτητος' })
-		.min(1, { message: 'Ο κωδικός είναι απαραίτητος' })
+		.string({ required_error: 'Παρακαλώ εισάγετε τον κωδικό πρόσβασης' })
+		.min(1, { message: 'Παρακαλώ εισάγετε τον κωδικό πρόσβασης' })
 });
