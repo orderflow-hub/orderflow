@@ -46,7 +46,7 @@
 	async function handleLogout() {
 		try {
 			await authHandlers.logout();
-			await fetch('/api/logout', { method: 'POST' });
+			await fetch('/api/sessionLogout', { method: 'POST' });
 			window.location.href = '/login';
 		} catch (error) {
 			console.log(error);
