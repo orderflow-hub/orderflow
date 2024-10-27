@@ -122,7 +122,7 @@
 							...order.products.map((product) => [
 								{ text: product.product_name } as Content,
 								{ text: product.qty } as Content,
-								{ text: saleUnitLabels[product.selected_sale_unit] } as Content,
+								{ text: saleUnitLabels[product.sale_unit] } as Content,
 								{ text: '', alignment: 'center' } as Content
 							])
 						]
@@ -177,7 +177,6 @@
 
 		pdfMake.createPdf(docDefinition).open();
 	};
-
 	// Update the order status.
 	async function handleStatusChange(s: Selected<string> | undefined) {
 		if (s && order) {
