@@ -18,10 +18,6 @@
 	export let data;
 	let { order, userRole } = data;
 
-	// Variables to hold the printer settings
-	let printerIP: string | null = null;
-	let printerPort: string | null = null;
-
 	if (order === undefined) {
 		toast.error('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
@@ -179,48 +175,22 @@
 		}
 	};
 
-	const fetchPrinterSettings = async () => {
-		try {
-			const response = await fetch('/api/printer-settings'); // Adjust this path as needed
-			if (!response.ok) throw new Error('Failed to fetch printer settings');
-
-			const settings = await response.json(); // Assuming settings has `{ ip: string }`
-
-			// Store retrieved IP and port in component-level variables
-			printerIP = settings.ip;
-		} catch (error) {
-			console.error('Error fetching printer settings:', error);
-			toast.error('Unable to retrieve printer settings. Using default print dialog.');
-			printerIP = null; // Reset to ensure fallback
-		}
-	};
-
 	const handleDirectPrint = async () => {
-		await fetchPrinterSettings(); // Fetch printer IP from the user's profile
-		toast.info('Fetching printer settings...');
-		if (printerIP) {
-			try {
-				const response = await fetch('/api/print', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ order })
-				});
+		try {
+			const response = await fetch('/api/print', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ order })
+			});
 
-				if (response.ok) {
-					toast.success('Η παραγγελία εκτυπώθηκε επιτυχώς');
-				} else {
-					toast.error('Υπήρξε πρόβλημα κατά την εκτύπωση της παραγγελίας');
-					indirectPrint(); // Fallback to manual print dialog
-				}
-			} catch (error) {
-				console.error('Error:', error);
-				toast.error('Σφάλμα κατά την εκτύπωση');
-				indirectPrint(); // Fallback to manual print dialog
+			if (response.ok) {
+				toast.success('Το αίτημα εκτύπωσης στάλθηκε');
 			}
-		} else {
-			toast.error('Δεν έχουν καθοριστεί ρυθμίσεις εκτυπωτή');
+		} catch (error) {
+			console.error('Error:', error);
+			toast.error('Υπήρξε πρόβλημα κατά την εκτύπωση της παραγγελίας');
 			indirectPrint(); // Open manual print dialog if no printer IP
 		}
 	};
