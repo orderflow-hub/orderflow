@@ -204,9 +204,10 @@
 			<Sheet.Header>
 				<Sheet.Title>Καλάθι</Sheet.Title>
 			</Sheet.Header>
-			<div class="w-full divide-y overflow-auto rounded-lg border">
+			<div class="divide-y overflow-auto rounded-lg">
 				{#each $cart as item}
 					<CartEntry product={item} />
+					<hr class="mx-2 border-gray-400 last:hidden" />
 				{/each}
 			</div>
 			<Sheet.Footer class="flex flex-col items-stretch gap-2.5">

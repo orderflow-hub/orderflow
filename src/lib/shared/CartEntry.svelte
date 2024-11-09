@@ -15,11 +15,11 @@
 	};
 </script>
 
-<Card.Root class="grid gap-2 rounded-md bg-white p-3 text-gray-800 shadow-sm">
+<Card.Root class="border-none p-3 shadow-none">
 	<!-- First Row -->
-	<div class="grid grid-cols-[auto,1fr,20%] items-center gap-3">
+	<div class="flex items-center gap-3">
 		<!-- Product Image -->
-		<div class="h-16 w-16">
+		<div class="h-16 w-16 flex-none">
 			{#if product.image_url}
 				<img
 					src={product.image_url}
@@ -36,26 +36,23 @@
 		</div>
 
 		<!-- Title and Item ID -->
-		<div>
-			<div class="line-clamp-1 text-sm font-medium">{product.product_name}</div>
+		<div class="grow">
+			<div class="line-clamp-1 text-sm font-medium text-gray-800">{product.product_name}</div>
 			<div class="text-xs text-gray-500">{product.product_code}</div>
 		</div>
 
 		<!-- Price -->
-		<div class="text-right text-sm font-semibold text-gray-700">
+		<div class="flex-none text-right text-sm font-semibold text-gray-700">
 			{''}
 		</div>
 	</div>
 
 	<!-- Second Row -->
-	<div class="grid grid-cols-[auto,1fr,auto] items-center gap-3">
+	<div class="flex justify-between">
 		<!-- Quantity and Sale Units -->
-		<Card.Footer class="inline-flex items-center justify-start p-0">
+		<Card.Footer class="w-full p-0">
 			<QuantityInput id={product.product_id} sale_units={product.sale_units} />
 		</Card.Footer>
-
-		<!-- Spacer for alignment, could also use justify-between on parent div -->
-		<div></div>
 
 		<!-- Delete Button -->
 		<Button variant="ghost" size="icon" on:click={removeFromCart}>

@@ -78,15 +78,15 @@
 	</div>
 	<Card.Footer class="mt-2 p-0">
 		{#if quantity > 0}
-			<div class="inline-flex w-full items-center justify-center gap-2">
-				<Button class="p-3" variant="secondary" on:click={removeFromCart}
-					><Trash size={18} /></Button
-				>
+			<div class="inline-flex w-full items-center justify-between gap-2">
 				<QuantityInput
 					id={product.product_id}
 					sale_units={product.sale_units}
 					on:saleUnitChange={handleSaleUnitChange}
 				/>
+				<Button class="p-3" variant="secondary" on:click={removeFromCart}
+					><Trash size={18} />
+				</Button>
 			</div>
 		{:else}
 			<Button

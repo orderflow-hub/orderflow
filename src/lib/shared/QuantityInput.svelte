@@ -58,9 +58,9 @@
 	onDestroy(() => unsubscribe());
 </script>
 
-<div class="relative flex flex-grow items-center gap-2">
+<div class="relative flex w-full items-center gap-2">
 	<Input
-		class="min-w[80px] max-w-[100px] text-center font-semibold text-zinc-700"
+		class="max-w-20 text-center font-semibold text-zinc-700"
 		placeholder=""
 		type="number"
 		style="appearance: none; -moz-appearance: textfield;"
@@ -70,7 +70,7 @@
 	/>
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
-		<Select.Trigger class="truncate p-1">
+		<Select.Trigger class="max-w-24 truncate p-1">
 			<Select.Value class="" />
 		</Select.Trigger>
 		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[100px]">
