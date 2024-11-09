@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const customerSchema = z.object({
+export const formCustomerSchema = z.object({
 	customerId: z.number().optional(),
 	companyName: z.string().min(1, 'Company name is required'),
 	userCode: z.string().optional(),
@@ -50,4 +50,4 @@ export const customerSchema = z.object({
 	isAccountDisabled: z.boolean().default(false)
 });
 
-export type FormCustomerSchema = typeof customerSchema;
+export type FormCustomerSchema = typeof formCustomerSchema;
