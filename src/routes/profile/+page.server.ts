@@ -79,7 +79,7 @@ export const actions: Actions = {
 
 		try {
 			const apiResponse = await event.fetch('api/printer-settings', {
-				method: 'POST',
+				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},

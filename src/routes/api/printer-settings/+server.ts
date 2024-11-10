@@ -4,11 +4,11 @@ import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 
 /*
- * POST: Saves or updates printer settings for the authenticated user.
+ * PATCH: Updates printer settings for the authenticated user.
  * Accepts printer settings in the request body and updates the database.
  * Returns the saved printer settings on success or an error message on failure.
  */
-export const POST: RequestHandler = async ({ request, locals }) => {
+export const PATCH: RequestHandler = async ({ request, locals }) => {
 	// Ensure user is authenticated and get user_id
 	const userId = locals.user?.user_id;
 	if (!userId) {
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		// Return the saved or updated printer settings
 		return new Response(JSON.stringify(updatedSettings), {
-			status: 201,
+			status: 200,
 			headers: { 'Content-Type': 'application/json' }
 		});
 	} catch (error) {
