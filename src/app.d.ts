@@ -5,6 +5,7 @@ declare global {
 		interface User {
 			uid: string;
 			role: string;
+			user_id: number;
 		}
 
 		interface Locals {

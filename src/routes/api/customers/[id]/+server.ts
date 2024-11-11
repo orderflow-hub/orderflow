@@ -26,13 +26,13 @@ export const GET: RequestHandler = async ({ params }) => {
 	}
 
 	try {
-		const order = await sql`
+		const customer = await sql`
             SELECT user_id, company_name, user_code, email, phone_number, afm, street_address, city, postal_code, is_account_disabled
             FROM users
             WHERE user_id = ${id};
         `;
-		if (order.length > 0) {
-			return new Response(JSON.stringify(order[0]), {
+		if (customer.length > 0) {
+			return new Response(JSON.stringify(customer[0]), {
 				headers: { 'Content-Type': 'application/json' },
 				status: 200
 			});

@@ -6,7 +6,7 @@
 	import { Plus } from 'lucide-svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Form from '$lib/components/ui/form';
-	import { customerSchema } from '$lib/schemas/customerSchema';
+	import { formCustomerSchema } from '$lib/schemas/customerSchema';
 	import type { Customer } from '$lib/types';
 	import { toast } from 'svelte-sonner';
 	import customersStore from '../../stores/customersStore';
@@ -15,7 +15,7 @@
 	export let data;
 
 	const form = superForm(data.form, {
-		validators: zodClient(customerSchema),
+		validators: zodClient(formCustomerSchema),
 		resetForm: false,
 		dataType: 'json',
 		onUpdated({ form }) {
