@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import type { Customer } from '$lib/types';
-import { customerSchema } from '$lib/schemas/customerSchema';
+import { formCustomerSchema } from '$lib/schemas/customerSchema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { message, superValidate, fail } from 'sveltekit-superforms';
 import humps from 'humps';
@@ -23,50 +23,26 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 		};
 	}
 
-	// Fetch customer details from the database for the specified customer ID
-	const response = await fetch(`/api/customers/${params.id}`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-
-	if (!response.ok) {
-		return {
-			status: response.status,
-			error: new Error('Failed to fetch customer details')
-		};
-	} else if (response.status === 404) {
-		return {
-			status: 404,
-			error: new Error('Customer not found')
-		};
-	}
-
 	try {
-		const customer: Customer = await response.json();
+		// Fetch customer details from the database for the specified customer ID
+		const response = await fetch(`/api/customers/${params.id}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 
-		if (!customer) {
-			throw new Error('Customer not found');
+		if (!response.ok) {
+			throw new Error(`Failed to fetch customer details with status ${response.status}`);
 		}
+
+		// Attempt to parse the response as JSON
+		const rawCustomer = await response.json();
+		const customer: Customer = humps.camelizeKeys(rawCustomer) as Customer;
 
 		return {
 			customer,
-			form: await superValidate(
-				{
-					customerId: customer.user_id,
-					companyName: customer.company_name,
-					userCode: customer.user_code,
-					email: customer.email,
-					phoneNumber: customer.phone_number,
-					afm: customer.afm,
-					streetAddress: customer.street_address,
-					city: customer.city,
-					postalCode: customer.postal_code,
-					isAccountDisabled: customer.is_account_disabled
-				},
-				zod(customerSchema)
-			)
+			form: await superValidate(customer, zod(formCustomerSchema))
 		};
 	} catch (error) {
 		return {
@@ -78,7 +54,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 
 export const actions: Actions = {
 	editCustomer: async (event) => {
-		const form = await superValidate(event, zod(customerSchema));
+		const form = await superValidate(event, zod(formCustomerSchema));
 		if (!form.valid) {
 			return fail(400, {
 				form
@@ -92,7 +68,7 @@ export const actions: Actions = {
 
 		try {
 			// TODO: Maybe only send the fields that have changed
-			const response = await event.fetch(`/api/customers/${formData.user_id}`, {
+			const response = await event.fetch(`/api/customers/${formData.userId}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'

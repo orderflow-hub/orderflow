@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import * as Form from '$lib/components/ui/form';
 	import customersStore from '../../../stores/customersStore';
-	import { customerSchema } from '$lib/schemas/customerSchema';
+	import { formCustomerSchema } from '$lib/schemas/customerSchema';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
@@ -25,7 +25,7 @@
 	}
 
 	const form = superForm(data.form, {
-		validators: zodClient(customerSchema),
+		validators: zodClient(formCustomerSchema),
 		resetForm: false,
 		onUpdated({ form }) {
 			if (form.message) {
@@ -53,7 +53,7 @@
 
 	// Delete the customer from the database and show a toast notification. Redirect to '/customers' page if successful
 	async function handleDelete() {
-		const response = await fetch(`/api/customers/${customer?.user_id}`, {
+		const response = await fetch(`/api/customers/${customer?.userId}`, {
 			method: 'DELETE'
 		});
 
@@ -64,7 +64,7 @@
 
 			// Filters deleted product from the store.
 			let filteredCustomers = $customersStore.filter(
-				(customer) => customer.user_id !== $formData.customerId
+				(customer) => customer.userId !== $formData.customerId
 			);
 			customersStore.setCustomers(filteredCustomers, true);
 
