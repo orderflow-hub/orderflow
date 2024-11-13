@@ -4,7 +4,6 @@ import type { Customer } from '$lib/types';
 import { formCustomerSchema } from '$lib/schemas/customerSchema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { message, superValidate, fail } from 'sveltekit-superforms';
-import humps from 'humps';
 
 export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 	if (!locals.user) {
@@ -36,9 +35,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 			throw new Error(`Failed to fetch customer details with status ${response.status}`);
 		}
 
-		// Attempt to parse the response as JSON
-		const rawCustomer = await response.json();
-		const customer: Customer = humps.camelizeKeys(rawCustomer) as Customer;
+		const customer: Customer = await response.json();
 
 		return {
 			customer,
@@ -61,19 +58,16 @@ export const actions: Actions = {
 			});
 		}
 
-		// Convert form data to snake_case with humps library
-		// Assert the type to match the Customer interface
-		const { customerId, ...rest } = form.data;
-		const formData = humps.decamelizeKeys({ userId: customerId, ...rest }) as Customer;
+		const customerNewData = form.data as Customer;
 
 		try {
 			// TODO: Maybe only send the fields that have changed
-			const response = await event.fetch(`/api/customers/${formData.userId}`, {
+			const response = await event.fetch(`/api/customers/${customerNewData.userId}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(formData)
+				body: JSON.stringify(customerNewData)
 			});
 
 			if (!response.ok) {
