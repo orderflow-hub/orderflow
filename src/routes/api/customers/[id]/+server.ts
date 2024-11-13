@@ -3,6 +3,7 @@
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { updateEmail, deleteUser } from '$lib/firebaseAdmin';
+import humps from 'humps';
 
 /*
  * GET: Fetches a single customer by ID from the database.
@@ -32,7 +33,7 @@ export const GET: RequestHandler = async ({ params }) => {
             WHERE user_id = ${id};
         `;
 		if (customer.length > 0) {
-			return new Response(JSON.stringify(customer[0]), {
+			return new Response(JSON.stringify(humps.camelizeKeys(customer[0])), {
 				headers: { 'Content-Type': 'application/json' },
 				status: 200
 			});
@@ -71,7 +72,8 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		});
 	}
 
-	const data = await request.json();
+	// Decamelized customer data
+	const data = humps.decamelizeKeys(await request.json());
 
 	try {
 		const user = await sql`
@@ -105,7 +107,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
         `;
 
 		if (result.length > 0) {
-			return new Response(JSON.stringify(result[0]), {
+			return new Response(JSON.stringify(humps.camelizeKeys(result[0])), {
 				headers: { 'Content-Type': 'application/json' },
 				status: 200
 			});

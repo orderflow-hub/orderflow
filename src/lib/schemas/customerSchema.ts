@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const formCustomerSchema = z.object({
-	customerId: z.number().optional(),
+	userId: z.number().optional(),
 	companyName: z.string().min(1, 'Company name is required'),
 	userCode: z.string().optional(),
 	email: z.string().email('Invalid email address'),
