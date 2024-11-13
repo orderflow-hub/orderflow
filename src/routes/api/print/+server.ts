@@ -121,7 +121,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				printNewLine();
 
 				// Print order message
-				printer.align('LT').style('B').size(0.5, 0.5).text('ΕΞΤΕΛΕΣΗ ΠΑΡΑΓΓΕΛΙΑΣ:');
+				printer.align('LT').style('B').size(0.5, 0.5).text('ΕΚΤΕΛΕΣΗ ΠΑΡΑΓΓΕΛΙΑΣ:');
 				printer
 					.align('LT')
 					.style('B')
