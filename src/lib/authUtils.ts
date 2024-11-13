@@ -1,22 +1,23 @@
 // File containing helper functions to enforce authentication and authorization
 
 import { parse } from 'cookie';
-import { verifyToken } from '$lib/firebaseAdmin';
+import { authAdmin } from '$lib/firebaseAdmin';
 import sql from '$lib/db';
 
 /**
- * Extracts the Firebase UID from a request's cookies if a valid ID token is present
+ * Extracts the Firebase UID from a request's session cookie if it is valid
  * @param request
- * @returns The Firebase UID of the user if the request contains a valid ID token, otherwise undefined
+ * @returns The Firebase UID of the user if the request contains a valid session cookie, otherwise undefined
  */
 export const getFirebaseUidFromCookie = async (request: Request): Promise<string | undefined> => {
+	// Parse the cookies from the request and extract the session cookie
 	const cookies = parse(request.headers.get('cookie') ?? '');
-	const idToken = cookies.idToken;
+	const session = cookies.session;
 
-	if (idToken) {
+	if (session) {
 		try {
-			// Verify the ID token via firebase-admin to ensure it's valid and has not been tampered with or expired
-			const decodedToken = await verifyToken(idToken);
+			// Verify the session cookie via firebase-admin to ensure it's valid and has not been tampered with or expired
+			const decodedToken = await authAdmin.verifySessionCookie(session, true);
 			if (decodedToken) {
 				return decodedToken.uid;
 			}

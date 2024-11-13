@@ -3,6 +3,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import sql from '$lib/db';
 import { createUser } from '$lib/firebaseAdmin';
+import humps from 'humps';
 
 /*
  * GET: Fetches all customers from the database.
@@ -22,7 +23,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			ORDER BY is_account_disabled ASC, company_name ASC
 			LIMIT ${limit} OFFSET ${offset};
         `;
-		return new Response(JSON.stringify(customers), {
+		return new Response(JSON.stringify(humps.camelizeKeys(customers)), {
 			headers: { 'Content-Type': 'application/json' },
 			status: 200
 		});

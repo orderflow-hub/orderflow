@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+import { loginFormSchema } from '$lib/schemas/loginFormSchema';
 
 // Similar to 'src/routes/+page.server.ts'
 export const load: PageServerLoad = async ({ locals }) => {
@@ -10,4 +11,27 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	return {};
+};
+
+export const actions: Actions = {
+	default: async ({ request, locals }) => {
+		// Parse the form data
+		const formData = Object.fromEntries(await request.formData());
+
+		// Validate the input data
+		try {
+			const result = loginFormSchema.parse(formData);
+			return {
+				success: true,
+				data: formData
+			};
+		} catch (error) {
+			const { fieldErrors: errors } = error.flatten();
+			return {
+				success: false,
+				data: formData,
+				errors
+			};
+		}
+	}
 };

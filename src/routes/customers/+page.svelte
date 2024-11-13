@@ -63,7 +63,7 @@
 			<Search size={18} />
 		</div>
 	</div>
-	<AddNewCustomer data={data} />
+	<AddNewCustomer {data} />
 </div>
 <div class="p-2.5 pt-0">
 	<div class="w-full divide-y overflow-hidden rounded-lg border">

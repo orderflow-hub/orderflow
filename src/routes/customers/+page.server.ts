@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { create } from 'domain';
 import { fail, message } from 'sveltekit-superforms';
-import { customerSchema } from '$lib/schemas/customerSchema';
+import { formCustomerSchema } from '$lib/schemas/customerSchema';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms';
 import humps from 'humps';
@@ -26,13 +26,13 @@ export const load: PageServerLoad = async ({ locals, fetch }) => {
 	}
 
 	return {
-		form: await superValidate(zod(customerSchema))
+		form: await superValidate(zod(formCustomerSchema))
 	};
 };
 
 export const actions: Actions = {
 	createCustomer: async (event) => {
-		const form = await superValidate(event, zod(customerSchema));
+		const form = await superValidate(event, zod(formCustomerSchema));
 		if (!form.valid) {
 			return fail(400, {
 				form
