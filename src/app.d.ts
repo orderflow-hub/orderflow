@@ -4,8 +4,8 @@ declare global {
 	namespace App {
 		interface User {
 			uid: string;
-			id: string;
 			role: string;
+			user_id: number;
 		}
 
 		interface Locals {

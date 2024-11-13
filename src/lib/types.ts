@@ -11,16 +11,17 @@ export interface Product {
 }
 
 export interface Customer {
-	user_id: number;
-	company_name: string;
-	user_code: string;
+	userId: number;
+	companyName: string;
+	userCode: string;
 	email: string;
-	phone_number: string;
+	phoneNumber: string;
 	afm: string;
-	street_address: string;
+	streetAddress: string;
 	city: string;
-	postal_code: string;
-	is_account_disabled: boolean;
+	postalCode: string;
+	isAccountDisabled: boolean;
+	printerIp?: string;
 }
 
 export interface Order {

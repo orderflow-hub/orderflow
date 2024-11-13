@@ -19,10 +19,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 				// If the session cookie is valid, extract the user's UID and role from the database and add it to the event locals
 				const uid = decodedToken.uid;
 
-				// Retrieves user data from the database
-				const userData = await getUserFromDatabase(uid);
-				if (userData != null) {
-					event.locals.user = { uid, id: userData.user_id, role: userData.role };
+				const user = await getUserDetailsFromDatabase(uid);
+				if (user) {
+					// event.locals.user = { uid, role: userRole };
+					event.locals.user = {
+						uid,
+						role: user.role,
+						user_id: user.user_id
+					};
 				} else {
 					// Handle the case when user role is null
 					console.error('User role is null');
@@ -43,8 +47,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	return response;
 };
 
-// This function queries the database to get the user's information based on their UID retrieved from the session cookie
-async function getUserFromDatabase(uid: string) {
-	const [user] = await sql`SELECT * FROM users WHERE firebase_uid = ${uid}`;
-	return user;
+// Function to get the user's role and user_id from the database based on their UID retrieved from the session cookie
+async function getUserDetailsFromDatabase(uid: string) {
+	const userDetails = await sql`SELECT user_id, role FROM users WHERE firebase_uid = ${uid}`;
+	return userDetails[0];
 }

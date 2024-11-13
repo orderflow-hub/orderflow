@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		throw redirect(302, '/login');
 	}
 
-	const userId: string = locals.user.id;
+	const userId: number = locals.user.user_id;
 
 	try {
 		const { order }: { order: Order } = await request.json();
