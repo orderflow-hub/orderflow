@@ -7,7 +7,7 @@
 	import { debounce } from '$lib/debounce';
 
 	export let data;
-	const userRole: string = data.userRole;	
+	const userRole: string = data.userRole;
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;

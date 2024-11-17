@@ -12,6 +12,7 @@
 	import ordersStore from '../../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
+	import { Toaster } from '$lib/components/ui/sonner';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -97,86 +98,107 @@
 		}
 	};
 
-	const handlePrint = () => {
-		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 227, height: 'auto' },
-			pageMargins: [10, 10, 10, 10],
-			content: [
-				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
-				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
-				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' } as Content,
-				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' } as Content,
-				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' } as Content,
-				{ text: '', margin: [0, 0, 0, 10] } as Content,
-				{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
-				{
-					table: {
-						widths: ['*', 'auto', 'auto', 'auto'],
-						body: [
-							[
-								{ text: 'Προϊόντα', style: 'tableHeader' },
-								{ text: 'Ποσότητα', style: 'tableHeader' },
-								{ text: 'Μονάδα', style: 'tableHeader' },
-								{ text: 'Κατάσταση', style: 'tableHeader' }
-							],
-							...order.products.map((product) => [
-								{ text: product.product_name } as Content,
-								{ text: product.qty } as Content,
-								{ text: saleUnitLabels[product.sale_unit] } as Content,
-								{ text: '', alignment: 'center' } as Content
-							])
-						]
+	const docDefinition: TDocumentDefinitions = {
+		pageSize: { width: 227, height: 'auto' },
+		pageMargins: [10, 10, 10, 10],
+		content: [
+			{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
+			{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
+			{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' } as Content,
+			{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' } as Content,
+			{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' } as Content,
+			{ text: '', margin: [0, 0, 0, 10] } as Content,
+			{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
+			{
+				table: {
+					widths: ['*', 'auto', 'auto', 'auto'],
+					body: [
+						[
+							{ text: 'Προϊόντα', style: 'tableHeader' },
+							{ text: 'Ποσότητα', style: 'tableHeader' },
+							{ text: 'Μονάδα', style: 'tableHeader' },
+							{ text: 'Κατάσταση', style: 'tableHeader' }
+						],
+						...order.products.map((product) => [
+							{ text: product.product_name } as Content,
+							{ text: product.qty } as Content,
+							{ text: saleUnitLabels[product.sale_unit] } as Content,
+							{ text: '', alignment: 'center' } as Content
+						])
+					]
+				},
+				layout: {
+					fillColor: function (rowIndex: number, node: any, columnIndex: any) {
+						return rowIndex % 2 === 0 ? '#F5F5F5' : null;
 					},
-					layout: {
-						fillColor: function (rowIndex: number, node: any, columnIndex: any) {
-							return rowIndex % 2 === 0 ? '#F5F5F5' : null;
-						},
-						hLineColor: function (i: number, node: { table: { body: any[] } }) {
-							return i === 0 || i === node.table.body.length ? 'black' : 'gray';
-						},
-						vLineColor: function (i: number, node: { table: { widths: any[] } }) {
-							return i === 0 || i === node.table.widths.length ? 'black' : 'gray';
-						},
-						paddingLeft: function (i: number) {
-							return i === 0 ? 5 : 5;
-						},
-						paddingRight: function (i: number) {
-							return i === 0 ? 5 : 5;
-						},
-						paddingTop: function (i: any) {
-							return 2;
-						},
-						paddingBottom: function (i: any) {
-							return 2;
-						}
+					hLineColor: function (i: number, node: { table: { body: any[] } }) {
+						return i === 0 || i === node.table.body.length ? 'black' : 'gray';
+					},
+					vLineColor: function (i: number, node: { table: { widths: any[] } }) {
+						return i === 0 || i === node.table.widths.length ? 'black' : 'gray';
+					},
+					paddingLeft: function (i: number) {
+						return i === 0 ? 5 : 5;
+					},
+					paddingRight: function (i: number) {
+						return i === 0 ? 5 : 5;
+					},
+					paddingTop: function (i: any) {
+						return 2;
+					},
+					paddingBottom: function (i: any) {
+						return 2;
 					}
-				} as Content
-			],
-			styles: {
-				sectionHeader: {
-					fontSize: 10,
-					bold: true,
-					margin: [0, 0, 0, 10],
-					alignment: 'center'
-				},
-				businessLabel: {
-					fontSize: 9,
-					margin: [0, 2, 0, 2]
-				},
-				tableHeader: {
-					fontSize: 7,
-					bold: true,
-					alignment: 'center',
-					fillColor: '#CCCCCC'
 				}
-			} as StyleDictionary,
-			defaultStyle: {
-				fontSize: 7
+			} as Content
+		],
+		styles: {
+			sectionHeader: {
+				fontSize: 10,
+				bold: true,
+				margin: [0, 0, 0, 10],
+				alignment: 'center'
+			},
+			businessLabel: {
+				fontSize: 9,
+				margin: [0, 2, 0, 2]
+			},
+			tableHeader: {
+				fontSize: 7,
+				bold: true,
+				alignment: 'center',
+				fillColor: '#CCCCCC'
 			}
-		};
+		} as StyleDictionary,
+		defaultStyle: {
+			fontSize: 7
+		}
+	};
 
+	const handleDirectPrint = async () => {
+		try {
+			const response = await fetch('/api/print', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ order })
+			});
+
+			if (response.ok) {
+				toast.success('Το αίτημα εκτύπωσης στάλθηκε');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			toast.error('Υπήρξε πρόβλημα κατά την εκτύπωση της παραγγελίας');
+			indirectPrint(); // Open manual print dialog if no printer IP
+		}
+	};
+
+	const indirectPrint = () => {
 		pdfMake.createPdf(docDefinition).open();
 	};
+
 	// Update the order status.
 	async function handleStatusChange(s: Selected<string> | undefined) {
 		if (s && order) {
@@ -295,7 +317,7 @@
 				</Select.Content>
 			</Select.Root>
 		{/if}
-		<Button on:click={handlePrint}>Εκτύπωση</Button>
+		<Button on:click={handleDirectPrint}>Εκτύπωση</Button>
 	{/if}
 </div>
 
