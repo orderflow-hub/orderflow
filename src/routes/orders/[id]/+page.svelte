@@ -99,8 +99,8 @@
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 227, height: 'auto' },
-			pageMargins: [10, 10, 10, 10],
+			pageSize: { width: 200, height: 'auto' },
+			pageMargins: [0, 0, 0, 80],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
 				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
@@ -117,7 +117,7 @@
 								{ text: 'Προϊόντα', style: 'tableHeader' },
 								{ text: 'Ποσότητα', style: 'tableHeader' },
 								{ text: 'Μονάδα', style: 'tableHeader' },
-								{ text: 'Κατάσταση', style: 'tableHeader' }
+								{ text: 'Ζύγισμα', style: 'tableHeader' }
 							],
 							...order.products.map((product) => [
 								{ text: product.product_name } as Content,
@@ -150,7 +150,10 @@
 							return 2;
 						}
 					}
-				} as Content
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: 'Εκτέλεση Παραγγελίας:', margin: [0, 0, 0, 20], style: 'businessLabel' } as Content,
+				{ text: '____________________________________________', style: 'sectionHeader' } as Content
 			],
 			styles: {
 				sectionHeader: {
