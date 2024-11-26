@@ -99,8 +99,8 @@
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 200, height: 'auto' },
-			pageMargins: [0, 0, 0, 80],
+			pageSize: { width: 227, height: 'auto' },
+			pageMargins: [10, 10, 10, 10],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
 				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
@@ -152,8 +152,31 @@
 					}
 				} as Content,
 				{ text: '', margin: [0, 0, 0, 10] } as Content,
-				{ text: 'Εκτέλεση Παραγγελίας:', margin: [0, 0, 0, 20], style: 'businessLabel' } as Content,
-				{ text: '____________________________________________', style: 'sectionHeader' } as Content
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: 'Εκτέλεση Παραγγελίας:', margin: [0, 0, 0, 5], style: 'businessLabel' } as Content,
+				{
+					canvas: [
+						{
+							type: 'rect',
+							x: 0,
+							y: 0,
+							w: 207, // Full width minus margins
+							h: 20, // Height of the rectangle
+							lineColor: 'black', // Black border
+							lineWidth: 1, // Thickness of the border
+							color: 'white' // White background (optional since white is default)
+						},
+						{
+							type: 'text',
+							text: 'Εκτέλεση Παραγγελίας:',
+							x: 10, // Padding inside the rectangle
+							y: 5,
+							fontSize: 9,
+							bold: true
+						}
+					]
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content
 			],
 			styles: {
 				sectionHeader: {
