@@ -99,8 +99,8 @@
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 200, height: 'auto' },
-			pageMargins: [0, 0, 0, 80],
+			pageSize: { width: 204, height: 'auto' },
+			pageMargins: [10, 10, 10, 10],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
 				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
@@ -160,7 +160,7 @@
 							type: 'rect',
 							x: 0,
 							y: 0,
-							w: 200, // Full width minus margins
+							w: 184, // Full width minus margins
 							h: 20, // Height of the rectangle
 							lineColor: 'black', // Black border
 							lineWidth: 1, // Thickness of the border
