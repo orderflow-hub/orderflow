@@ -10,14 +10,13 @@
 	import { authHandlers, authStore } from '../../stores/authStore';
 	import { EmailAuthProvider } from 'firebase/auth';
 	import { toast } from 'svelte-sonner';
-	import PrinterSettingsForm from '$lib/components/PrinterSettingsForm.svelte';
 	import type { PageData } from './$types';
 	import type { Customer } from '$lib/types';
 
 	export let data: PageData;
 	const { userRole } = data;
 	const customer: Customer = data.customer; // Get customer data from the server to populate the fields
-	const { printerSettingsForm, customerDetailsForm } = data;
+	const { customerDetailsForm } = data;
 
 	if (!customer) {
 		throw new Error('Customer not found');
@@ -72,16 +71,6 @@
 			{:else if userRole === 'customer'}
 				<CustomerDetailsForm {customerDetailsForm} />
 			{/if}
-		</Card.Content>
-	</Card.Root>
-	<Card.Root class="border-none">
-		<Card.Header class="overflow-hidden rounded-t-md border-b p-0">
-			<Card.Title class="flex h-10 items-center justify-center bg-secondary font-normal">
-				Ρυθμίσεις Εκτυπωτή
-			</Card.Title>
-		</Card.Header>
-		<Card.Content class="p-0">
-			<PrinterSettingsForm {printerSettingsForm} />
 		</Card.Content>
 	</Card.Root>
 	<Separator />

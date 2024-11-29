@@ -21,7 +21,6 @@ export interface Customer {
 	city: string;
 	postalCode: string;
 	isAccountDisabled: boolean;
-	printerIp?: string;
 }
 
 export interface Order {
