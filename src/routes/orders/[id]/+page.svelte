@@ -16,7 +16,7 @@
 	// Get order data from the server to populate the fields
 	export let data;
 	let { order, userRole } = data;
-	
+
 	if (order === undefined) {
 		toast.error('Η παραγγελία δεν βρέθηκε');
 		throw new Error('Order not found');
@@ -77,18 +77,30 @@
 		})
 		.replace(',', ' •');
 
+	const saleUnitLabels: { [key: string]: string } = {
+		kg: 'Κιλά',
+		piece: 'Τεμάχια',
+		crate: 'Τελάρα',
+		bunch: 'Ματσάκια',
+		cup: 'Κουπάκια'
+	};
+
 	pdfMake.fonts = {
 		Roboto: {
-			normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+			normal:
+				'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
 			bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-			italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-			bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
-		},
+			italics:
+				'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+			bolditalics:
+				'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+		}
 	};
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 230, height: 'auto' },
+			pageSize: { width: 204, height: 'auto' },
+			pageMargins: [10, 10, 10, 10],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
 				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
@@ -99,17 +111,19 @@
 				{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
 				{
 					table: {
-						widths: ['*', 'auto', 'auto'],
+						widths: ['*', 'auto', 'auto', 'auto'],
 						body: [
 							[
 								{ text: 'Προϊόντα', style: 'tableHeader' },
 								{ text: 'Ποσότητα', style: 'tableHeader' },
-								{ text: 'Μονάδα', style: 'tableHeader' }
+								{ text: 'Μονάδα', style: 'tableHeader' },
+								{ text: 'Ζύγισμα', style: 'tableHeader' }
 							],
 							...order.products.map((product) => [
 								{ text: product.product_name } as Content,
-								{ text: product.qty?.toString() } as Content,
-								{ text: product.sale_units } as Content
+								{ text: product.qty } as Content,
+								{ text: saleUnitLabels[product.sale_unit] } as Content,
+								{ text: '', alignment: 'center' } as Content
 							])
 						]
 					},
@@ -136,34 +150,59 @@
 							return 2;
 						}
 					}
-				} as Content
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: 'Εκτέλεση Παραγγελίας:', margin: [0, 0, 0, 5], style: 'businessLabel' } as Content,
+				{
+					canvas: [
+						{
+							type: 'rect',
+							x: 0,
+							y: 0,
+							w: 184, // Full width minus margins
+							h: 20, // Height of the rectangle
+							lineColor: 'black', // Black border
+							lineWidth: 1, // Thickness of the border
+							color: 'white' // White background (optional since white is default)
+						},
+						{
+							type: 'text',
+							text: 'Εκτέλεση Παραγγελίας:',
+							x: 10, // Padding inside the rectangle
+							y: 5,
+							fontSize: 9,
+							bold: true
+						}
+					]
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content
 			],
 			styles: {
 				sectionHeader: {
-					fontSize: 12,
+					fontSize: 10,
 					bold: true,
-					margin: [0, 10, 0, 10],
+					margin: [0, 0, 0, 10],
 					alignment: 'center'
 				},
 				businessLabel: {
-					fontSize: 10,
+					fontSize: 9,
 					margin: [0, 2, 0, 2]
 				},
 				tableHeader: {
-					fontSize: 10,
+					fontSize: 7,
 					bold: true,
 					alignment: 'center',
 					fillColor: '#CCCCCC'
 				}
 			} as StyleDictionary,
 			defaultStyle: {
-				fontSize: 8
+				fontSize: 7
 			}
 		};
 
 		pdfMake.createPdf(docDefinition).open();
 	};
-
 	// Update the order status.
 	async function handleStatusChange(s: Selected<string> | undefined) {
 		if (s && order) {
