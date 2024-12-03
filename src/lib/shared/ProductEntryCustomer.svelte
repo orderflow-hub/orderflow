@@ -17,30 +17,30 @@
 	let selectedSaleUnit: string;
 
 	// Set the default sale unit based on the available sale units
-	if (product.sale_units.includes('kg')) {
+	if (product.saleUnits.includes('kg')) {
 		selectedSaleUnit = 'kg';
-	} else if (product.sale_units.includes('piece')) {
+	} else if (product.saleUnits.includes('piece')) {
 		selectedSaleUnit = 'piece';
-	} else if (product.sale_units.includes('crate')) {
+	} else if (product.saleUnits.includes('crate')) {
 		selectedSaleUnit = 'crate';
-	} else if (product.sale_units.includes('bunch')) {
+	} else if (product.saleUnits.includes('bunch')) {
 		selectedSaleUnit = 'bunch';
-	} else if (product.sale_units.includes('cup')) {
+	} else if (product.saleUnits.includes('cup')) {
 		selectedSaleUnit = 'cup';
 	} else {
 		selectedSaleUnit = 'kg';
 	}
 
 	// Update the quantity variable when the quantity of the product in the cart changes
-	$: $cart, (quantity = cart.getItemQuantity(product.product_id));
+	$: $cart, (quantity = cart.getItemQuantity(product.productId));
 
 	const addToCart = () => {
-		product.selected_sale_unit = selectedSaleUnit;
+		product.selectedSaleUnit = selectedSaleUnit;
 		cart.addItem(product);
 	};
 
 	const removeFromCart = () => {
-		cart.removeItem(product.product_id);
+		cart.removeItem(product.productId);
 	};
 
 	function handleSaleUnitChange(event: CustomEvent) {
@@ -51,12 +51,12 @@
 <Card.Root class="flex w-auto flex-col justify-between p-2">
 	<div class="flex flex-col gap-3">
 		<Card.Content class="p-0">
-			{#if product.image_url}
+			{#if product.imageUrl}
 				<img
 					class={cn('w-full object-cover', {
-						grayscale: product.is_disabled
+						grayscale: product.isDisabled
 					})}
-					src={product.image_url}
+					src={product.imageUrl}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
@@ -68,11 +68,11 @@
 		<Card.Header class="space-y-0 p-0">
 			<Card.Title
 				class={cn('line-clamp-2 font-normal leading-normal text-zinc-700', {
-					'text-slate-400': product.is_disabled
-				})}>{product.product_name}</Card.Title
+					'text-slate-400': product.isDisabled
+				})}>{product.productName}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{product.product_code}</Card.Description
+				>{product.productCode}</Card.Description
 			>
 		</Card.Header>
 	</div>
@@ -83,8 +83,8 @@
 					><Trash size={18} /></Button
 				>
 				<QuantityInput
-					id={product.product_id}
-					sale_units={product.sale_units}
+					id={product.productId}
+					sale_units={product.saleUnits}
 					on:saleUnitChange={handleSaleUnitChange}
 				/>
 			</div>
@@ -92,10 +92,10 @@
 			<Button
 				class="w-full gap-2 px-2 text-base"
 				variant="secondary"
-				disabled={product.is_disabled}
+				disabled={product.isDisabled}
 				on:click={addToCart}
 			>
-				{#if product.is_disabled}
+				{#if product.isDisabled}
 					Μη διαθέσιμο
 				{:else}
 					<Plus />Προσθήκη

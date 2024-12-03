@@ -120,9 +120,9 @@
 								{ text: 'Ζύγισμα', style: 'tableHeader' }
 							],
 							...order.products.map((product) => [
-								{ text: product.product_name } as Content,
+								{ text: product.productName } as Content,
 								{ text: product.qty } as Content,
-								{ text: saleUnitLabels[product.sale_unit] } as Content,
+								{ text: saleUnitLabels[product.saleUnit] } as Content,
 								{ text: '', alignment: 'center' } as Content
 							])
 						]

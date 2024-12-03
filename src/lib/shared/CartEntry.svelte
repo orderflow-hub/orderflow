@@ -11,12 +11,12 @@
 <Card.Root class="flex items-center justify-between gap-2 rounded-none border-0 p-3">
 	<div class="flex h-full items-center justify-start">
 		<Card.Content class="aspect-square h-[72px] p-0">
-			{#if product.image_url}
+			{#if product.imageUrl}
 				<img
 					class={cn('w-full object-cover', {
-						grayscale: product.is_disabled
+						grayscale: product.isDisabled
 					})}
-					src={product.image_url}
+					src={product.imageUrl}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
@@ -27,14 +27,14 @@
 		</Card.Content>
 		<Card.Header class="px-3 py-0">
 			<Card.Title class="line-clamp-2 text-sm font-normal text-zinc-700"
-				>{product.product_name}</Card.Title
+				>{product.productName}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{product.product_code}</Card.Description
+				>{product.productCode}</Card.Description
 			>
 		</Card.Header>
 	</div>
 	<Card.Footer class="inline-flex items-center justify-start p-0">
-		<QuantityInput id={product.product_id} sale_units={product.sale_units} />
+		<QuantityInput id={product.productId} sale_units={product.saleUnits} />
 	</Card.Footer>
 </Card.Root>

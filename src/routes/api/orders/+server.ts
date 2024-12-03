@@ -3,6 +3,7 @@
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { getUserId } from '$lib/authUtils';
+import humps from 'humps';
 
 /*
  * GET: Fetches the first 4 orders from the database.
@@ -68,7 +69,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	}
 
-	const products = await request.json();
+	const products = humps.decamelizeKeys(await request.json());
 
 	// Check if the products array is empty
 	if (products.length === 0) {
