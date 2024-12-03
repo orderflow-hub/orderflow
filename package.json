@@ -50,6 +50,7 @@
 		"formsnap": "^1.0.0",
 		"humps": "^2.0.1",
 		"lucide-svelte": "^0.352.0",
+		"minio": "^8.0.2",
 		"mode-watcher": "^0.2.2",
 		"pdfmake": "^0.2.10",
 		"postgres": "^3.4.3",
