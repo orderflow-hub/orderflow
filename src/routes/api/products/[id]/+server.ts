@@ -2,6 +2,7 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
+import humps from 'humps';
 import type { ParameterOrJSON } from 'postgres';
 
 /*
@@ -49,7 +50,7 @@ export const GET: RequestHandler = async ({ params }) => {
         `;
 
 		if (product.length > 0) {
-			return new Response(JSON.stringify(product[0]), {
+			return new Response(JSON.stringify(humps.camelizeKeys(product[0])), {
 				headers: { 'Content-Type': 'application/json' },
 				status: 200
 			});
@@ -89,7 +90,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	}
 
 	// Parse the request body to get the updated product details
-	const data = await request.json();
+	const data = humps.decamelizeKeys(await request.json());
 
 	// Define allowed keys to prevent SQL injection
 	const allowedColumns = ['product_code', 'product_name', 'category', 'is_disabled', 'image_url'];
@@ -171,7 +172,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 		`;
 
 		// Return the updated product details
-		return new Response(JSON.stringify(updatedProduct), {
+		return new Response(JSON.stringify(humps.camelizeKeys(updatedProduct)), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' }
 		});

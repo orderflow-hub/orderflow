@@ -25,15 +25,15 @@
 
 <Card.Root class="flex rounded-none border-0">
 	<a
-		href={`/orders/${order.order_id}`}
+		href={`/orders/${order.orderId}`}
 		on:click={navigateToOrderDetails}
 		class="flex w-full flex-col"
 	>
 		<Card.Header class="px-3 pt-3 ">
 			{#if userRole === 'admin'}
-				<Card.Title class="text-lg font-normal">{order.company_name} #{order.order_id}</Card.Title>
+				<Card.Title class="text-lg font-normal">{order.companyName} #{order.orderId}</Card.Title>
 			{:else}
-				<Card.Title class="text-lg font-normal">#{order.user_order_number}</Card.Title>
+				<Card.Title class="text-lg font-normal">#{order.userOrderNumber}</Card.Title>
 			{/if}
 			<Card.Description class="text-[13px] font-normal text-slate-400"
 				>{formattedDateTime}</Card.Description

@@ -3,7 +3,7 @@
 	import { cn } from '$lib/utils';
 	import type { Product } from '$lib/types';
 
-	export let product;
+	export let product: Product;
 	export let showImage: boolean = true;
 
 	const saleUnitLabels: { [key: string]: string } = {
@@ -21,19 +21,19 @@
 			<Card.Content class="aspect-square h-[72px] p-0">
 				<img
 					class={cn('aspect-square h-full object-cover', {
-						grayscale: product.is_disabled
+						grayscale: product.isDisabled
 					})}
-					src={product.image_url}
+					src={product.imageUrl}
 					alt="Εικόνα προϊόντος"
 				/>
 			</Card.Content>
 		{/if}
 		<Card.Header class="p-0">
 			<Card.Title class="line-clamp-2 text-sm font-normal text-zinc-700"
-				>{product.product_name}</Card.Title
+				>{product.productName}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{product.product_code}</Card.Description
+				>{product.productCode}</Card.Description
 			>
 		</Card.Header>
 	</div>
@@ -44,7 +44,7 @@
 			</p>
 
 			<p class="text-center text-base font-semibold text-zinc-700">
-				{saleUnitLabels[product.sale_unit]}
+				{saleUnitLabels[product.saleUnit]}
 			</p>
 		</div>
 	</Card.Footer>

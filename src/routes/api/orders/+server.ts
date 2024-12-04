@@ -3,6 +3,7 @@
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
 import { getUserId } from '$lib/authUtils';
+import humps from 'humps';
 
 /*
  * GET: Fetches the first 4 orders from the database.
@@ -40,7 +41,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 					LIMIT ${limit} OFFSET ${offset};
 				`;
 		}
-		return new Response(JSON.stringify(orders), {
+		return new Response(JSON.stringify(humps.camelizeKeys(orders)), {
 			headers: { 'Content-Type': 'application/json' },
 			status: 200
 		});
@@ -68,7 +69,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	}
 
-	const products = await request.json();
+	const products = humps.decamelizeKeys(await request.json());
 
 	// Check if the products array is empty
 	if (products.length === 0) {
@@ -107,7 +108,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 
 		return new Response(
-			JSON.stringify({ newOrder, message: 'Order and order items created successfully' }),
+			JSON.stringify({
+				order: humps.camelizeKeys(newOrder),
+				message: 'Order and order items created successfully'
+			}),
 			{
 				status: 201,
 				headers: { 'Content-Type': 'application/json' }

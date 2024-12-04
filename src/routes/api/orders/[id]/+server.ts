@@ -2,6 +2,7 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
+import humps from 'humps';
 /*
  * GET: Fetches a single order by ID from the database.
  * Validates the provided ID to ensure it's numeric and exists within the database.
@@ -57,8 +58,8 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		// Combines the order details with the products
 		const response = {
-			...orderDetails[0],
-			products: products
+			...humps.camelizeKeys(orderDetails[0]),
+			products: humps.camelizeKeys(products)
 		};
 
 		// Returns the response
