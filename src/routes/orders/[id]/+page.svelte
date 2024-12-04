@@ -47,7 +47,7 @@
 	async function handleDelete() {
 		if (!order) return;
 
-		const response = await fetch(`/api/orders/${order?.order_id}`, {
+		const response = await fetch(`/api/orders/${order?.orderId}`, {
 			method: 'DELETE'
 		});
 
@@ -56,7 +56,7 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredOrders = $ordersStore.filter((o) => o.order_id !== order.order_id);
+			let filteredOrders = $ordersStore.filter((o) => o.orderId !== order.orderId);
 			ordersStore.setOrders(filteredOrders, true);
 
 			// Redirect to '/orders' page
@@ -103,10 +103,10 @@
 			pageMargins: [10, 10, 10, 10],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
-				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
+				{ text: `Όνομα Επιχείρησης: ${order.companyName}`, style: 'businessLabel' } as Content,
 				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' } as Content,
 				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' } as Content,
-				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' } as Content,
+				{ text: `Τηλέφωνο: ${order.phoneNumber}`, style: 'businessLabel' } as Content,
 				{ text: '', margin: [0, 0, 0, 10] } as Content,
 				{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
 				{
@@ -214,7 +214,7 @@
 
 			// Request to change status in the database
 			try {
-				const response = await fetch(`/api/orders/${order.order_id}`, {
+				const response = await fetch(`/api/orders/${order.orderId}`, {
 					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json'
@@ -224,7 +224,7 @@
 
 				if (response.ok) {
 					// Finds order in the Store and updates its status.
-					let orderToUpdate = $ordersStore.find((o) => o.order_id == order.order_id);
+					let orderToUpdate = $ordersStore.find((o) => o.orderId == order.orderId);
 					if (orderToUpdate) orderToUpdate.status = currentStatus.value;
 
 					toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
@@ -247,7 +247,7 @@
 				<ArrowLeft />
 			</a>
 			<div class="flex shrink grow flex-col items-start">
-				<h1 class="text-base font-normal text-zinc-700">Παραγγελία #{order.order_id}</h1>
+				<h1 class="text-base font-normal text-zinc-700">Παραγγελία #{order.orderId}</h1>
 				{#if userRole === 'customer'}
 					<div class="text-xs font-normal text-slate-400">{formattedDateTime}</div>
 				{/if}
@@ -271,7 +271,7 @@
 					<div class="flex flex-col gap-4 px-4 py-3.5">
 						<div class="flex flex-col gap-1.5">
 							<div class="text-[17px] font-normal text-zinc-700">
-								{order.company_name}
+								{order.companyName}
 							</div>
 							<div class="text-xs font-normal text-slate-400">{formattedDateTime}</div>
 						</div>
@@ -279,16 +279,16 @@
 							<div class="flex gap-1">
 								<div class="text-sm font-semibold text-slate-400">Διεύθυνση:</div>
 								<div class="text-sm font-semibold text-zinc-700">
-									{`${order.street_address}, ${order.city} ${order.postal_code}`}
+									{`${order.streetAddress}, ${order.city} ${order.postalCode}`}
 								</div>
 							</div>
 							<div class="flex items-center gap-1">
 								<div class="text-sm font-semibold text-slate-400">Τηλέφωνο:</div>
-								<div class="text-sm font-semibold text-zinc-700">{order.phone_number}</div>
+								<div class="text-sm font-semibold text-zinc-700">{order.phoneNumber}</div>
 							</div>
 							<div class="flex items-center gap-1">
 								<div class="text-sm font-semibold text-slate-400">Α.Φ.Μ.:</div>
-								<div class="text-sm font-semibold text-zinc-700">{order.phone_number}</div>
+								<div class="text-sm font-semibold text-zinc-700">{order.phoneNumber}</div>
 							</div>
 						</div>
 					</div>

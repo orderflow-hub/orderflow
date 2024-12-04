@@ -58,7 +58,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 		// Combines the order details with the products
 		const response = {
-			...orderDetails[0],
+			...humps.camelizeKeys(orderDetails[0]),
 			products: humps.camelizeKeys(products)
 		};
 

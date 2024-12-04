@@ -41,7 +41,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 					LIMIT ${limit} OFFSET ${offset};
 				`;
 		}
-		return new Response(JSON.stringify(orders), {
+		return new Response(JSON.stringify(humps.camelizeKeys(orders)), {
 			headers: { 'Content-Type': 'application/json' },
 			status: 200
 		});
@@ -108,7 +108,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 
 		return new Response(
-			JSON.stringify({ newOrder, message: 'Order and order items created successfully' }),
+			JSON.stringify({
+				order: humps.camelizeKeys(newOrder),
+				message: 'Order and order items created successfully'
+			}),
 			{
 				status: 201,
 				headers: { 'Content-Type': 'application/json' }

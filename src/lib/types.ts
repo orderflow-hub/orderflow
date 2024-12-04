@@ -24,15 +24,15 @@ export interface Customer {
 }
 
 export interface Order {
-	order_id: number;
+	orderId: number;
 	status: 'pending' | 'complete';
-	user_order_number: number;
-	company_name: string;
+	userOrderNumber: number;
+	companyName: string;
 	timestamp: string;
-	street_address: string;
+	streetAddress: string;
 	city: string;
-	postal_code: string;
-	phone_number: string;
+	postalCode: string;
+	phoneNumber: string;
 	afm: string;
 	products: Product[];
 }
