@@ -39,9 +39,6 @@ export const actions: Actions = {
 			});
 		}
 
-		// Convert form data to snake_case with humps library
-		const formData = humps.decamelizeKeys(form.data);
-
 		try {
 			// Create a new customer
 			const response = await event.fetch('/api/customers', {
@@ -49,7 +46,7 @@ export const actions: Actions = {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(formData)
+				body: JSON.stringify(form.data)
 			});
 
 			if (!response.ok) {
