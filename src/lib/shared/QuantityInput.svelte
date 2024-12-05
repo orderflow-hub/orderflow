@@ -73,7 +73,12 @@
 		<Select.Trigger class="max-w-24 truncate p-1">
 			<Select.Value class="" />
 		</Select.Trigger>
-		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[100px]">
+		<Select.Content
+			sameWidth={false}
+			align="start"
+			alignOffset={0}
+			class="w-auto min-w-[110px] max-w-[200px]"
+		>
 			{#each sale_units as unit}
 				<Select.Item value={unit} label={saleUnitLabels[unit]} />
 			{/each}
