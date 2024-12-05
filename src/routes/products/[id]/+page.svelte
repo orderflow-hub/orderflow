@@ -103,14 +103,13 @@
 			}
 
 			const result = await response.json();
-			toast.success('Image uploaded successfully');
-			console.log('Image URL:', result.imgUrl);
+			toast.success('Η φωτογραφία προϊόντος ενημερώθηκε επιτυχώς');
 
 			// Update local product data with the new image URL
 			product.image_url = result.imgUrl;
 		} catch (error) {
 			console.error('Error uploading image:', error);
-			toast.error(error.message || 'Error uploading image');
+			toast.error('Άγνωστο σφάλμα. Παρακαλώ προσπαθήστε αργότερα');
 		}
 	}
 
