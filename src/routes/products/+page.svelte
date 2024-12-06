@@ -85,7 +85,7 @@
 		if (response.ok) {
 			// Retrieve the new order from the json response and add it to the order store
 			const json = await response.json();
-			ordersStore.setOrders([json.newOrder], false);
+			ordersStore.setOrders([json.order], false);
 
 			cart.clear();
 			closeCartSheet();

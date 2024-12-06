@@ -37,7 +37,7 @@ const createProductsStore = (): ProductsStore => {
 		updateProduct: (updatedProduct: Product) => {
 			update((current) =>
 				current.map((product) =>
-					product.product_id === updatedProduct.product_id ? updatedProduct : product
+					product.productId === updatedProduct.productId ? updatedProduct : product
 				)
 			);
 		},

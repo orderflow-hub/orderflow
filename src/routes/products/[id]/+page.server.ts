@@ -54,12 +54,12 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 			product,
 			form: await superValidate(
 				{
-					productId: product.product_id,
-					productName: product.product_name,
+					productId: product.productId,
+					productName: product.productName,
 					category: product.category,
-					productCode: product.product_code,
-					saleUnits: product.sale_units,
-					isDisabled: product.is_disabled
+					productCode: product.productCode,
+					saleUnits: product.saleUnits,
+					isDisabled: product.isDisabled
 				},
 				zod(productSchema)
 			)
@@ -81,18 +81,14 @@ export const actions: Actions = {
 			});
 		}
 
-		// Convert form data to snake_case with humps library
-		// Assert the type to match the Product interface
-		const formData = humps.decamelizeKeys(form.data) as Product;
-
 		try {
 			// TODO: Maybe only send the fields that have changed
-			const response = await event.fetch(`/api/products/${formData.product_id}`, {
+			const response = await event.fetch(`/api/products/${form.data.productId}`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(formData)
+				body: JSON.stringify(form.data)
 			});
 
 			if (!response.ok) {

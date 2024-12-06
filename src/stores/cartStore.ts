@@ -20,7 +20,7 @@ const createCartStore = (): CartStore => {
 		addItem: (item) =>
 			update((items) => {
 				// Check if the item is already in the cart
-				const index = items.findIndex((i) => i.product_id === item.product_id);
+				const index = items.findIndex((i) => i.productId === item.productId);
 				if (index === -1) {
 					// Item not in cart, add it with qty 1 if not provided
 					return [...items, { ...item, qty: item.qty || 1 }];
@@ -30,25 +30,25 @@ const createCartStore = (): CartStore => {
 			}),
 		updateItemQuantity: (id, qty) =>
 			// Set the quantity of the item with the given id
-			update((items) => items.map((item) => (item.product_id === id ? { ...item, qty } : item))),
+			update((items) => items.map((item) => (item.productId === id ? { ...item, qty } : item))),
 		updateItemSaleUnit: (id, sale_unit) => {
 			update((items) =>
 				items.map((item) =>
-					item.product_id === id ? { ...item, selected_sale_unit: sale_unit } : item
+					item.productId === id ? { ...item, selected_sale_unit: sale_unit } : item
 				)
 			);
 		},
 		getItemQuantity: (id) => {
 			const items = get(cart); // Use get to access the current state
-			const item = items.find((item) => item.product_id === id);
+			const item = items.find((item) => item.productId === id);
 			return item ? item.qty : 0;
 		},
 		getSaleUnit: (id) => {
 			const items = get(cart); // Access current state
-			const item = items.find((item) => item.product_id === id);
-			return item ? item.selected_sale_unit || null : null;
+			const item = items.find((item) => item.productId === id);
+			return item ? item.selectedSaleUnit || null : null;
 		},
-		removeItem: (id) => update((items) => items.filter((item) => item.product_id !== id)),
+		removeItem: (id) => update((items) => items.filter((item) => item.productId !== id)),
 		clear: () => set([]) // Clear the cart
 	};
 };
