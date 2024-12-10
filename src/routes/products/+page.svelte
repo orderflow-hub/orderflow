@@ -207,7 +207,6 @@
 			<div class="divide-y overflow-auto rounded-lg">
 				{#each $cart as item}
 					<CartEntry product={item} />
-					<hr class="mx-2 border-gray-400 last:hidden" />
 				{/each}
 			</div>
 			<Sheet.Footer class="flex flex-col items-stretch gap-2.5">
