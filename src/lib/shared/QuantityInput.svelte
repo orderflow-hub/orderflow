@@ -60,7 +60,7 @@
 
 <div class="relative flex w-full items-center gap-2">
 	<Input
-		class="max-w-20 text-center font-semibold text-zinc-700"
+		class="max-w-20 p-0 text-center font-semibold text-zinc-700"
 		placeholder=""
 		type="number"
 		style="appearance: none; -moz-appearance: textfield;"
