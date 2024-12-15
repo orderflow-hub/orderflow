@@ -25,7 +25,7 @@
 					src={product.image_url}
 					alt={product.product_name}
 					class={cn('w-full object-cover', {
-						grayscale: product.is_disabled
+						grayscale: product.isDisabled
 					})}
 				/>
 			{:else}
@@ -34,13 +34,11 @@
 				</div>
 			{/if}
 		</div>
-
 		<!-- Title and Item ID -->
 		<div class="grow">
 			<div class="line-clamp-1 text-sm font-medium text-gray-800">{product.product_name}</div>
 			<div class="text-xs text-gray-500">{product.product_code}</div>
 		</div>
-
 		<!-- Price -->
 		<div class="flex-none text-right text-sm font-semibold text-gray-700">
 			{''}
@@ -53,7 +51,6 @@
 		<Card.Footer class="w-full p-0">
 			<QuantityInput id={product.product_id} sale_units={product.sale_units} />
 		</Card.Footer>
-
 		<!-- Delete Button -->
 		<Button variant="ghost" size="icon" on:click={removeFromCart}>
 			<Trash class="h-5 w-5" />

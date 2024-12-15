@@ -47,7 +47,7 @@
 	async function handleDelete() {
 		if (!order) return;
 
-		const response = await fetch(`/api/orders/${order?.order_id}`, {
+		const response = await fetch(`/api/orders/${order?.orderId}`, {
 			method: 'DELETE'
 		});
 
@@ -56,7 +56,7 @@
 			isDialogOpen = false;
 
 			// Filters deleted product from the store.
-			let filteredOrders = $ordersStore.filter((o) => o.order_id !== order.order_id);
+			let filteredOrders = $ordersStore.filter((o) => o.orderId !== order.orderId);
 			ordersStore.setOrders(filteredOrders, true);
 
 			// Redirect to '/orders' page
@@ -99,14 +99,14 @@
 
 	const handlePrint = () => {
 		const docDefinition: TDocumentDefinitions = {
-			pageSize: { width: 227, height: 'auto' },
+			pageSize: { width: 204, height: 'auto' },
 			pageMargins: [10, 10, 10, 10],
 			content: [
 				{ text: 'Στοιχεία Επιχείρησης', style: 'sectionHeader' } as Content,
-				{ text: `Όνομα Επιχείρησης: ${order.company_name}`, style: 'businessLabel' } as Content,
+				{ text: `Όνομα Επιχείρησης: ${order.companyName}`, style: 'businessLabel' } as Content,
 				{ text: `Ημερομηνία: ${formattedDateTime}`, style: 'businessLabel' } as Content,
 				{ text: `ΑΦΜ: ${order.afm}`, style: 'businessLabel' } as Content,
-				{ text: `Τηλέφωνο: ${order.phone_number}`, style: 'businessLabel' } as Content,
+				{ text: `Τηλέφωνο: ${order.phoneNumber}`, style: 'businessLabel' } as Content,
 				{ text: '', margin: [0, 0, 0, 10] } as Content,
 				{ text: 'Προϊόντα', style: 'sectionHeader' } as Content,
 				{
@@ -117,12 +117,12 @@
 								{ text: 'Προϊόντα', style: 'tableHeader' },
 								{ text: 'Ποσότητα', style: 'tableHeader' },
 								{ text: 'Μονάδα', style: 'tableHeader' },
-								{ text: 'Κατάσταση', style: 'tableHeader' }
+								{ text: 'Ζύγισμα', style: 'tableHeader' }
 							],
 							...order.products.map((product) => [
-								{ text: product.product_name } as Content,
+								{ text: product.productName } as Content,
 								{ text: product.qty } as Content,
-								{ text: saleUnitLabels[product.sale_unit] } as Content,
+								{ text: saleUnitLabels[product.saleUnit] } as Content,
 								{ text: '', alignment: 'center' } as Content
 							])
 						]
@@ -150,7 +150,33 @@
 							return 2;
 						}
 					}
-				} as Content
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content,
+				{ text: 'Εκτέλεση Παραγγελίας:', margin: [0, 0, 0, 5], style: 'businessLabel' } as Content,
+				{
+					canvas: [
+						{
+							type: 'rect',
+							x: 0,
+							y: 0,
+							w: 184, // Full width minus margins
+							h: 20, // Height of the rectangle
+							lineColor: 'black', // Black border
+							lineWidth: 1, // Thickness of the border
+							color: 'white' // White background (optional since white is default)
+						},
+						{
+							type: 'text',
+							text: 'Εκτέλεση Παραγγελίας:',
+							x: 10, // Padding inside the rectangle
+							y: 5,
+							fontSize: 9,
+							bold: true
+						}
+					]
+				} as Content,
+				{ text: '', margin: [0, 0, 0, 10] } as Content
 			],
 			styles: {
 				sectionHeader: {
@@ -188,7 +214,7 @@
 
 			// Request to change status in the database
 			try {
-				const response = await fetch(`/api/orders/${order.order_id}`, {
+				const response = await fetch(`/api/orders/${order.orderId}`, {
 					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json'
@@ -198,7 +224,7 @@
 
 				if (response.ok) {
 					// Finds order in the Store and updates its status.
-					let orderToUpdate = $ordersStore.find((o) => o.order_id == order.order_id);
+					let orderToUpdate = $ordersStore.find((o) => o.orderId == order.orderId);
 					if (orderToUpdate) orderToUpdate.status = currentStatus.value;
 
 					toast.success('Κατάσταση παραγγελίας ενημερώθηκε επιτυχώς');
@@ -221,7 +247,7 @@
 				<ArrowLeft />
 			</a>
 			<div class="flex shrink grow flex-col items-start">
-				<h1 class="text-base font-normal text-zinc-700">Παραγγελία #{order.order_id}</h1>
+				<h1 class="text-base font-normal text-zinc-700">Παραγγελία #{order.orderId}</h1>
 				{#if userRole === 'customer'}
 					<div class="text-xs font-normal text-slate-400">{formattedDateTime}</div>
 				{/if}
@@ -245,7 +271,7 @@
 					<div class="flex flex-col gap-4 px-4 py-3.5">
 						<div class="flex flex-col gap-1.5">
 							<div class="text-[17px] font-normal text-zinc-700">
-								{order.company_name}
+								{order.companyName}
 							</div>
 							<div class="text-xs font-normal text-slate-400">{formattedDateTime}</div>
 						</div>
@@ -253,16 +279,16 @@
 							<div class="flex gap-1">
 								<div class="text-sm font-semibold text-slate-400">Διεύθυνση:</div>
 								<div class="text-sm font-semibold text-zinc-700">
-									{`${order.street_address}, ${order.city} ${order.postal_code}`}
+									{`${order.streetAddress}, ${order.city} ${order.postalCode}`}
 								</div>
 							</div>
 							<div class="flex items-center gap-1">
 								<div class="text-sm font-semibold text-slate-400">Τηλέφωνο:</div>
-								<div class="text-sm font-semibold text-zinc-700">{order.phone_number}</div>
+								<div class="text-sm font-semibold text-zinc-700">{order.phoneNumber}</div>
 							</div>
 							<div class="flex items-center gap-1">
 								<div class="text-sm font-semibold text-slate-400">Α.Φ.Μ.:</div>
-								<div class="text-sm font-semibold text-zinc-700">{order.phone_number}</div>
+								<div class="text-sm font-semibold text-zinc-700">{order.phoneNumber}</div>
 							</div>
 						</div>
 					</div>

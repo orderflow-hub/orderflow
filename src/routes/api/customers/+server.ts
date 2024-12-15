@@ -41,7 +41,7 @@ export const GET: RequestHandler = async ({ url }) => {
  * Returns the created customer details on success or an error message on failure.
  */
 export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json();
+	const data = humps.decamelizeKeys(await request.json());
 
 	// Check if the unique fields already exist in the database
 	const existingUser = await sql`
@@ -79,7 +79,7 @@ export const POST: RequestHandler = async ({ request }) => {
         `;
 
 		// Return the newly created customer details
-		return new Response(JSON.stringify(newCustomer), {
+		return new Response(JSON.stringify(humps.camelizeKeys(newCustomer)), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});

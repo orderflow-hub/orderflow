@@ -1,13 +1,13 @@
 export interface Product {
-	product_id: number;
-	image_url?: string;
-	product_name: string;
-	product_code: string;
-	is_disabled: boolean;
-	sale_units: ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
+	productId: number;
+	imageUrl?: string;
+	productName: string;
+	productCode: string;
+	isDisabled: boolean;
+	saleUnits: ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
 	category: 'fruits' | 'vegetables' | 'bundles' | 'other';
 	qty?: number;
-	selected_sale_unit?: string;
+	selectedSaleUnit?: string;
 }
 
 export interface Customer {
@@ -21,19 +21,18 @@ export interface Customer {
 	city: string;
 	postalCode: string;
 	isAccountDisabled: boolean;
-	printerIp?: string;
 }
 
 export interface Order {
-	order_id: number;
+	orderId: number;
 	status: 'pending' | 'complete';
-	user_order_number: number;
-	company_name: string;
+	userOrderNumber: number;
+	companyName: string;
 	timestamp: string;
-	street_address: string;
+	streetAddress: string;
 	city: string;
-	postal_code: string;
-	phone_number: string;
+	postalCode: string;
+	phoneNumber: string;
 	afm: string;
 	products: Product[];
 }
