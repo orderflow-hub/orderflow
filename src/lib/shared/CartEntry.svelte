@@ -11,7 +11,7 @@
 	export let product: Product;
 
 	const removeFromCart = () => {
-		cart.removeItem(product.product_id);
+		cart.removeItem(product.productId);
 	};
 </script>
 
@@ -20,10 +20,10 @@
 	<div class="flex items-center gap-3">
 		<!-- Product Image -->
 		<div class="h-16 w-16 flex-none">
-			{#if product.image_url}
+			{#if product.imageUrl}
 				<img
-					src={product.image_url}
-					alt={product.product_name}
+					src={product.imageUrl}
+					alt={product.productName}
 					class={cn('w-full object-cover', {
 						grayscale: product.isDisabled
 					})}
@@ -36,8 +36,8 @@
 		</div>
 		<!-- Title and Item ID -->
 		<div class="grow">
-			<div class="line-clamp-1 text-sm font-medium text-gray-800">{product.product_name}</div>
-			<div class="text-xs text-gray-500">{product.product_code}</div>
+			<div class="line-clamp-1 text-sm font-medium text-gray-800">{product.productName}</div>
+			<div class="text-xs text-gray-500">{product.productCode}</div>
 		</div>
 		<!-- Price -->
 		<div class="flex-none text-right text-sm font-semibold text-gray-700">
@@ -49,7 +49,7 @@
 	<div class="flex justify-between">
 		<!-- Quantity and Sale Units -->
 		<Card.Footer class="w-full p-0">
-			<QuantityInput id={product.product_id} sale_units={product.sale_units} />
+			<QuantityInput id={product.productId} sale_units={product.saleUnits} />
 		</Card.Footer>
 		<!-- Delete Button -->
 		<Button variant="ghost" size="icon" on:click={removeFromCart}>
