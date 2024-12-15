@@ -15,7 +15,7 @@
 	};
 </script>
 
-<Card.Root class="p-3">
+<Card.Root class="rounded-none border-0 p-3">
 	<!-- First Row -->
 	<div class="flex items-center gap-3">
 		<!-- Product Image -->

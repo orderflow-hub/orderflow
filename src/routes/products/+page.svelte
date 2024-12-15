@@ -204,7 +204,7 @@
 			<Sheet.Header>
 				<Sheet.Title>Καλάθι</Sheet.Title>
 			</Sheet.Header>
-			<div class="divide-y overflow-auto rounded-lg">
+			<div class="w-full divide-y overflow-auto rounded-lg border">
 				{#each $cart as item}
 					<CartEntry product={item} />
 				{/each}
