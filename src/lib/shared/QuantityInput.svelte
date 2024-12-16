@@ -58,9 +58,9 @@
 	onDestroy(() => unsubscribe());
 </script>
 
-<div class="relative flex w-[125px] flex-grow items-center gap-2 sm:w-[120px]">
+<div class="relative flex w-full items-center gap-2">
 	<Input
-		class="text-center font-semibold text-zinc-700"
+		class="max-w-20 p-0 text-center font-semibold text-zinc-700"
 		placeholder=""
 		type="number"
 		style="appearance: none; -moz-appearance: textfield;"
@@ -70,10 +70,15 @@
 	/>
 	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
-		<Select.Trigger class="w-full p-1">
-			<Select.Value class="w-[30px]" />
+		<Select.Trigger class="max-w-24 truncate p-1">
+			<Select.Value class="" />
 		</Select.Trigger>
-		<Select.Content sameWidth={false} align="end" alignOffset={4} class="w-[110px] sm:w-[100px]">
+		<Select.Content
+			sameWidth={false}
+			align="start"
+			alignOffset={0}
+			class="w-auto min-w-[110px] max-w-[200px]"
+		>
 			{#each sale_units as unit}
 				<Select.Item value={unit} label={saleUnitLabels[unit]} />
 			{/each}
