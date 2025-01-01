@@ -5,6 +5,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { ModeWatcher, setMode } from 'mode-watcher';
 	import { page } from '$app/stores';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
 
 	let headerText: string;
 
@@ -28,6 +29,10 @@
 	// Retrieve user role from the server
 	export let data;
 	const userRole = data.userRole;
+
+	// Populate the Sale Units store
+	const saleUnits = data.saleUnits;
+	saleUnitsStore.setSaleUnits(saleUnits);
 </script>
 
 <div class="flex min-h-screen flex-col items-center">

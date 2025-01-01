@@ -3,43 +3,41 @@
 	import { cart } from '../../stores/cartStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
-	import { createEventDispatcher, onDestroy } from 'svelte';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
+	import { derived } from 'svelte/store';
 
 	export let id: number;
 	export let sale_units: string[];
 
-	const dispatch = createEventDispatcher();
+	// Quantity of cart item
+	let quantity = derived(cart, () => {
+		return cart.getItemQuantity(id);
+	});
 
-	// Bind this to the Input component's value
-	let inputValue: number = cart.getItemQuantity(id);
+	// Default selected unit of cart item
+	let saleUnitSelection = derived(cart, () => {
+		const currentSaleUnit = cart.getSaleUnit(id);
+		const saleUnitLabel = saleUnitsStore.getSaleUnitById(currentSaleUnit)?.saleUnitLabel || '';
+		return {
+			value: currentSaleUnit,
+			label: saleUnitLabel
+		};
+	});
 
-	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλά',
-		piece: 'Τεμάχια',
-		crate: 'Τελάρα',
-		bunch: 'Ματσάκια',
-		cup: 'Κουπάκια'
-	};
+	function updateCartItemQuantity(event: FocusEvent) {
+		const target = event.target as HTMLInputElement;
+		let value = parseFloat(target.value);
 
-	// Determine the default selection based on the priority
-	let defaultSelection = {
-		value: sale_units[0],
-		label: saleUnitLabels[sale_units[0]]
-	};
-
-	// Function to validate the quantity input value
-	function updateCartItemQuantity() {
-		// Limits value to a range between 0.1 and 999
-		inputValue = Math.max(0.1, Math.min(999, inputValue));
+		// Limit the value to a range between 0.1 and 999
+		value = Math.max(0.1, Math.min(999, value));
 
 		// Update the quantity value in the CartStore
-		cart.updateItemQuantity(id, inputValue);
+		cart.updateItemQuantity(id, value);
 	}
 
 	function handleSelectedChange(s: Selected<string> | undefined) {
 		if (s) {
 			cart.updateItemSaleUnit(id, s.value);
-			dispatch('saleUnitChange', { sale_unit: s.value });
 		}
 	}
 
@@ -47,15 +45,6 @@
 		const target = event.target as HTMLInputElement;
 		target.select();
 	}
-
-	// Subscribe to the cart store and update inputValue when the cart store changes
-	const unsubscribe = cart.subscribe(() => {
-		inputValue = cart.getItemQuantity(id);
-		defaultSelection = { value: cart.getSaleUnit(id), label: saleUnitLabels[cart.getSaleUnit(id)] };
-	});
-
-	// Cleanup the subscription when the component is destroyed
-	onDestroy(() => unsubscribe());
 </script>
 
 <div class="relative flex w-full items-center gap-2">
@@ -64,11 +53,11 @@
 		placeholder=""
 		type="number"
 		style="appearance: none; -moz-appearance: textfield;"
-		bind:value={inputValue}
-		on:blur={() => updateCartItemQuantity()}
+		value={$quantity}
+		on:blur={updateCartItemQuantity}
 		on:focus={selectInput}
 	/>
-	<Select.Root bind:selected={defaultSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
+	<Select.Root selected={$saleUnitSelection} onSelectedChange={(s) => handleSelectedChange(s)}>
 		<Select.Input />
 		<Select.Trigger class="max-w-24 truncate p-1">
 			<Select.Value class="" />
@@ -80,7 +69,7 @@
 			class="w-auto min-w-[110px] max-w-[200px]"
 		>
 			{#each sale_units as unit}
-				<Select.Item value={unit} label={saleUnitLabels[unit]} />
+				<Select.Item value={unit} label={saleUnitsStore.getSaleUnitById(unit)?.saleUnitLabel} />
 			{/each}
 		</Select.Content>
 	</Select.Root>

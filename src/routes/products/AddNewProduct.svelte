@@ -15,6 +15,7 @@
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { z } from 'zod';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
 
 	type ProductSchema = z.infer<typeof productSchema>;
 	type Category = ProductSchema['category']; // Product category types
@@ -49,10 +50,8 @@
 
 	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
 		if (s) {
-			// Map over selections to extract values
-			const selectedValues = s.map((selection) => selection.value as SaleUnit);
 			// Update $formData.saleUnits with the new selections
-			$formData.saleUnits = selectedValues;
+			$formData.saleUnits = s.map((item) => parseInt(item.value));
 		} else {
 			// If no selection, reset $formData.saleUnits to an empty array
 			$formData.saleUnits = [];
@@ -64,15 +63,6 @@
 			$formData.category = s.value as Category;
 		}
 	}
-
-	// Select items of saleUnits
-	const saleUnits: Selected<string>[] = [
-		{ value: 'kg', label: 'Κιλά' },
-		{ value: 'piece', label: 'Τεμάχια' },
-		{ value: 'crate', label: 'Τελάρα' },
-		{ value: 'bunch', label: 'Ματσάκια' },
-		{ value: 'cup', label: 'Κουπάκια' }
-	];
 
 	// Select items of category
 	const categories: Selected<string>[] = [
@@ -116,18 +106,14 @@
 					<Form.Field class="flex w-full max-w-sm flex-col" {form} name="saleUnits">
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
-							<Select.Root
-								items={saleUnits}
-								multiple={true}
-								onSelectedChange={(s) => handleSaleUnitsChange(s)}
-							>
+							<Select.Root multiple={true} onSelectedChange={(s) => handleSaleUnitsChange(s)}>
 								<Select.Input name={attrs.name} />
 								<Select.Trigger {...attrs}>
 									<Select.Value />
 								</Select.Trigger>
 								<Select.Content>
-									{#each saleUnits as saleUnit}
-										<Select.Item value={saleUnit.value} label={saleUnit.label} />
+									{#each $saleUnitsStore as saleUnit}
+										<Select.Item value={saleUnit.saleUnitId} label={saleUnit.saleUnitLabel} />
 									{/each}
 								</Select.Content>
 							</Select.Root>

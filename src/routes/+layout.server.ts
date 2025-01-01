@@ -8,10 +8,19 @@ import type { LayoutServerLoad } from './$types';
  *
  * The role is added to locals in the handle function in src/hooks.server.ts.
  */
-export const load: LayoutServerLoad = async ({ locals }) => {
+export const load: LayoutServerLoad = async ({ locals, fetch }) => {
 	const role = locals.user?.role;
 
+	// Fetch sale units on page load
+	// TODO: Implement lazy loading instead
+	const saleUnitsResponse = await fetch('/api/saleUnits');
+	if (!saleUnitsResponse.ok) {
+		throw new Error('Failed to fetch sale units');
+	}
+	const saleUnits = await saleUnitsResponse.json();
+
 	return {
-		userRole: role
+		userRole: role,
+		saleUnits: saleUnits
 	};
 };

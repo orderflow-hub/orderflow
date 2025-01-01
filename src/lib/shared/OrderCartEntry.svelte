@@ -2,17 +2,13 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import type { Product } from '$lib/types';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
 
 	export let product: Product;
 	export let showImage: boolean = true;
 
-	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλά',
-		piece: 'Τεμάχια',
-		crate: 'Τελάρα',
-		bunch: 'Ματσάκια',
-		cup: 'Κουπάκια'
-	};
+	// Gets sale unit label from the store
+	const saleUnitLabel = saleUnitsStore.getSaleUnitById(product.saleUnit)?.saleUnitLabel;
 </script>
 
 <Card.Root class="flex items-center justify-between gap-2 rounded-none border-0 p-3">
@@ -44,7 +40,7 @@
 			</p>
 
 			<p class="text-center text-base font-semibold text-zinc-700">
-				{saleUnitLabels[product.saleUnit]}
+				{saleUnitLabel}
 			</p>
 		</div>
 	</Card.Footer>

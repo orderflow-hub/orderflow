@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ params }) => {
 				p.product_code,
 				p.is_disabled,
 				p.category,
-				array_agg(su.sale_unit) AS sale_units
+				array_agg(su.sale_unit_id) AS sale_units
 			FROM 
 				products p
 			LEFT JOIN 
@@ -127,7 +127,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 
 		if (data[saleUnitsKey]) {
 			// Update the product_sale_unit table
-			const saleUnits = data[saleUnitsKey] as ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
+			const saleUnits = data[saleUnitsKey];
 
 			// Delete existing sale units for the product
 			await sql`
@@ -136,12 +136,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 			`;
 
 			// Insert new sale units for the product
-			for (const saleUnit of saleUnits) {
-				const saleUnitIdResult = await sql`
-					SELECT sale_unit_id FROM sale_units WHERE sale_unit = ${saleUnit}
-				`;
-				const saleUnitId = saleUnitIdResult[0].sale_unit_id;
-
+			for (const saleUnitId of saleUnits) {
 				await sql`
 					INSERT INTO product_sale_unit (product_id, sale_unit_id)
 					VALUES (${productId}, ${saleUnitId});

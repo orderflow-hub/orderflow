@@ -4,10 +4,10 @@ export interface Product {
 	productName: string;
 	productCode: string;
 	isDisabled: boolean;
-	saleUnits: ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
+	saleUnits: number[];
 	category: 'fruits' | 'vegetables' | 'bundles' | 'other';
 	qty?: number;
-	selectedSaleUnit?: string;
+	selectedSaleUnit?: number;
 }
 
 export interface Customer {
@@ -35,4 +35,10 @@ export interface Order {
 	phoneNumber: string;
 	afm: string;
 	products: Product[];
+}
+
+export interface SaleUnit {
+	saleUnitId: number;
+	saleUnit: string;
+	saleUnitLabel: string;
 }

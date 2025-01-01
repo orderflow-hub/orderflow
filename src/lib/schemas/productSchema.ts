@@ -5,9 +5,7 @@ export const productSchema = z.object({
 	productName: z.string().min(1, 'Product name is required'),
 	productCode: z.string().min(1, 'Product code is required'),
 	category: z.enum(['fruits', 'vegetables', 'bundles', 'other']).default('other'),
-	saleUnits: z
-		.array(z.enum(['kg', 'piece', 'crate', 'bunch', 'cup']))
-		.min(1, 'At least one sale unit is required'),
+	saleUnits: z.array(z.number()).min(1, 'At least one sale unit is required'),
 	isDisabled: z.boolean().default(false)
 });
 
