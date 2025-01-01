@@ -5,7 +5,7 @@ export interface Product {
 	productCode: string;
 	isDisabled: boolean;
 	saleUnits: ('kg' | 'piece' | 'crate' | 'bunch' | 'cup')[];
-	category: 'fruits' | 'vegetables' | 'bundles' | 'other';
+	categoryId: number;
 	qty?: number;
 	selectedSaleUnit?: string;
 }
@@ -35,4 +35,10 @@ export interface Order {
 	phoneNumber: string;
 	afm: string;
 	products: Product[];
+}
+
+export interface Category {
+	categoryId: number;
+	category: string;
+	categoryLabel: string;
 }

@@ -15,9 +15,9 @@
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
 	import { z } from 'zod';
+	import { categoriesStore } from '$stores/categoriesStore';
 
 	type ProductSchema = z.infer<typeof productSchema>;
-	type Category = ProductSchema['category']; // Product category types
 	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	// Get product data from the server to populate the fields
@@ -98,7 +98,7 @@
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
 		if (s) {
-			$formData.category = s.value as Category;
+			$formData.categoryId = parseInt(s.value);
 		}
 	}
 	const saleUnitLabels: { [key: string]: string } = {
@@ -109,16 +109,7 @@
 		cup: 'Κουπάκια'
 	};
 
-	// Select items of category
-	const categoryLabels: { [key: string]: string } = {
-		fruits: 'Φρούτα',
-		vegetables: 'Κηπευτικά',
-		bundles: 'Δεματικά',
-		other: 'Άλλο'
-	};
-
 	const saleUnits = Object.entries(saleUnitLabels).map(([value, label]) => ({ value, label }));
-	const categories = Object.entries(categoryLabels).map(([value, label]) => ({ value, label }));
 
 	$: defaultSaleUnits = $formData.saleUnits.map((unit) => ({
 		value: unit,
@@ -126,8 +117,8 @@
 	}));
 
 	$: defaultCategory = {
-		value: $formData.category,
-		label: categoryLabels[$formData.category]
+		value: categoriesStore.getCategoryById($formData.categoryId)?.categoryId,
+		label: categoriesStore.getCategoryById($formData.categoryId)?.categoryLabel
 	};
 </script>
 
@@ -200,11 +191,10 @@
 						</Form.Control>
 					</Form.Field>
 				</div>
-				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="category">
+				<Form.Field class="mb-3 flex w-full max-w-sm flex-col" {form} name="categoryId">
 					<Form.Control let:attrs>
 						<Form.Label>Κατηγορία *</Form.Label>
 						<Select.Root
-							items={categories}
 							bind:selected={defaultCategory}
 							onSelectedChange={(s) => handleCategoryChange(s)}
 						>
@@ -213,8 +203,8 @@
 								<Select.Value />
 							</Select.Trigger>
 							<Select.Content>
-								{#each categories as category}
-									<Select.Item value={category.value} label={category.label} />
+								{#each $categoriesStore as category}
+									<Select.Item value={category.categoryId} label={category.categoryLabel} />
 								{/each}
 							</Select.Content>
 						</Select.Root>

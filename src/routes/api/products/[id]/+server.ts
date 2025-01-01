@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ params }) => {
 				p.product_name,
 				p.product_code,
 				p.is_disabled,
-				p.category,
+				p.category_id,
 				array_agg(su.sale_unit) AS sale_units
 			FROM 
 				products p
@@ -93,7 +93,13 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 	const data = humps.decamelizeKeys(await request.json());
 
 	// Define allowed keys to prevent SQL injection
-	const allowedColumns = ['product_code', 'product_name', 'category', 'is_disabled', 'image_url'];
+	const allowedColumns = [
+		'product_code',
+		'product_name',
+		'category_id',
+		'is_disabled',
+		'image_url'
+	];
 	const saleUnitsKey = 'sale_units';
 
 	const updates = Object.entries(data)
@@ -157,7 +163,7 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 				p.product_name,
 				p.product_code,
 				p.is_disabled,
-				p.category,
+				p.category_id,
 				array_agg(su.sale_unit) AS sale_units
 			FROM 
 				products p
