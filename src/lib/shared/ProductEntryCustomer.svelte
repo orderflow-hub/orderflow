@@ -16,26 +16,11 @@
 
 	let selectedSaleUnit: string;
 
-	// Set the default sale unit based on the available sale units
-	if (product.saleUnits.includes('kg')) {
-		selectedSaleUnit = 'kg';
-	} else if (product.saleUnits.includes('piece')) {
-		selectedSaleUnit = 'piece';
-	} else if (product.saleUnits.includes('crate')) {
-		selectedSaleUnit = 'crate';
-	} else if (product.saleUnits.includes('bunch')) {
-		selectedSaleUnit = 'bunch';
-	} else if (product.saleUnits.includes('cup')) {
-		selectedSaleUnit = 'cup';
-	} else {
-		selectedSaleUnit = 'kg';
-	}
-
 	// Update the quantity variable when the quantity of the product in the cart changes
 	$: $cart, (quantity = cart.getItemQuantity(product.productId));
 
 	const addToCart = () => {
-		product.selectedSaleUnit = selectedSaleUnit;
+		product.selectedSaleUnit = product.saleUnits[0];
 		cart.addItem(product);
 	};
 

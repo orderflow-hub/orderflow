@@ -6,7 +6,7 @@ interface CartStore extends Readable<Product[]> {
 	addItem: (item: Product) => void;
 	updateItemQuantity: (id: number, qty: number) => void;
 	getItemQuantity: (id: number) => number;
-	getSaleUnit: (id: number) => string;
+	getSaleUnit: (id: number) => number;
 	updateItemSaleUnit: (id: number, sale_unit: string) => void;
 	removeItem: (id: number) => void;
 	clear: () => void;
@@ -34,7 +34,7 @@ const createCartStore = (): CartStore => {
 		updateItemSaleUnit: (id, sale_unit) => {
 			update((items) =>
 				items.map((item) =>
-					item.productId === id ? { ...item, selected_sale_unit: sale_unit } : item
+					item.productId === id ? { ...item, selectedSaleUnit: sale_unit } : item
 				)
 			);
 		},

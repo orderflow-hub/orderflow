@@ -15,10 +15,10 @@
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
 	import { z } from 'zod';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
 
 	type ProductSchema = z.infer<typeof productSchema>;
 	type Category = ProductSchema['category']; // Product category types
-	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	// Get product data from the server to populate the fields
 	export let data;
@@ -86,10 +86,8 @@
 
 	function handleSaleUnitsChange(s: Selected<string>[] | undefined) {
 		if (s) {
-			// Map over selections to extract values
-			const selectedValues = s.map((selection) => selection.value as SaleUnit);
 			// Update $formData.saleUnits with the new selections
-			$formData.saleUnits = selectedValues;
+			$formData.saleUnits = s.map((item) => parseInt(item.value));
 		} else {
 			// If no selection, reset $formData.saleUnits to an empty array
 			$formData.saleUnits = [];
@@ -101,13 +99,6 @@
 			$formData.category = s.value as Category;
 		}
 	}
-	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλά',
-		piece: 'Τεμάχια',
-		crate: 'Τελάρα',
-		bunch: 'Ματσάκια',
-		cup: 'Κουπάκια'
-	};
 
 	// Select items of category
 	const categoryLabels: { [key: string]: string } = {
@@ -117,13 +108,12 @@
 		other: 'Άλλο'
 	};
 
-	const saleUnits = Object.entries(saleUnitLabels).map(([value, label]) => ({ value, label }));
 	const categories = Object.entries(categoryLabels).map(([value, label]) => ({ value, label }));
 
-	$: defaultSaleUnits = $formData.saleUnits.map((unit) => ({
-		value: unit,
-		label: saleUnitLabels[unit]
-	}));
+	$: defaultSaleUnits = $formData.saleUnits.map((unit) => {
+		const matchedUnit = saleUnitsStore.getSaleUnitById(unit);
+		return { value: matchedUnit.saleUnitId, label: matchedUnit.saleUnitLabel };
+	});
 
 	$: defaultCategory = {
 		value: $formData.category,
@@ -182,7 +172,6 @@
 						<Form.Control let:attrs>
 							<Form.Label>Μονάδα μέτρησης *</Form.Label>
 							<Select.Root
-								items={saleUnits}
 								bind:selected={defaultSaleUnits}
 								multiple={true}
 								onSelectedChange={(s) => handleSaleUnitsChange(s)}
@@ -192,8 +181,8 @@
 									<Select.Value />
 								</Select.Trigger>
 								<Select.Content>
-									{#each saleUnits as saleUnit}
-										<Select.Item value={saleUnit.value} label={saleUnit.label} />
+									{#each $saleUnitsStore as saleUnit}
+										<Select.Item value={saleUnit.saleUnitId} label={saleUnit.saleUnitLabel} />
 									{/each}
 								</Select.Content>
 							</Select.Root>

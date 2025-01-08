@@ -12,6 +12,7 @@
 	import ordersStore from '../../../stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
+	import { saleUnitsStore } from '$stores/saleUnitsStore';
 
 	// Get order data from the server to populate the fields
 	export let data;
@@ -77,14 +78,6 @@
 		})
 		.replace(',', ' •');
 
-	const saleUnitLabels: { [key: string]: string } = {
-		kg: 'Κιλά',
-		piece: 'Τεμάχια',
-		crate: 'Τελάρα',
-		bunch: 'Ματσάκια',
-		cup: 'Κουπάκια'
-	};
-
 	pdfMake.fonts = {
 		Roboto: {
 			normal:
@@ -122,7 +115,9 @@
 							...order.products.map((product) => [
 								{ text: product.productName } as Content,
 								{ text: product.qty } as Content,
-								{ text: saleUnitLabels[product.saleUnit] } as Content,
+								{
+									text: saleUnitsStore.getSaleUnitById(product.saleUnit)?.saleUnitLabel
+								} as Content,
 								{ text: '', alignment: 'center' } as Content
 							])
 						]
