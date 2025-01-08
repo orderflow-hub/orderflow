@@ -12,9 +12,9 @@
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
-	import { cart, itemCount } from '../../stores/cartStore';
-	import productsStore from '../../stores/productsStore';
-	import ordersStore from '../../stores/ordersStore';
+	import { cart, itemCount } from '$stores/cartStore';
+	import productsStore from '$stores/productsStore';
+	import ordersStore from '$stores/ordersStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';

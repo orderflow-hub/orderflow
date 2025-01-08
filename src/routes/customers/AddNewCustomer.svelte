@@ -9,7 +9,7 @@
 	import { formCustomerSchema } from '$lib/schemas/customerSchema';
 	import type { Customer } from '$lib/types';
 	import { toast } from 'svelte-sonner';
-	import customersStore from '../../stores/customersStore';
+	import customersStore from '$stores/customersStore';
 
 	// export let data: SuperValidated<Infer<FormCustomerSchema>>;
 	export let data;

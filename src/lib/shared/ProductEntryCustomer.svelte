@@ -5,7 +5,7 @@
 	import { Plus, Trash } from 'lucide-svelte';
 	import type { Product } from '$lib/types';
 	import QuantityInput from '$lib/shared/QuantityInput.svelte';
-	import { cart } from '../../stores/cartStore';
+	import { cart } from '$stores/cartStore';
 	import { Image } from 'lucide-svelte';
 
 	export let product: Product;

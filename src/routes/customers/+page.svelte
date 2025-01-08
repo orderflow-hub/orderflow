@@ -5,7 +5,7 @@
 	import { Search } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
-	import customersStore from '../../stores/customersStore';
+	import customersStore from '$stores/customersStore';
 	import { debounce } from '$lib/debounce';
 
 	export let data: PageData;
