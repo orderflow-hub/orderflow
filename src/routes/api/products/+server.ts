@@ -48,7 +48,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			if (category === 'all') {
 				return sql``; // No additional filtering if 'all'
 			}
-			return sql`AND category = ${category}`;
+			return sql`AND category_id = ${category}`;
 		};
 
 		try {
@@ -59,7 +59,7 @@ export const GET: RequestHandler = async ({ url }) => {
 					p.product_name,
 					p.product_code,
 					p.is_disabled,
-					p.category,
+					p.category_id,
 					array_agg(su.sale_unit) AS sale_units
 				FROM 
 					products p
@@ -123,9 +123,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		// Insert the new product
 		const [newProduct] = await sql`
             INSERT INTO products 
-            (product_code, product_name, category, is_disabled, image_url) 
+            (product_code, product_name, category_id, is_disabled, image_url) 
             VALUES 
-            (${data.product_code}, ${data.product_name}, ${data.category}, ${data.is_disabled}, ${data.image_url || null})
+            (${data.product_code}, ${data.product_name}, ${data.category_id}, ${data.is_disabled}, ${data.image_url || null})
             RETURNING *;
         `;
 
@@ -159,7 +159,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 p.product_name,
                 p.product_code,
                 p.is_disabled,
-                p.category,
+                p.category_id,
                 array_agg(su.sale_unit) AS sale_units
             FROM 
                 products p

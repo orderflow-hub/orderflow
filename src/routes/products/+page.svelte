@@ -20,6 +20,7 @@
 	import type { Product } from '$lib/types';
 	import { debounce } from '$lib/debounce';
 	import { goto } from '$app/navigation';
+	import { categoriesStore } from '$stores/categoriesStore';
 
 	export let data: PageData;
 
@@ -161,9 +162,9 @@
 			</Select.Trigger>
 			<Select.Content>
 				<Select.Item value="all" label="Όλα" />
-				<Select.Item value="fruits" label="Φρούτα" />
-				<Select.Item value="vegetables" label="Κηπευτικά" />
-				<Select.Item value="bundles" label="Δεματικά" />
+				{#each $categoriesStore as category}
+					<Select.Item value={category.categoryId} label={category.categoryLabel} />
+				{/each}
 			</Select.Content>
 		</Select.Root>
 	</div>

@@ -15,9 +15,9 @@
 	import type { Selected } from 'bits-ui';
 	import type { Product } from '$lib/types';
 	import { z } from 'zod';
+	import { categoriesStore } from '$stores/categoriesStore';
 
 	type ProductSchema = z.infer<typeof productSchema>;
-	type Category = ProductSchema['category']; // Product category types
 	type SaleUnit = ProductSchema['saleUnits'][number]; // Product saleUnit types
 
 	export let data: PageData;
@@ -61,7 +61,7 @@
 
 	function handleCategoryChange(s: Selected<string> | undefined) {
 		if (s) {
-			$formData.category = s.value as Category;
+			$formData.categoryId = parseInt(s.value);
 		}
 	}
 
@@ -72,14 +72,6 @@
 		{ value: 'crate', label: 'Τελάρα' },
 		{ value: 'bunch', label: 'Ματσάκια' },
 		{ value: 'cup', label: 'Κουπάκια' }
-	];
-
-	// Select items of category
-	const categories: Selected<string>[] = [
-		{ value: 'fruits', label: 'Φρούτα' },
-		{ value: 'vegetables', label: 'Κηπευτικά' },
-		{ value: 'bundles', label: 'Δεματικά' },
-		{ value: 'other', label: 'Άλλο' }
 	];
 
 	let isDialogOpen = false;
@@ -134,17 +126,17 @@
 						</Form.Control>
 					</Form.Field>
 				</div>
-				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="category">
+				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="categoryId">
 					<Form.Control let:attrs>
 						<Form.Label>Κατηγορία *</Form.Label>
-						<Select.Root items={categories} onSelectedChange={(s) => handleCategoryChange(s)}>
+						<Select.Root onSelectedChange={(s) => handleCategoryChange(s)}>
 							<Select.Input name={attrs.name} />
 							<Select.Trigger {...attrs}>
 								<Select.Value />
 							</Select.Trigger>
 							<Select.Content>
-								{#each categories as category}
-									<Select.Item value={category.value} label={category.label} />
+								{#each $categoriesStore as category}
+									<Select.Item value={category.categoryId} label={category.categoryLabel} />
 								{/each}
 							</Select.Content>
 						</Select.Root>

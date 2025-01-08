@@ -56,7 +56,7 @@ export const load: PageServerLoad = async ({ locals, fetch, params }) => {
 				{
 					productId: product.productId,
 					productName: product.productName,
-					category: product.category,
+					categoryId: product.categoryId,
 					productCode: product.productCode,
 					saleUnits: product.saleUnits,
 					isDisabled: product.isDisabled
