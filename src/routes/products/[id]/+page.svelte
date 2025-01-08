@@ -11,7 +11,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import productsStore from '../../../stores/productsStore';
+	import productsStore from '$stores/productsStore';
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
 	import { z } from 'zod';

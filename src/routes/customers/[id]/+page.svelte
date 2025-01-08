@@ -7,7 +7,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { goto } from '$app/navigation';
 	import * as Form from '$lib/components/ui/form';
-	import customersStore from '../../../stores/customersStore';
+	import customersStore from '$stores/customersStore';
 	import { formCustomerSchema } from '$lib/schemas/customerSchema';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';

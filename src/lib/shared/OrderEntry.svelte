@@ -2,7 +2,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
 	import type { Order } from '$lib/types';
-	import { returnToHome } from '../../stores/orderNavigationStore';
+	import { returnToHome } from '$stores/orderNavigationStore';
 
 	export let order: Order;
 	export let userRole: string;

@@ -8,7 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { productSchema } from '$lib/schemas/productSchema';
-	import productsStore from '../../stores/productsStore';
+	import productsStore from '$stores/productsStore';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form';
 	import type { PageData } from './$types';

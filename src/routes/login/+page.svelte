@@ -3,7 +3,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import { authHandlers } from '../../stores/authStore';
+	import { authHandlers } from '$stores/authStore';
 	import { toast } from 'svelte-sonner';
 
 	let email = '';

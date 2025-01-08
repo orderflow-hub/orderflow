@@ -3,11 +3,11 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import OrderEntry from '$lib/shared/OrderEntry.svelte';
 	import { writable } from 'svelte/store';
-	import ordersStore from '../../stores/ordersStore';
+	import ordersStore from '$stores/ordersStore';
 	import { debounce } from '$lib/debounce';
 
 	export let data;
-	const userRole: string = data.userRole;	
+	const userRole: string = data.userRole;
 
 	let searchQuery = writable('');
 	let intersectionRef: HTMLElement | null = null;

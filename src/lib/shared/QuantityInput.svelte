@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { cart } from '../../stores/cartStore';
+	import { cart } from '$stores/cartStore';
 	import * as Select from '$lib/components/ui/select';
 	import type { Selected } from 'bits-ui';
 	import { createEventDispatcher, onDestroy } from 'svelte';

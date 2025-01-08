@@ -7,7 +7,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import CustomerDetailsForm from '$lib/components/CustomerDetailsForm.svelte';
 	import AdminDetailsForm from '$lib/components/AdminDetailsForm.svelte';
-	import { authHandlers, authStore } from '../../stores/authStore';
+	import { authHandlers, authStore } from '$stores/authStore';
 	import { EmailAuthProvider } from 'firebase/auth';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';

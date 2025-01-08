@@ -6,7 +6,7 @@
 	import { Image } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Trash } from 'lucide-svelte';
-	import { cart } from '../../stores/cartStore';
+	import { cart } from '$stores/cartStore';
 
 	export let product: Product;
 
