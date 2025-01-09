@@ -69,7 +69,7 @@
 
 	// Delete the product from the database and show a toast notification. Redirect to '/products' page if successful
 	async function handleDelete() {
-		const response = await fetch(`/api/products/${product?.product_id}`, {
+		const response = await fetch(`/api/products/${product?.productId}`, {
 			method: 'DELETE'
 		});
 
@@ -79,7 +79,7 @@
 
 			// Filters deleted product from the store.
 			let filteredProducts = $productsStore.filter(
-				(product) => product.product_id !== $formData.productId
+				(product) => product.productId !== $formData.productId
 			);
 			productsStore.setProducts(filteredProducts, true);
 
@@ -197,11 +197,11 @@
 			<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
 				<div class="h-24 rounded-md border p-2">
 					<Label for="imgUpload" class="cursor-pointer">
-						{#if product?.image_url}
-							{#key product.image_url}
+						{#if product?.imageUrl}
+							{#key product.imageUrl}
 								<img
 									class="aspect-square h-full object-cover"
-									src={`${product.image_url}?t=${Date.now()}`}
+									src={`${product.imageUrl}?t=${Date.now()}`}
 									alt="Εικόνα προϊόντος"
 								/>
 							{/key}

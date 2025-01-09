@@ -9,16 +9,16 @@
 
 <Card.Root class="flex rounded-none border-0">
 	<a
-		href={`/products/${product.product_id}`}
+		href={`/products/${product.productId}`}
 		class="flex h-24 w-full items-center justify-start gap-4 p-3"
 	>
 		<Card.Content class="aspect-square h-full p-0">
-			{#if product.image_url}
+			{#if product.imageUrl}
 				<img
 					class={cn('aspect-square w-full object-cover', {
-						grayscale: product.is_disabled
+						grayscale: product.isDisabled
 					})}
-					src={product.image_url}
+					src={product.imageUrl}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
@@ -30,11 +30,11 @@
 		<Card.Header class="p-0">
 			<Card.Title
 				class={cn('line-clamp-2 font-normal text-zinc-700', {
-					'text-slate-400': product.is_disabled
-				})}>{product.product_name}</Card.Title
+					'text-slate-400': product.isDisabled
+				})}>{product.productName}</Card.Title
 			>
 			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{product.product_code}</Card.Description
+				>{product.productCode}</Card.Description
 			>
 		</Card.Header>
 	</a>

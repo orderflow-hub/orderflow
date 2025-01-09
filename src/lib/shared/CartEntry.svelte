@@ -4,37 +4,56 @@
 	import QuantityInput from '$lib/shared/QuantityInput.svelte';
 	import type { Product } from '$lib/types';
 	import { Image } from 'lucide-svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Trash } from 'lucide-svelte';
+	import { cart } from '../../stores/cartStore';
 
 	export let product: Product;
+
+	const removeFromCart = () => {
+		cart.removeItem(product.productId);
+	};
 </script>
 
-<Card.Root class="flex items-center justify-between gap-2 rounded-none border-0 p-3">
-	<div class="flex h-full items-center justify-start">
-		<Card.Content class="aspect-square h-[72px] p-0">
-			{#if product.image_url}
+<Card.Root class="rounded-none border-0 p-3">
+	<!-- First Row -->
+	<div class="flex items-center gap-3">
+		<!-- Product Image -->
+		<div class="h-16 w-16 flex-none">
+			{#if product.imageUrl}
 				<img
-					class={cn('aspect-square w-full object-cover', {
-						grayscale: product.is_disabled
+					src={product.imageUrl}
+					alt={product.productName}
+					class={cn('w-full object-cover', {
+						grayscale: product.isDisabled
 					})}
-					src={product.image_url}
-					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
 				<div class="flex w-full items-center justify-center object-cover">
 					<Image strokeWidth={0.6} class="h-full w-full object-contain" />
 				</div>
 			{/if}
-		</Card.Content>
-		<Card.Header class="px-3 py-0">
-			<Card.Title class="line-clamp-2 text-sm font-normal text-zinc-700"
-				>{product.product_name}</Card.Title
-			>
-			<Card.Description class="text-[13px] font-normal text-slate-400"
-				>{product.product_code}</Card.Description
-			>
-		</Card.Header>
+		</div>
+		<!-- Title and Item ID -->
+		<div class="grow">
+			<div class="line-clamp-1 text-sm font-medium text-gray-800">{product.productName}</div>
+			<div class="text-xs text-gray-500">{product.productCode}</div>
+		</div>
+		<!-- Price -->
+		<div class="flex-none text-right text-sm font-semibold text-gray-700">
+			{''}
+		</div>
 	</div>
-	<Card.Footer class="inline-flex items-center justify-start p-0">
-		<QuantityInput id={product.product_id} sale_units={product.sale_units} />
-	</Card.Footer>
+
+	<!-- Second Row -->
+	<div class="flex justify-between">
+		<!-- Quantity and Sale Units -->
+		<Card.Footer class="w-full p-0">
+			<QuantityInput id={product.productId} sale_units={product.saleUnits} />
+		</Card.Footer>
+		<!-- Delete Button -->
+		<Button variant="ghost" size="icon" on:click={removeFromCart}>
+			<Trash class="h-5 w-5" />
+		</Button>
+	</div>
 </Card.Root>

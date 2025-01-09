@@ -68,10 +68,11 @@
 		observer.observe(intersectionRef);
 	}
 
-	let isCartSheetOpen = false;
-	const closeCartSheet = () => {
+	// If cart is empty, close the cart sheet
+	let isCartSheetOpen: boolean;
+	$: if ($itemCount <= 0) {
 		isCartSheetOpen = false;
-	};
+	}
 
 	const submitOrder = async () => {
 		const response = await fetch('/api/orders', {
@@ -85,10 +86,9 @@
 		if (response.ok) {
 			// Retrieve the new order from the json response and add it to the order store
 			const json = await response.json();
-			ordersStore.setOrders([json.newOrder], false);
+			ordersStore.setOrders([json.order], false);
 
 			cart.clear();
-			closeCartSheet();
 			toast.success('Η παραγγελία σας υποβλήθηκε επιτυχώς');
 			goto('/orders');
 		} else {
@@ -215,7 +215,6 @@
 					variant="destructive"
 					on:click={() => {
 						cart.clear();
-						closeCartSheet();
 					}}>Άδειασμα Καλαθιού</Button
 				>
 			</Sheet.Footer>

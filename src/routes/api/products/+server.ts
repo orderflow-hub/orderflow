@@ -2,6 +2,7 @@
 
 import sql from '$lib/db';
 import type { RequestHandler } from '@sveltejs/kit';
+import humps from 'humps';
 
 /*
  * GET: Fetches all products from the database.
@@ -76,7 +77,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				LIMIT ${limit} OFFSET ${offset};
 			`;
 
-			return new Response(JSON.stringify(products), {
+			return new Response(JSON.stringify(humps.camelizeKeys(products)), {
 				headers: { 'Content-Type': 'application/json' },
 				status: 200
 			});
@@ -100,7 +101,7 @@ export const GET: RequestHandler = async ({ url }) => {
  * Returns the created product details on success or an error message on failure.
  */
 export const POST: RequestHandler = async ({ request }) => {
-	const data = await request.json();
+	const data = humps.decamelizeKeys(await request.json());
 
 	// Check if the unique fields already exist in the database
 	const existingProducts = await sql`
@@ -173,7 +174,7 @@ export const POST: RequestHandler = async ({ request }) => {
         `;
 
 		// Return the newly created product details
-		return new Response(JSON.stringify(createdProduct), {
+		return new Response(JSON.stringify(humps.camelizeKeys(createdProduct)), {
 			status: 201,
 			headers: { 'Content-Type': 'application/json' }
 		});
