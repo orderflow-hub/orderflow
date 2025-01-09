@@ -18,7 +18,7 @@
 					class={cn('aspect-square w-full object-cover', {
 						grayscale: product.isDisabled
 					})}
-					src={product.imageUrl}
+					src={`${product.imageUrl}?t=${Date.now()}`}
 					alt="Εικόνα προϊόντος"
 				/>
 			{:else}
