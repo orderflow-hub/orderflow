@@ -126,7 +126,7 @@
 			// Update the store with the new image URL
 			productsStore.updateProduct({
 				...product,
-				imageUrl: result.imgUrl
+				imageUrl: `${result.imgUrl}?t=${Date.now()}`
 			});
 		} catch (error) {
 			console.error('Error uploading image:', error);
@@ -214,7 +214,7 @@
 							{#key product.imageUrl}
 								<img
 									class="aspect-square h-full object-cover"
-									src={`${product.imageUrl}?t=${Date.now()}`}
+									src={`${product.imageUrl}`}
 									alt="Εικόνα προϊόντος"
 								/>
 							{/key}
