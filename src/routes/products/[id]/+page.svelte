@@ -91,11 +91,15 @@
 	}
 
 	let selectedImageFile: File | null = null;
+	let previewImageUrl: string | null = null;
 
 	function handleImageSelection(event: Event) {
 		const fileInput = event.target as HTMLInputElement;
 		if (fileInput.files && fileInput.files[0]) {
-			selectedImageFile = fileInput.files[0]; // Store the file but do NOT upload it yet
+			selectedImageFile = fileInput.files[0];
+
+			// Generate a temporary preview URL for the selected file
+			previewImageUrl = URL.createObjectURL(selectedImageFile);
 		}
 	}
 
@@ -200,7 +204,13 @@
 			<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
 				<div class="h-24 rounded-md border p-2">
 					<Label for="imgUpload" class="cursor-pointer">
-						{#if product?.imageUrl}
+						{#if previewImageUrl}
+							<img
+								class="aspect-square h-full object-cover"
+								src={previewImageUrl}
+								alt="Εικόνα προϊόντος"
+							/>
+						{:else if product?.imageUrl}
 							{#key product.imageUrl}
 								<img
 									class="aspect-square h-full object-cover"
