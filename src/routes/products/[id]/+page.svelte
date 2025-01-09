@@ -45,6 +45,11 @@
 					// Updates the Product Store data.
 					productsStore.updateProduct(form.message.updatedProduct);
 
+					// Upload provided image.
+					if (selectedImageFile) {
+						uploadImage(selectedImageFile);
+					}
+
 					// Redirect to '/products' page
 					goto('/products');
 				} else {
@@ -82,6 +87,15 @@
 			goto('/products');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή του προϊόντος');
+		}
+	}
+
+	let selectedImageFile: File | null = null;
+
+	function handleImageSelection(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files[0]) {
+			selectedImageFile = fileInput.files[0]; // Store the file but do NOT upload it yet
 		}
 	}
 
@@ -200,12 +214,7 @@
 						type="file"
 						class="hidden"
 						accept="image/*"
-						on:change={(e) => {
-							const file = e.target.files[0];
-							if (file) {
-								uploadImage(file); // Trigger the uploadImage function
-							}
-						}}
+						on:change={handleImageSelection}
 					/>
 				</div>
 				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productName">
