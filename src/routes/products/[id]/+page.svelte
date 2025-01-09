@@ -119,8 +119,11 @@
 			const result = await response.json();
 			toast.success('Η φωτογραφία προϊόντος ενημερώθηκε επιτυχώς');
 
-			// Update local product data with the new image URL
-			product.image_url = result.imgUrl;
+			// Update the store with the new image URL
+			productsStore.updateProduct({
+				...product,
+				imageUrl: result.imgUrl
+			});
 		} catch (error) {
 			console.error('Error uploading image:', error);
 			toast.error('Άγνωστο σφάλμα. Παρακαλώ προσπαθήστε αργότερα');
