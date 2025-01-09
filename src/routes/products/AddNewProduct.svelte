@@ -2,6 +2,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
 	import { Image, Plus } from 'lucide-svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -37,6 +38,14 @@
 
 					productsStore.setProducts([form.message.newProduct], false);
 
+					// Assign the newly created product ID to the formData
+					$formData.productId = form.message.newProduct.productId;
+
+					// Upload provided image.
+					if (selectedImageFile) {
+						uploadImage(selectedImageFile);
+					}
+
 					isDialogOpen = false; // Hides form modal.
 				} else {
 					toast.error(form.message.text);
@@ -62,6 +71,46 @@
 	function handleCategoryChange(s: Selected<string> | undefined) {
 		if (s) {
 			$formData.category = s.value as Category;
+		}
+	}
+
+	let selectedImageFile: File | null = null;
+
+	function handleImageSelection(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files[0]) {
+			selectedImageFile = fileInput.files[0]; // Store the file but do NOT upload it yet
+		}
+	}
+
+	async function uploadImage(file: File) {
+		const formData = new FormData();
+		formData.append('file', file); // Key name matches the server's expectation
+
+		const productId = $formData.productId;
+
+		try {
+			const response = await fetch(`/api/products/${productId}/upload-image`, {
+				method: 'PATCH',
+				body: formData // Use FormData as the body
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.message || 'Failed to upload image');
+			}
+
+			const result = await response.json();
+			toast.success('Η φωτογραφία προϊόντος ενημερώθηκε επιτυχώς');
+
+			// Update the store with the new image URL
+			productsStore.updateProduct({
+				...$formData,
+				imageUrl: result.imgUrl
+			});
+		} catch (error) {
+			console.error('Error uploading image:', error);
+			toast.error('Άγνωστο σφάλμα. Παρακαλώ προσπαθήστε αργότερα');
 		}
 	}
 
@@ -97,7 +146,18 @@
 		</Dialog.Header>
 		<form method="POST" action="?/createProduct" use:enhance>
 			<div class="flex flex-col items-start justify-center gap-4 self-stretch rounded-lg">
-				<Image class="rounded-md border" strokeWidth={1} size={80} />
+				<div class="h-24 rounded-md border p-2">
+					<Label for="imgUpload" class="cursor-pointer">
+						<Image strokeWidth={1} size={80} />
+					</Label>
+					<input
+						id="imgUpload"
+						type="file"
+						class="hidden"
+						accept="image/*"
+						on:change={handleImageSelection}
+					/>
+				</div>
 				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productName">
 					<Form.Control let:attrs>
 						<Form.Label>Όνομα προϊόντος *</Form.Label>
