@@ -15,6 +15,7 @@
 	import { productSchema } from '$lib/schemas/productSchema';
 	import type { Selected } from 'bits-ui';
 	import { z } from 'zod';
+	import Label from '$lib/components/ui/label/label.svelte';
 
 	type ProductSchema = z.infer<typeof productSchema>;
 	type Category = ProductSchema['category']; // Product category types
@@ -43,6 +44,11 @@
 
 					// Updates the Product Store data.
 					productsStore.updateProduct(form.message.updatedProduct);
+
+					// Upload provided image.
+					if (selectedImageFile) {
+						uploadImage(selectedImageFile);
+					}
 
 					// Redirect to '/products' page
 					goto('/products');
@@ -81,6 +87,50 @@
 			goto('/products');
 		} else {
 			toast.error('Υπήρξε πρόβλημα κατά τη διαγραφή του προϊόντος');
+		}
+	}
+
+	let selectedImageFile: File | null = null;
+	let previewImageUrl: string | null = null;
+
+	function handleImageSelection(event: Event) {
+		const fileInput = event.target as HTMLInputElement;
+		if (fileInput.files && fileInput.files[0]) {
+			selectedImageFile = fileInput.files[0];
+
+			// Generate a temporary preview URL for the selected file
+			previewImageUrl = URL.createObjectURL(selectedImageFile);
+		}
+	}
+
+	async function uploadImage(file: File) {
+		const formData = new FormData();
+		formData.append('file', file); // Key name matches the server's expectation
+
+		const productId = $formData.productId;
+
+		try {
+			const response = await fetch(`/api/products/${productId}/upload-image`, {
+				method: 'PATCH',
+				body: formData // Use FormData as the body
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.message || 'Failed to upload image');
+			}
+
+			const result = await response.json();
+			toast.success('Η φωτογραφία προϊόντος ενημερώθηκε επιτυχώς');
+
+			// Update the store with the new image URL
+			productsStore.updateProduct({
+				...product,
+				imageUrl: result.imgUrl
+			});
+		} catch (error) {
+			console.error('Error uploading image:', error);
+			toast.error('Άγνωστο σφάλμα. Παρακαλώ προσπαθήστε αργότερα');
 		}
 	}
 
@@ -152,17 +202,34 @@
 				</Form.Control>
 			</Form.Field>
 			<div class="flex flex-col items-start justify-center gap-2.5 self-stretch rounded-lg">
-				{#if product?.imageUrl}
-					<div class="h-24 rounded-md border p-2">
-						<img
-							class="aspect-square h-full object-cover"
-							src={product.imageUrl}
-							alt="Εικόνα προϊόντος"
-						/>
-					</div>
-				{:else}
-					<Image class="rounded-md border" strokeWidth={1} size={80} />
-				{/if}
+				<div class="h-24 rounded-md border p-2">
+					<Label for="imgUpload" class="cursor-pointer">
+						{#if previewImageUrl}
+							<img
+								class="aspect-square h-full object-cover"
+								src={previewImageUrl}
+								alt="Εικόνα προϊόντος"
+							/>
+						{:else if product?.imageUrl}
+							{#key product.imageUrl}
+								<img
+									class="aspect-square h-full object-cover"
+									src={`${product.imageUrl}?t=${Date.now()}`}
+									alt="Εικόνα προϊόντος"
+								/>
+							{/key}
+						{:else}
+							<Image strokeWidth={1} size={80} />
+						{/if}
+					</Label>
+					<input
+						id="imgUpload"
+						type="file"
+						class="hidden"
+						accept="image/*"
+						on:change={handleImageSelection}
+					/>
+				</div>
 				<Form.Field class="flex w-full max-w-sm flex-col" {form} name="productName">
 					<Form.Control let:attrs>
 						<Form.Label>Όνομα προϊόντος *</Form.Label>
