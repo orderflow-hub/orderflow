@@ -1,6 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { loginFormSchema } from '$lib/schemas/loginFormSchema';
+import { fail, message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { authHandlers } from '../../stores/authStore';
 
 // Similar to 'src/routes/+page.server.ts'
 export const load: PageServerLoad = async ({ locals }) => {
@@ -10,28 +13,23 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(302, '/');
 	}
 
-	return {};
+	return {
+		form: await superValidate(zod(loginFormSchema))
+	};
 };
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
-		// Parse the form data
-		const formData = Object.fromEntries(await request.formData());
+	// Validates form before a login occurs
+	default: async (event) => {
+		const form = await superValidate(event, zod(loginFormSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 
-		// Validate the input data
 		try {
-			const result = loginFormSchema.parse(formData);
-			return {
-				success: true,
-				data: formData
-			};
+			return message(form, { status: 'success' });
 		} catch (error) {
-			const { fieldErrors: errors } = error.flatten();
-			return {
-				success: false,
-				data: formData,
-				errors
-			};
+			return fail(400, { form, message: 'Error validating form' });
 		}
 	}
 };
